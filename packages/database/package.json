@@ -1,0 +1,19 @@
+{
+  "name": "@casino/database",
+  "version": "1.0.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "seed": "tsx seeders/index.ts",
+    "seed:games": "tsx seeders/game-config.seeder.ts",
+    "seed:jackpots": "tsx seeders/jackpot.seeder.ts",
+    "indexes": "tsx indexes.ts"
+  },
+  "dependencies": {
+    "mongoose": "^8.0.3"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "@types/node": "^20.0.0"
+  }
+}

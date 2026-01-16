@@ -1,0 +1,557 @@
+diff --git a/packages/database/schema.prisma b/packages/database/schema.prisma
+index 1234567..abcdefg 100644
+--- a/packages/database/schema.prisma
++++ b/packages/database/schema.prisma
+@@ -89,7 +89,7 @@ model Wallet {
+   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+   currency      Currency
+   balance       Float    @default(0)
+-  lockedBalance Float    @default(0)
++  lockedBalance Decimal  @default(0) @db.Decimal(24,8)
+   
+   createdAt     DateTime @default(now())
+   updatedAt     DateTime @updatedAt
+@@ -98,6 +98,23 @@ model Wallet {
+   @@index([userId])
+ }
+ 
++model Transaction {
++  id           String   @id @default(cuid())
++  userId       String
++  walletId     String
++  amount       Decimal  @db.Decimal(24,8)
++  type         String
++  beforeAmount Decimal  @db.Decimal(24,8)
++  afterAmount  Decimal  @db.Decimal(24,8)
++  meta         Json?
++  createdAt    DateTime @default(now())
++
++  @@index([userId])
++  @@index([walletId])
++  @@index([createdAt])
++  @@index([type])
++}
++
+ model SeedPair {
+   id              String   @id @default(cuid())
+   userId          String
+diff --git a/packages/fairness/seed-manager.ts b/packages/fairness/seed-manager.ts
+index 2345678..bcdefgh 100644
+--- a/packages/fairness/seed-manager.ts
++++ b/packages/fairness/seed-manager.ts
+@@ -1,4 +1,4 @@
+-import { prisma } from '@casino/database';
++import { prisma, Prisma } from '@casino/database';
+ import { generateServerSeed, hashServerSeed, generateClientSeed } from './rng';
+ 
+ /**
+@@ -48,6 +48,35 @@ export class SeedManager {
+   }
+ 
+   /**
++   * Reserve seed for bet (atomic nonce increment within transaction)
++   * MUST be called inside a Prisma transaction
++   */
++  static async reserveSeedForBet(
++    tx: Prisma.TransactionClient,
++    userId: string
++  ) {
++    // Get active seed pair with lock
++    const seed = await tx.seedPair.findFirst({
++      where: { userId, isActive: true },
++    });
++
++    if (!seed) {
++      throw new Error('No active seed pair found');
++    }
++
++    // Atomically increment nonce
++    const updated = await tx.seedPair.update({
++      where: { id: seed.id },
++      data: { nonce: { increment: 1 } },
++    });
++
++    return {
++      seedPairId: seed.id,
++      serverSeed: seed.serverSeed,
++      clientSeed: seed.clientSeed,
++      nonce: updated.nonce,
++      serverSeedHash: seed.serverSeedHash,
++    };
++  }
++
++  /**
+    * Rotate to new seed pair (reveals old server seed)
+    */
+   static async rotateSeedPair(userId: string, newClientSeed?: string) {
+diff --git a/apps/backend/src/services/wallet-service.ts b/apps/backend/src/services/wallet-service.ts
+index 3456789..cdefghi 100644
+--- a/apps/backend/src/services/wallet-service.ts
++++ b/apps/backend/src/services/wallet-service.ts
+@@ -1,4 +1,5 @@
+-import { prisma, Currency } from '@casino/database';
++import { prisma, Currency, Prisma } from '@casino/database';
++import Decimal from 'decimal.js';
+ 
+ /**
+  * Wallet Service - manages user balances
+@@ -30,6 +31,120 @@ export class WalletService {
+   }
+ 
+   /**
++   * Debit balance and lock funds (atomic, within transaction)
++   * MUST be called inside a Prisma transaction
++   */
++  static async debitAndLockBalance(
++    tx: Prisma.TransactionClient,
++    userId: string,
++    currency: Currency,
++    amount: number
++  ) {
++    const amountDecimal = new Decimal(amount);
++
++    // Get wallet with lock
++    const wallet = await tx.wallet.findUnique({
++      where: {
++        userId_currency: {
++          userId,
++          currency,
++        },
++      },
++    });
++
++    if (!wallet) {
++      throw new Error(`Wallet not found for ${currency}`);
++    }
++
++    const currentBalance = new Decimal(wallet.balance);
++    const currentLocked = new Decimal(wallet.lockedBalance.toString());
++
++    // Check sufficient balance
++    if (currentBalance.lessThan(amountDecimal)) {
++      throw new Error('Insufficient balance');
++    }
++
++    const newBalance = currentBalance.minus(amountDecimal);
++    const newLocked = currentLocked.plus(amountDecimal);
++
++    // Update wallet atomically
++    const updated = await tx.wallet.update({
++      where: { id: wallet.id },
++      data: {
++        balance: newBalance.toNumber(),
++        lockedBalance: newLocked.toString(),
++      },
++    });
++
++    // Create transaction log
++    await tx.transaction.create({
++      data: {
++        userId,
++        walletId: wallet.id,
++        amount: amountDecimal.toString(),
++        type: 'bet-reserve',
++        beforeAmount: currentBalance.toString(),
++        afterAmount: newBalance.toString(),
++        meta: { currency },
++      },
++    });
++
++    return updated;
++  }
++
++  /**
++   * Credit payout and unlock funds (atomic, within transaction)
++   * MUST be called inside a Prisma transaction
++   */
++  static async creditAndUnlockBalance(
++    tx: Prisma.TransactionClient,
++    userId: string,
++    walletId: string,
++    currency: Currency,
++    betAmount: number,
++    payoutAmount: number
++  ) {
++    const betDecimal = new Decimal(betAmount);
++    const payoutDecimal = new Decimal(payoutAmount);
++
++    const wallet = await tx.wallet.findUnique({
++      where: { id: walletId },
++    });
++
++    if (!wallet) {
++      throw new Error('Wallet not found');
++    }
++
++    const currentBalance = new Decimal(wallet.balance);
++    const currentLocked = new Decimal(wallet.lockedBalance.toString());
++
++    const newBalance = currentBalance.plus(payoutDecimal);
++    const newLocked = currentLocked.minus(betDecimal);
++
++    // Update wallet atomically
++    const updated = await tx.wallet.update({
++      where: { id: walletId },
++      data: {
++        balance: newBalance.toNumber(),
++        lockedBalance: newLocked.toString(),
++      },
++    });
++
++    // Create transaction log
++    await tx.transaction.create({
++      data: {
++        userId,
++        walletId,
++        amount: payoutDecimal.toString(),
++        type: 'payout',
++        beforeAmount: currentBalance.toString(),
++        afterAmount: newBalance.toString(),
++        meta: { currency, betAmount, payoutAmount },
++      },
++    });
++
++    return updated;
++  }
++
++  /**
+    * Get all wallets for user
+    */
+   static async getAllWallets(userId: string) {
+@@ -38,6 +153,57 @@ export class WalletService {
+     });
+   }
+ 
++  /**
++   * Release locked balance on loss (atomic, within transaction)
++   * MUST be called inside a Prisma transaction
++   */
++  static async releaseLockOnLoss(
++    tx: Prisma.TransactionClient,
++    userId: string,
++    walletId: string,
++    currency: Currency,
++    amount: number
++  ) {
++    const amountDecimal = new Decimal(amount);
++
++    const wallet = await tx.wallet.findUnique({
++      where: { id: walletId },
++    });
++
++    if (!wallet) {
++      throw new Error('Wallet not found');
++    }
++
++    const currentBalance = new Decimal(wallet.balance);
++    const currentLocked = new Decimal(wallet.lockedBalance.toString());
++
++    const newLocked = currentLocked.minus(amountDecimal);
++
++    // Ensure locked balance doesn't go negative
++    if (newLocked.lessThan(0)) {
++      throw new Error('Invalid locked balance state');
++    }
++
++    // Update wallet atomically
++    const updated = await tx.wallet.update({
++      where: { id: walletId },
++      data: {
++        lockedBalance: newLocked.toString(),
++      },
++    });
++
++    // Create transaction log
++    await tx.transaction.create({
++      data: {
++        userId,
++        walletId,
++        amount: amountDecimal.negated().toString(),
++        type: 'bet-loss',
++        beforeAmount: currentBalance.toString(),
++        afterAmount: currentBalance.toString(),
++        meta: { currency, lostAmount: amount },
++      },
++    });
++
++    return updated;
++  }
++
+   /**
+    * Add balance
+    */
+diff --git a/apps/backend/src/services/bet-engine.ts b/apps/backend/src/services/bet-engine.ts
+index 4567890..defghij 100644
+--- a/apps/backend/src/services/bet-engine.ts
++++ b/apps/backend/src/services/bet-engine.ts
+@@ -1,7 +1,7 @@
+-import { prisma, BetStatus, GameType, Currency } from '@casino/database';
++import { prisma, BetStatus, GameType, Currency, Prisma } from '@casino/database';
+ import { gameRegistry } from '@casino/game-engine';
+ import { SeedManager } from '@casino/fairness';
+ import { WalletService } from './wallet-service';
+-import { JackpotService } from './jackpot-service';
++import Decimal from 'decimal.js';
+ import { EventEmitter } from 'events';
+ 
+ export const betEvents = new EventEmitter();
+@@ -24,77 +24,127 @@ export interface PlaceBetInput {
+ export class BetEngine {
+   /**
+    * Place a bet (FULLY ATOMIC)
++   * All operations happen in a single database transaction
+    */
+   static async placeBet(input: PlaceBetInput) {
+     const { userId, gameType, currency, amount, gameParams, isDemo, isAutoBet, strategyId } = input;
+ 
+-    // Get or create active seed pair
+-    const seedPair = await SeedManager.getActiveSeedPair(userId);
+-
+-    // Lock wallet balance (skip for demo)
++    // Demo mode: skip wallet operations
+     if (!isDemo) {
+-      await WalletService.lockBalance(userId, currency, amount);
++      if (amount <= 0) {
++        throw new Error('Bet amount must be positive');
++      }
+     }
+ 
+-    try {
+-      // Get game instance
+-      const game = gameRegistry.getGame(gameType);
+-
+-      // Play game
+-      const result = game.play({
+-        amount,
+-        currency,
+-        seedData: {
+-          serverSeed: seedPair.serverSeed,
+-          clientSeed: seedPair.clientSeed,
+-          nonce: seedPair.nonce,
+-        },
+-        gameParams,
+-      });
+-
+-      // Determine bet status
+-      const status = result.won ? BetStatus.WON : BetStatus.LOST;
+-
+-      // Create bet record
+-      const bet = await prisma.bet.create({
+-        data: {
+-          userId,
+-          gameType,
+-          currency,
+-          amount,
+-          multiplier: result.multiplier,
+-          payout: result.payout,
+-          profit: result.profit,
+-          status,
+-          seedPairId: seedPair.id,
+-          nonce: seedPair.nonce,
+-          gameData: gameParams,
+-          result: result.result,
+-          isDemo: isDemo || false,
+-          isAutoBet: isAutoBet || false,
+-          strategyId,
+-        },
+-      });
+-
+-      // Increment nonce
+-      await SeedManager.incrementNonce(seedPair.id);
+-
+-      // Process payout (skip for demo)
+-      if (!isDemo) {
+-        await WalletService.unlockBalance(userId, currency, amount);
+-
+-        if (result.won) {
+-          await WalletService.addBalance(userId, currency, result.payout);
++    // Execute entire bet flow in a single atomic transaction
++    const betResult = await prisma.$transaction(
++      async (tx) => {
++        // 1. Reserve seed and increment nonce atomically
++        const seedData = await SeedManager.reserveSeedForBet(tx, userId);
++
++        // 2. Debit wallet and lock funds (skip for demo)
++        let walletId: string | undefined;
++        if (!isDemo) {
++          const wallet = await WalletService.debitAndLockBalance(
++            tx,
++            userId,
++            currency,
++            amount
++          );
++          walletId = wallet.id;
+         }
+ 
+-        // Update user stats
+-        await this.updateUserStats(userId, amount, result.profit, result.won);
++        // 3. Get game engine and compute outcome
++        const game = gameRegistry.getGame(gameType);
++        const result = game.play({
++          amount,
++          currency,
++          seedData: {
++            serverSeed: seedData.serverSeed,
++            clientSeed: seedData.clientSeed,
++            nonce: seedData.nonce,
++          },
++          gameParams,
++        });
++
++        // 4. Determine bet status
++        const status = result.won ? BetStatus.WON : BetStatus.LOST;
++
++        // 5. Create bet record atomically
++        const bet = await tx.bet.create({
++          data: {
++            userId,
++            gameType,
++            currency,
++            amount,
++            multiplier: result.multiplier,
++            payout: result.payout,
++            profit: result.profit,
++            status,
++            seedPairId: seedData.seedPairId,
++            nonce: seedData.nonce,
++            gameData: gameParams as any,
++            result: result.result as any,
++            isDemo: isDemo || false,
++            isAutoBet: isAutoBet || false,
++            strategyId,
++          },
++        });
++
++        // 6. Process payout or loss (skip for demo)
++        if (!isDemo && walletId) {
++          if (result.won) {
++            // Credit payout and unlock
++            await WalletService.creditAndUnlockBalance(
++              tx,
++              userId,
++              walletId,
++              currency,
++              amount,
++              result.payout
++            );
++          } else {
++            // Release locked balance on loss
++            await WalletService.releaseLockOnLoss(
++              tx,
++              userId,
++              walletId,
++              currency,
++              amount
++            );
++          }
++
++          // 7. Update user stats atomically
++          await tx.userStats.upsert({
++            where: { userId },
++            create: {
++              userId,
++              totalWagered: amount,
++              totalProfit: result.profit,
++              totalWins: result.won ? 1 : 0,
++              totalLosses: result.won ? 0 : 1,
++            },
++            update: {
++              totalWagered: { increment: amount },
++              totalProfit: { increment: result.profit },
++              totalWins: result.won ? { increment: 1 } : undefined,
++              totalLosses: result.won ? undefined : { increment: 1 },
++            },
++          });
++        }
+ 
+-        // Check jackpot
+-        await JackpotService.checkJackpot(bet.id, gameType, currency, amount);
+-      }
++        return { bet, result };
++      },
++      {
++        maxWait: 5000,
++        timeout: 10000,
++        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
++      }
++    );
++
++    // Fetch updated wallet balance
++    const wallet = isDemo
++      ? null
++      : await WalletService.getWallet(userId, currency);
+ 
+       // Emit bet event
+       betEvents.emit('bet-placed', {
+         userId,
+-        betId: bet.id,
++        betId: betResult.bet.id,
+         gameType,
+         amount,
+-        multiplier: result.multiplier,
+-        won: result.won,
++        multiplier: betResult.result.multiplier,
++        won: betResult.result.won,
+       });
+ 
+       // Emit user activity
+       betEvents.emit('user-activity', {
+         user_id: userId,
+         activity: 'bet_placed',
+-        brief_desc: `Placed ${amount} ${currency} bet on ${gameType}`,
++        brief_desc: `Placed ${amount} ${currency} bet on ${gameType}`,
+         severity: 'info',
+-        meta_data: { betId: bet.id, gameType, amount, won: result.won },
++        meta_data: { betId: betResult.bet.id, gameType, amount, won: betResult.result.won },
+       });
+ 
+-      return { bet, result };
+-    } catch (error) {
+-      // Unlock balance on error
+-      if (!isDemo) {
+-        await WalletService.unlockBalance(userId, currency, amount);
+-      }
+-      throw error;
+-    }
+-  }
+-
+-  /**
+-   * Update user statistics
+-   */
+-  private static async updateUserStats(userId: string, wagered: number, profit: number, won: boolean) {
+-    await prisma.userStats.upsert({
+-      where: { userId },
+-      create: {
+-        userId,
+-        totalWagered: wagered,
+-        totalProfit: profit,
+-        totalWins: won ? 1 : 0,
+-        totalLosses: won ? 0 : 1,
+-      },
+-      update: {
+-        totalWagered: { increment: wagered },
+-        totalProfit: { increment: profit },
+-        totalWins: won ? { increment: 1 } : undefined,
+-        totalLosses: won ? undefined : { increment: 1 },
+-      },
+-    });
++    return {
++      bet: betResult.bet,
++      result: betResult.result,
++      wallet,
++    };
+   }
+ 
+   /**
+diff --git a/apps/backend/package.json b/apps/backend/package.json
+index 5678901..efghijk 100644
+--- a/apps/backend/package.json
++++ b/apps/backend/package.json
+@@ -20,6 +20,7 @@
+     "bullmq": "^5.1.5",
+     "ioredis": "^5.3.2",
+     "bcrypt": "^5.1.1",
++    "decimal.js": "^10.4.3",
+     "zod": "^3.22.4"
+   },
+   "devDependencies": {

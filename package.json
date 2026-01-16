@@ -1,0 +1,24 @@
+{
+  "name": "casino-platform",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "db:seed": "cd packages/database && npm run seed",
+    "db:seed:games": "cd packages/database && npm run seed:games",
+    "db:seed:jackpots": "cd packages/database && npm run seed:jackpots",
+    "db:indexes": "cd packages/database && npm run indexes",
+    "mongo:start": "mongod --dbpath ./data/db",
+    "mongo:stop": "pkill mongod"
+  },
+  "devDependencies": {
+    "turbo": "^1.11.2",
+    "typescript": "^5.3.3"
+  }
+}
