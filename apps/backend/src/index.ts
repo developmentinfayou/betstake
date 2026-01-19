@@ -22,6 +22,7 @@ import hiloRoutes from './routes/hilo';
 import blackjackRoutes from './routes/blackjack';
 import pvpRoutes from './routes/pvp';
 import rakebackRoutes from './routes/rakeback';
+import fastparityJackpotRoutes from './routes/fastparity-jackpot';
 
 // WebSocket handlers
 import { setupCrashSocket } from './websocket/crash';
@@ -74,6 +75,7 @@ async function start() {
   app.use('/api/blackjack', blackjackRoutes);
   app.use('/api/pvp', pvpRoutes);
   app.use('/api/rakeback', rakebackRoutes);
+  app.use('/api/fastparity-jackpot', fastparityJackpotRoutes);
 
   // Setup Socket.IO
   const io = new Server(httpServer, {

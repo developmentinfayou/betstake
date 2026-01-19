@@ -25,53 +25,169 @@ export default function HomePage() {
     >
       {/* ✅ HEADER */}
       <header className="border-b border-[#31313F]">
-        <div className="mx-auto flex h-[81px] max-w-[1440px] items-center justify-between px-8">
+        <nav className="mx-auto flex h-[81px] max-w-[1440px] items-center justify-between px-8">
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
               <div className="h-[26px] w-[26px] rounded-full bg-[#73FFD7]" />
             </div>
             <div className="flex items-baseline gap-1">
-              <span className="text-[19px] tracking-[0.08em]">OREBIT</span>
-              <span className="text-[#73FFD7] text-[14px] tracking-[0.08em]">
+              <span className="font-['Barlow_Condensed'] text-[19px] tracking-[0.08em]">ORBIT</span>
+              <span className="font-['Barlow_Condensed'] text-[#73FFD7] text-[14px] tracking-[0.08em]">
                 ~Play
               </span>
             </div>
           </div>
 
-          {/* Center Tabs */}
+          {/* Center Navigation */}
           <div className="hidden items-center gap-4 lg:flex">
-            <div className="flex items-center gap-3 rounded bg-[#73FFD7]/5 p-2">
-              <button className="rounded bg-white/5 px-3 py-2 text-sm flex items-center gap-1">
-             <img src='/imgs/Solid.png' />   Dashboard
+            {/* Primary Nav Tabs */}
+            <div className="flex items-center gap-3 rounded bg-[#73FFD7]/[0.06] p-1.5">
+              <button className="flex items-center gap-1.5 rounded bg-white/[0.06] px-3 py-1.5">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M0.585787 6.41421L5.58579 1.41421C5.96086 1.03914 6.5 0.848858 7 1H10.5C10.7761 1 11 1.22386 11 1.5V5C11.1511 5.5 10.9609 6.03914 10.5858 6.41421L5.58579 11.4142C5.21071 11.7893 4.59214 11.7893 4.21707 11.4142L0.585786 7.78284C0.210714 7.40777 0.210714 6.78929 0.585787 6.41421Z" stroke="white" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="8.5" cy="3.5" r="0.5" fill="white" />
+                </svg>
+                <span className="font-['Barlow_Condensed'] text-sm tracking-[1.12px] text-white">
+                  Dashboard
+                </span>
               </button>
-              <button className="px-3 py-2 text-sm text-[#828282]">
-                Casino
+              <button className="flex items-center gap-1.5 px-3 py-1.5">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 3H2C1.44772 3 1 3.44772 1 4V10C1 10.5523 1.44772 11 2 11H10C10.5523 11 11 10.5523 11 10V4C11 3.44772 10.5523 3 10 3Z" stroke="#818181" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M8 1L6 3L4 1" stroke="#818181" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="4" cy="7" r="1" stroke="#818181" />
+                  <circle cx="8" cy="7" r="1" stroke="#818181" />
+                </svg>
+                <span className="font-['Barlow_Condensed'] text-sm tracking-[1.12px] text-[#818181]">
+                  Casino
+                </span>
               </button>
-              <button className="px-3 py-2 text-sm text-[#828282]">
-                Multiplayer
+              <button className="flex items-center gap-1.5 px-3 py-1.5">
+                <svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="5.5" cy="2.5" r="2" stroke="#818181" />
+                  <path d="M1 11V10C1 8.34315 2.34315 7 4 7H7C8.65685 7 10 8.34315 10 10V11" stroke="#818181" strokeLinecap="round" />
+                  <circle cx="11" cy="4" r="1.5" stroke="#818181" />
+                  <path d="M11 7C12.6569 7 14 8.34315 14 10V11" stroke="#818181" strokeLinecap="round" />
+                </svg>
+                <span className="font-['Barlow_Condensed'] text-sm tracking-[1.12px] text-[#818181]">
+                  Multiplayer
+                </span>
               </button>
             </div>
 
-            <div className="flex items-center gap-4 rounded border border-[#31313F] px-4 py-2 text-sm">
-              <span className="text-white">Blackjack</span>
-              <span className="text-[#828282]">Slots</span>
-              <span className="text-[#828282]">Poker</span>
-              <span className="text-[#828282]">Baccarat</span>
-              <span className="text-[#828282]">Roulette</span>
+            {/* Game Category Tabs */}
+            <div className="relative flex items-center rounded border border-[#31313F] overflow-hidden">
+              <div className="flex items-center p-3 gap-0">
+                {/* Blackjack - Active */}
+                <button className="flex items-center gap-1.5 pr-4 relative">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 11L1 3C1 2 2 1 3 1L5 9L3 11Z" fill="white" />
+                    <path d="M9 11L11 3C11 2 10 1 9 1L7 9L9 11Z" fill="white" />
+                  </svg>
+                  <span className="font-['Barlow_Condensed'] text-sm tracking-[1.12px] text-white">
+                    Blackjack
+                  </span>
+                  {/* Active indicator */}
+                  <div className="absolute -bottom-3 left-0 w-full h-px bg-[#73FFD7]" style={{ boxShadow: '0px 0px 16px 2px rgba(115, 255, 215, 0.64)' }} />
+                </button>
+
+                <div className="w-px h-4 bg-[#31313F] mx-2" />
+
+                {/* Slots */}
+                <button className="flex items-center gap-1.5 px-2">
+                  <svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 4H17V10C17 11 16 12 15 12H3C2 12 1 11 1 10V4Z" stroke="#818181" />
+                    <path d="M4 4V1C4 0.5 4.5 0 5 0H13C13.5 0 14 0.5 14 1V4" stroke="#818181" />
+                  </svg>
+                  <span className="font-['Barlow_Condensed'] text-sm tracking-[1.12px] text-[#818181]">
+                    Slots
+                  </span>
+                </button>
+
+                <div className="w-px h-4 bg-[#31313F] mx-2" />
+
+                {/* Poker */}
+                <button className="flex items-center gap-1.5 px-2">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 1L7.5 4.5L11 5.5L8 8L9 11.5L6 9.5L3 11.5L4 8L1 5.5L4.5 4.5L6 1Z" stroke="#818181" />
+                  </svg>
+                  <span className="font-['Barlow_Condensed'] text-sm tracking-[1.12px] text-[#818181]">
+                    Poker
+                  </span>
+                </button>
+
+                <div className="w-px h-4 bg-[#31313F] mx-2" />
+
+                {/* Baccarat */}
+                <button className="flex items-center gap-1.5 px-2">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="6" cy="6" r="5" stroke="#818181" />
+                    <path d="M6 3V6L8 8" stroke="#818181" strokeLinecap="round" />
+                  </svg>
+                  <span className="font-['Barlow_Condensed'] text-sm tracking-[1.12px] text-[#818181]">
+                    Baccarat
+                  </span>
+                </button>
+
+                <div className="w-px h-4 bg-[#31313F] mx-2" />
+
+                {/* Roulette */}
+                <button className="flex items-center gap-1.5 pl-2">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="6" cy="6" r="5" stroke="#818181" />
+                    <circle cx="6" cy="6" r="2" stroke="#818181" />
+                    <path d="M6 1V3" stroke="#818181" />
+                    <path d="M6 9V11" stroke="#818181" />
+                    <path d="M1 6H3" stroke="#818181" />
+                    <path d="M9 6H11" stroke="#818181" />
+                  </svg>
+                  <span className="font-['Barlow_Condensed'] text-sm tracking-[1.12px] text-[#818181]">
+                    Roulette
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-4">
-            <button className="rounded border border-[#31313F] px-4 py-2 text-sm">
-              Spin
+          <div className="flex items-center gap-6">
+            {/* Spin Button */}
+            <button className="flex items-center gap-1.5 rounded border border-[#31313F] p-3">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 6C1 8.76142 3.23858 11 6 11C8.76142 11 11 8.76142 11 6C11 3.23858 8.76142 1 6 1" stroke="white" strokeLinecap="round" />
+                <path d="M6 1L4 3" stroke="white" strokeLinecap="round" />
+                <path d="M6 1V4" stroke="white" strokeLinecap="round" />
+              </svg>
+              <span className="font-['Barlow_Condensed'] text-sm tracking-[1.12px] text-white">
+                Spin
+              </span>
             </button>
-            <button className="rounded border border-[#31313F] px-4 py-2 text-sm">
-              Winner CrispyPotato 🎉
+
+            {/* Winner Notification */}
+            <div className="flex items-center gap-1.5 rounded border border-[#31313F] p-3 overflow-hidden">
+              <svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 0H11L12 3H3L4 0Z" fill="#FFD700" />
+                <path d="M3 3H12V5C12 6.65685 10.6569 8 9 8H6C4.34315 8 3 6.65685 3 5V3Z" fill="#FFD700" />
+                <path d="M6 8H9V10C9 10.5523 8.55228 11 8 11H7C6.44772 11 6 10.5523 6 10V8Z" fill="#FFD700" />
+                <path d="M5 11H10" stroke="#FFD700" strokeLinecap="round" />
+              </svg>
+              <p className="font-['Barlow_Condensed'] text-sm tracking-[1.12px]">
+                <span className="text-white">Winner </span>
+                <span className="text-[#73FFD7]">CrispyPotato</span>
+                <span className="text-white"> 🎉</span>
+              </p>
+            </div>
+
+            {/* Bell Notification */}
+            <button className="relative">
+              <svg width="12" height="15" viewBox="0 0 12 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 1C3.79086 1 2 2.79086 2 5V8L1 10H11L10 8V5C10 2.79086 8.20914 1 6 1Z" stroke="white" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M4 10V11C4 12.1046 4.89543 13 6 13C7.10457 13 8 12.1046 8 11V10" stroke="white" strokeLinecap="round" />
+              </svg>
             </button>
           </div>
-        </div>
+        </nav>
       </header>
 
       {/* ✅ PAGE CONTAINER */}
@@ -285,7 +401,7 @@ export default function HomePage() {
         <HomeFooter />
       </main>
 
-    
+
     </div>
   );
 }

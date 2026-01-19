@@ -45,6 +45,17 @@ interface HistoryItem {
   createdAt: string;
 }
 
+interface ProbabilityStats {
+  totalRounds: number;
+  numberStats: Array<{ number: number; count: number; percentage: string }>;
+  colorStats: {
+    green: { count: number; percentage: string };
+    red: { count: number; percentage: string };
+    violet: { count: number; percentage: string };
+  };
+  recentTrend: Array<{ number: number; color: string }>;
+}
+
 export default function FastParityPage() {
   const [amount, setAmount] = useState(10);
   const [gameParams, setGameParams] = useState<FastParityGameParams>({ betType: 'color', value: 'green' });
@@ -56,6 +67,7 @@ export default function FastParityPage() {
   const [userId, setUserId] = useState<string>();
   const [username, setUsername] = useState<string>();
   const [showResult, setShowResult] = useState(false);
+  const [probabilityStats, setProbabilityStats] = useState<ProbabilityStats | null>(null);
 
   const socket = useSocket();
 
@@ -97,7 +109,7 @@ export default function FastParityPage() {
     socket.on('round:result', (result: RoundResult) => {
       setLastResult(result);
       setShowResult(true);
-      
+
       // Add to history
       setHistory(prev => [{
         roundId: result.roundId,
@@ -121,7 +133,12 @@ export default function FastParityPage() {
       setHistory(data);
     });
 
+    socket.on('probability:data', (data: ProbabilityStats) => {
+      setProbabilityStats(data);
+    });
+
     socket.emit('fastparity:history');
+    socket.emit('fastparity:probability');
 
     return () => {
       socket.off('round:current');
@@ -131,6 +148,7 @@ export default function FastParityPage() {
       socket.off('round:bets_updated');
       socket.off('round:result');
       socket.off('history:data');
+      socket.off('probability:data');
       socket.emit('fastparity:leave');
     };
   }, [socket, userId]);
@@ -187,19 +205,18 @@ export default function FastParityPage() {
                 <div className="text-sm text-gray-400 mb-4">
                   Round: {currentRound?.roundId || 'Loading...'}
                 </div>
-                
+
                 {/* Progress Bar */}
                 <div className="w-full bg-gray-700 rounded-full h-2 mb-4">
-                  <div 
-                    className={`h-2 rounded-full transition-all duration-1000 ${
-                      canBet ? 'bg-green-500' : 'bg-red-500'
-                    }`}
-                    style={{ 
-                      width: currentRound ? `${(currentRound.timeLeft / 30) * 100}%` : '0%' 
+                  <div
+                    className={`h-2 rounded-full transition-all duration-1000 ${canBet ? 'bg-green-500' : 'bg-red-500'
+                      }`}
+                    style={{
+                      width: currentRound ? `${(currentRound.timeLeft / 30) * 100}%` : '0%'
                     }}
                   ></div>
                 </div>
-                
+
                 <div className="text-lg font-bold">
                   {canBet ? 'Place your bets' : currentRound?.status === 'closed' ? 'No more bets' : 'Waiting...'}
                 </div>
@@ -209,8 +226,8 @@ export default function FastParityPage() {
               {showResult && lastResult && (
                 <div className="mb-6 p-6 rounded-lg text-center bg-gradient-to-r from-yellow-900/20 to-yellow-800/20 border border-yellow-500">
                   <div className="text-2xl font-bold mb-4">WINNING NUMBER</div>
-                  <div 
-                    className="text-6xl font-bold mb-2 w-20 h-20 mx-auto rounded-full flex items-center justify-center text-white animate-bounce" 
+                  <div
+                    className="text-6xl font-bold mb-2 w-20 h-20 mx-auto rounded-full flex items-center justify-center text-white animate-bounce"
                     style={getColorStyle(lastResult.color)}
                   >
                     {lastResult.number}
@@ -238,11 +255,10 @@ export default function FastParityPage() {
                 <button
                   onClick={placeBet}
                   disabled={!canBet}
-                  className={`px-8 py-3 rounded-lg font-bold text-lg ${
-                    canBet 
-                      ? 'bg-primary hover:bg-primary/80 text-white' 
-                      : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                  }`}
+                  className={`px-8 py-3 rounded-lg font-bold text-lg ${canBet
+                    ? 'bg-primary hover:bg-primary/80 text-white'
+                    : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                    }`}
                 >
                   {canBet ? 'Place Bet' : 'Betting Closed'}
                 </button>
@@ -256,9 +272,8 @@ export default function FastParityPage() {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-2 rounded-lg font-bold capitalize ${
-                      activeTab === tab ? 'bg-primary text-white' : 'bg-gray-800 hover:bg-gray-700'
-                    }`}
+                    className={`px-4 py-2 rounded-lg font-bold capitalize ${activeTab === tab ? 'bg-primary text-white' : 'bg-gray-800 hover:bg-gray-700'
+                      }`}
                   >
                     {tab}
                   </button>
@@ -304,8 +319,65 @@ export default function FastParityPage() {
               )}
 
               {activeTab === 'probability' && (
-                <div className="text-center py-8 text-gray-400">
-                  Probability analysis coming soon...
+                <div className="space-y-4">
+                  {probabilityStats ? (
+                    <>
+                      <div className="text-sm text-gray-400 mb-2">
+                        Based on last {probabilityStats.totalRounds} rounds
+                      </div>
+
+                      {/* Number Statistics */}
+                      <div className="bg-gray-800 rounded-lg p-4">
+                        <h4 className="text-sm font-bold mb-3">Number Frequency</h4>
+                        <div className="grid grid-cols-5 gap-2">
+                          {probabilityStats.numberStats.map(stat => (
+                            <div key={stat.number} className="text-center">
+                              <div className="text-lg font-bold">{stat.number}</div>
+                              <div className="text-xs text-gray-400">{stat.percentage}%</div>
+                              <div className="w-full bg-gray-700 rounded-full h-1 mt-1">
+                                <div
+                                  className="bg-primary h-1 rounded-full"
+                                  style={{ width: `${parseFloat(stat.percentage)}%` }}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Color Statistics */}
+                      <div className="bg-gray-800 rounded-lg p-4">
+                        <h4 className="text-sm font-bold mb-3">Color Distribution</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="flex items-center gap-2">
+                              <div className="w-4 h-4 rounded-full bg-green-500" />
+                              Green
+                            </span>
+                            <span>{probabilityStats.colorStats.green.percentage}%</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="flex items-center gap-2">
+                              <div className="w-4 h-4 rounded-full bg-red-500" />
+                              Red
+                            </span>
+                            <span>{probabilityStats.colorStats.red.percentage}%</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="flex items-center gap-2">
+                              <div className="w-4 h-4 rounded-full bg-violet-500" />
+                              Violet
+                            </span>
+                            <span>{probabilityStats.colorStats.violet.percentage}%</span>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-8 text-gray-400">
+                      Loading statistics...
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -319,7 +391,7 @@ export default function FastParityPage() {
             <div className="text-lg font-bold mb-4">
               ₹{currentRound?.totalAmount?.toFixed(2) || '0.00'}
             </div>
-            
+
             <div className="space-y-2">
               <div className="grid grid-cols-4 gap-2 text-xs text-gray-400 font-bold">
                 <span>User</span>
@@ -327,7 +399,7 @@ export default function FastParityPage() {
                 <span>Bet Amount</span>
                 <span>Profit</span>
               </div>
-              
+
               {currentRound?.bets.map((bet, index) => (
                 <div key={index} className="grid grid-cols-4 gap-2 text-sm py-2 border-b border-gray-800">
                   <span className="truncate">{bet.username}</span>
@@ -338,7 +410,7 @@ export default function FastParityPage() {
                   <span className="text-gray-400">-</span>
                 </div>
               ))}
-              
+
               {(!currentRound?.bets || currentRound.bets.length === 0) && (
                 <div className="text-center py-8 text-gray-400">
                   No bets yet
