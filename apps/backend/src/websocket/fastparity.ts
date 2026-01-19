@@ -72,7 +72,7 @@ class FastParityServer {
       }
 
       this.currentRound.timeLeft--;
-      
+
       if (this.currentRound.timeLeft <= 0) {
         clearInterval(countdown);
         return;
@@ -89,7 +89,7 @@ class FastParityServer {
     if (!this.currentRound) return;
 
     this.currentRound.status = 'closed';
-    
+
     // Broadcast betting closed
     this.io.to('fastparity').emit('round:betting_closed', {
       roundId: this.currentRound.roundId
@@ -197,7 +197,7 @@ class FastParityServer {
 
     // Check if user already has a bet
     const existingBetIndex = this.currentRound.bets.findIndex(bet => bet.userId === userId);
-    
+
     if (existingBetIndex >= 0) {
       // Update existing bet
       this.currentRound.totalAmount -= this.currentRound.bets[existingBetIndex].amount;
@@ -242,6 +242,64 @@ class FastParityServer {
       .limit(limit)
       .select('roundId number color createdAt totalAmount playerCount');
   }
+
+  public async getProbabilityStats() {
+    // Get last 1000 rounds for probability analysis
+    const rounds = await FastParityRound.find({ status: 'completed' })
+      .sort({ createdAt: -1 })
+      .limit(1000)
+      .select('number color createdAt');
+
+    if (rounds.length === 0) {
+      return {
+        totalRounds: 0,
+        numberStats: [],
+        colorStats: { green: 0, red: 0, violet: 0 },
+        recentTrend: []
+      };
+    }
+
+    // Number frequency (0-9)
+    const numberCount = new Map<number, number>();
+    for (let i = 0; i <= 9; i++) numberCount.set(i, 0);
+
+    // Color frequency
+    const colorCount = { green: 0, red: 0, violet: 0 };
+
+    rounds.forEach(round => {
+      numberCount.set(round.number, (numberCount.get(round.number) || 0) + 1);
+      colorCount[round.color]++;
+    });
+
+    const totalRounds = rounds.length;
+
+    // Calculate percentages for numbers
+    const numberStats = Array.from(numberCount.entries()).map(([number, count]) => ({
+      number,
+      count,
+      percentage: ((count / totalRounds) * 100).toFixed(2)
+    }));
+
+    // Calculate percentages for colors
+    const colorStats = {
+      green: { count: colorCount.green, percentage: ((colorCount.green / totalRounds) * 100).toFixed(2) },
+      red: { count: colorCount.red, percentage: ((colorCount.red / totalRounds) * 100).toFixed(2) },
+      violet: { count: colorCount.violet, percentage: ((colorCount.violet / totalRounds) * 100).toFixed(2) }
+    };
+
+    // Recent trend (last 20 results)
+    const recentTrend = rounds.slice(0, 20).map(r => ({
+      number: r.number,
+      color: r.color
+    }));
+
+    return {
+      totalRounds,
+      numberStats,
+      colorStats,
+      recentTrend
+    };
+  }
 }
 
 let fastParityServer: FastParityServer;
@@ -252,7 +310,7 @@ export function setupFastParitySocket(io: Server) {
   io.on('connection', (socket) => {
     socket.on('fastparity:join', () => {
       socket.join('fastparity');
-      
+
       // Send current round state
       const currentRound = fastParityServer.getCurrentRound();
       if (currentRound) {
@@ -273,15 +331,20 @@ export function setupFastParitySocket(io: Server) {
 
     socket.on('fastparity:bet', async (data) => {
       const { userId, username, betType, value, amount } = data;
-      
+
       const success = fastParityServer.placeBet(userId, username, betType, value, amount);
-      
+
       socket.emit('bet:response', { success });
     });
 
     socket.on('fastparity:history', async () => {
       const history = await fastParityServer.getHistory();
       socket.emit('history:data', history);
+    });
+
+    socket.on('fastparity:probability', async () => {
+      const stats = await fastParityServer.getProbabilityStats();
+      socket.emit('probability:data', stats);
     });
   });
 }

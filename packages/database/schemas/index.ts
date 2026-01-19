@@ -20,3 +20,4 @@ export * from './fastparityround.schema';
 export * from './favoritegame.schema';
 export * from './useractivity.schema';
 export * from './pvpgame.schema';
+export * from './fastparity-jackpot.schema';
