@@ -521,19 +521,52 @@ export default function HomePage() {
 
 
           <div className="mt-3 flex gap-6 overflow-x-auto pb-2">
-            {games?.map((g, i) => 
-          (
-              <img
-                key={i}
-                className="relative h-[187px] w-[147px] flex-shrink-0 rounded border border-[#32323F] bg-white/5"
-              src={g.image}
-                // {g?.name == 'Continue' && (
-                //   <button className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded bg-[#FF4500] px-4 py-2 text-sm">
-                //     ► Continue
-                //   </button>
-                // )}
-              />
-))}
+          <div className="mt-3 flex gap-6 overflow-x-auto pb-2">
+  {games?.map((g, i) => (
+    <div
+      key={i}
+      className="group relative h-[187px] w-[147px] flex-shrink-0 rounded
+               border border-transparent bg-white/5 p-1
+               transition-all duration-300
+               group-hover:border-[#ffffff]"
+    >
+      {/* IMAGE WRAPPER */}
+      <div className="relative h-full w-full overflow-hidden rounded">
+        {/* IMAGE */}
+        <img
+          src={g.image}
+          className="h-full w-full object-cover transition-all duration-300 group-hover:blur-sm"
+          alt=""
+        />
+
+        {/* CONTINUE OVERLAY */}
+        <div className="absolute inset-0 flex items-end justify-center
+                pb-6 opacity-0 group-hover:opacity-100 transition-all duration-300">
+          <button className="flex items-center gap-1 rounded bg-[#FF4500] px-3 py-1.5 text-xs text-white">
+            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            Continue
+          </button>
+        </div>
+
+        {/* HEART ICON (HOLLOW) */}
+        <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+          <svg
+            className="h-5 w-5 text-white/80"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
           </div>
         </section>
 
@@ -589,14 +622,32 @@ export default function HomePage() {
                       </div>
                     </div>
                   </Link> */}
-                  <div className="w-[86px] overflow-hidden rounded border border-white/10 bg-[#1a1b23] shadow-xl">
-                      <div className="relative flex h-[114px] items-center justify-center bg-gradient-to-b from-[#2d2e4d] to-[#9245ff]">
-                        <img src={g.image} alt="Dice Game" className="h-full w-full object-contain" />
+                  <Link href={isLive ? `/game/${g.id}` : '#'} className="group w-[86px] overflow-hidden rounded border border-white/10 bg-[#1a1b23] shadow-xl 
+             transition-all duration-300 hover:-translate-y-1 hover:scale-[1.05]">
+                      <div className="relative flex h-[114px] items-center justify-center bg-gradient-to-b from-[#2d2e4d] to-[#9245ff] overflow-hidden">
+                        <img src={g.image} alt="Dice Game" className="h-full w-full object-contain transition-all duration-300 group-hover:blur-sm group-hover:scale-110" />
+
+                        {/* Play Button Overlay */}
+    <div className="absolute inset-0 pb-6 flex items-end justify-center 
+                    opacity-0 group-hover:opacity-100 transition-all duration-300">
+      
+      <button className="flex text-xs pr-2 py-1 items-center justify-centfer rounded bg-[#FF4500] backdrop-blur">
+        <svg
+          className="h-5 w-5 text-white"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path d="M8 5v14l11-7z" />
+        </svg>
+        <span>Play</span>
+      </button>
+    </div>
 
                         <div className="absolute bottom-3 right-3 text-white/40">
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" /></svg>
                         </div>
                       </div>
+
 
                       <div className="flex items-center justify-center py-2 bg-[#14151a]">
                         <div className="flex items-center gap-2 text-gray-400">
@@ -606,7 +657,8 @@ export default function HomePage() {
                           <span className="text-xs font-semibold tracking-wide">58.8K</span>
                         </div>
                       </div>
-                    </div></>
+                    </Link>
+                    </>
 
                 );
               })}
