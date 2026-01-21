@@ -4,14 +4,15 @@ import Link from 'next/link';
 import Challenge from './homecomponents/challanges';
 import HomeFooter from './homecomponents/homefooter';
 import ContestWinnerList from './homecomponents/contestWinnerList';
+import { Rakeback } from './homecomponents/rackback';
 
 const games = [
-  { id: 'dice', name: 'Dice', players: '58.8K', status: 'live' },
-  { id: 'mines', name: 'Mines', players: '58.8K', status: 'live' },
-  { id: 'plinko', name: 'Plinko', players: '58.8K', status: 'live' },
-  { id: 'coinflip', name: 'Coin Flip', players: '27.8K', status: 'live' },
-  { id: 'limbo', name: 'Limbo', players: '58.8K', status: 'live' },
-  { id: 'pump', name: 'Pump', players: '58.8K', status: 'live' },
+  { id: 'dice', name: 'Dice', players: '58.8K', status: 'live' , image : "imgs/dice.png" },
+  { id: 'mines', name: 'Mines', players: '58.8K', status: 'live',image : "imgs/mines.png" },
+  { id: 'plinko', name: 'Plinko', players: '58.8K', status: 'live',image : "imgs/plinko.png" },
+  { id: 'coinflip', name: 'Coin Flip', players: '27.8K', status: 'live',image : "imgs/flip.png" },
+  { id: 'limbo', name: 'Limbo', players: '58.8K', status: 'live',image : "imgs/limbo.png" },
+  { id: 'pump', name: 'Pump', players: '58.8K', status: 'live',image : "imgs/pump.png" },
 ];
 
 export default function HomePage() {
@@ -276,19 +277,22 @@ export default function HomePage() {
             Recently Played
           </div>
 
+
+
           <div className="mt-3 flex gap-6 overflow-x-auto pb-2">
-            {['FLIP', 'Continue', 'WHEEL', 'DICE', 'LIMBO'].map((t, i) => (
-              <div
+            {games?.map((g, i) => 
+          (
+              <img
                 key={i}
                 className="relative h-[187px] w-[147px] flex-shrink-0 rounded border border-[#32323F] bg-white/5"
-              >
-                {t === 'Continue' && (
-                  <button className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded bg-[#FF4500] px-4 py-2 text-sm">
-                    ► Continue
-                  </button>
-                )}
-              </div>
-            ))}
+              src={g.image}
+                // {g?.name == 'Continue' && (
+                //   <button className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded bg-[#FF4500] px-4 py-2 text-sm">
+                //     ► Continue
+                //   </button>
+                // )}
+              />
+))}
           </div>
         </section>
 
@@ -318,17 +322,18 @@ export default function HomePage() {
             </div>
 
             {/* games grid */}
-            <div className="mt-6 grid grid-cols-2 gap-6 sm:grid-cols-4 lg:grid-cols-6">
+            <div className="mt-6 flex gap-6">
               {games.map((g) => {
                 const isLive = g.status === 'live';
                 return (
-                  <Link
+                  <>
+                  {/* <Link
                     key={g.id}
                     href={isLive ? `/game/${g.id}` : '#'}
-                    className="group relative h-[163px] w-[123px] overflow-hidden rounded border border-[#32323F] bg-white/10 hover:border-[#73FFD7]/60"
+                    className="group hidden relative h-[163px] w-[123px] overflow-hidden rounded border border-[#32323F] bg-white/10 hover:border-[#73FFD7]/60"
                   >
                     <div className="p-3">
-                      <div className="h-[92px] rounded bg-white/10" />
+                      <img src={g.image} className="h-[92px] rounded bg-white/10" />
                       <div className="mt-2 text-sm tracking-[0.08em]">
                         {g.name}
                       </div>
@@ -338,11 +343,30 @@ export default function HomePage() {
                     </div>
 
                     <div className="absolute bottom-3 left-1/2 -translate-x-1/2">
-                      <div className="rounded bg-[#FF4500] px-4 py-2 text-sm opacity-0 group-hover:opacity-100 transition">
+                      <div className="rounded text-nowrap bg-[#FF4500] px-4 py-2 text-sm opacity-0 group-hover:opacity-100 transition">
                         ► Play
                       </div>
                     </div>
-                  </Link>
+                  </Link> */}
+                  <div className="w-[86px] overflow-hidden rounded border border-white/10 bg-[#1a1b23] shadow-xl">
+                      <div className="relative flex h-[114px] items-center justify-center bg-gradient-to-b from-[#2d2e4d] to-[#9245ff]">
+                        <img src={g.image} alt="Dice Game" className="h-full w-full object-contain" />
+
+                        <div className="absolute bottom-3 right-3 text-white/40">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" /></svg>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-center py-2 bg-[#14151a]">
+                        <div className="flex items-center gap-2 text-gray-400">
+                          <svg className="h-4 w-4 opacity-70" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                          </svg>
+                          <span className="text-xs font-semibold tracking-wide">58.8K</span>
+                        </div>
+                      </div>
+                    </div></>
+
                 );
               })}
             </div>
