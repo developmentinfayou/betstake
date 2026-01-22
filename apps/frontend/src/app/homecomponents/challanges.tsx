@@ -23,11 +23,10 @@ const Challenge = () => {
   <div className="flex flex-col md:flex-row gap-6 items-start">
     
     <div className="relative flex-shrink-0">
-      <div className="w-32 h-44 rounded-lg bg-gradient-to-b from-yellow-400 via-orange-500 to-red-500 flex items-center justify-center overflow-hidden shadow-lg">
-        <div className="bg-white/90 px-2 py-1 rotate-[-35deg] rounded shadow-md">
-           <span className="text-orange-600 font-black text-xl">900x</span>
-        </div>
-      </div>
+      <img className="w-32 h-44 rounded-lg bg-gradient-to-b from-yellow-400 via-orange-500 to-red-500 flex items-center justify-center overflow-hidden shadow-lg"
+      src ="images/limbo.png"
+      />
+        
       <div className="mt-3 w-full h-1 bg-gray-700 rounded-full overflow-hidden">
         <div className="w-2/3 h-full bg-white"></div>
       </div>
@@ -36,7 +35,7 @@ const Challenge = () => {
     <div className="flex-grow">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center space-x-3">
-          <h2 className="text-xl font-bold text-white tracking-wide">Boom Balloon</h2>
+          <h2 className="text-sm font-bold text-white tracking-wide">Boom Balloon</h2>
           <span className="px-2 py-0.5 text-[10px] font-bold text-gray-400 bg-gray-800/50 border border-gray-700 rounded flex items-center uppercase">
             <span className="text-orange-500 mr-1">✦</span> ORBEiT Originals
           </span>

@@ -406,7 +406,8 @@ export default function HomePage() {
           </div>
 
           {/* Rakeback card */}
-          <div className="rounded border border-[#31313F] p-4">
+          <div className="flex flex-col gap-1.5">
+          <div className="rounded border border-[#31313F] relative h-[86px] w-full p-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="font-semibold underline decoration-dashed">
@@ -425,14 +426,15 @@ export default function HomePage() {
               5412.81 INR
             </div>
 
-            <div className="mt-3 text-xs tracking-[0.08em] text-[#5B5B79]">
-              Rakeback
+              
             </div>
-          </div>
-
+            <p className="font-['Barlow_Condensed'] text-xs tracking-[0.96px] leading-normal text-[#5b5b79]">
+              Rackback
+            </p></div>
+       
           {/* House Edge card */}
           <div className="flex flex-col gap-1.5">
-            <div className="relative h-[85px]">
+            <div className="relative h-[86px]">
               {/* Glow effect */}
               <div
                 className="absolute top-[27px] left-[38px] w-[3px] h-[3px] bg-[#d9d9d9] rounded"
@@ -440,7 +442,7 @@ export default function HomePage() {
                 aria-hidden="true"
               />
 
-              <div className="flex flex-col w-full items-start gap-1.5 p-3 rounded overflow-hidden border border-[#31313F]">
+              <div className="flex flex-col w-full items-start h-[86px] gap-1.5 p-2 rounded overflow-hidden border border-[#31313F]">
                 {/* Header with badges and stats */}
                 <div className="flex items-center justify-between w-full">
                   {/* Premium/VIP badge tabs */}
@@ -503,16 +505,18 @@ export default function HomePage() {
 
                 {/* Description */}
                 <p className="font-['Barlow_Condensed'] font-light text-[#818181] text-xs tracking-[0.96px]">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit
                 </p>
               </div>
+              <span className="font-['Barlow_Condensed'] text-xs tracking-[0.96px] text-[#5b5b79]">
+              House Edge
+            </span>
             </div>
 
             {/* House Edge label */}
-            <span className="font-['Barlow_Condensed'] text-xs tracking-[0.96px] text-[#5b5b79]">
-              House Edge
-            </span>
+           
           </div>
+         
         </section>
 
         {/* ✅ RECENTLY PLAYED */}
