@@ -10,7 +10,7 @@ const HomeFooter = () => {
           <div className="flex items-center space-x-3">
             <div className="relative">
               <img
-                src="/imgs/footer-men.png"
+                src="/images/footer-men.png"
                 alt="Avatar"
                 className="w-10 h-10 rounded-lg object-cover"
               />
@@ -80,7 +80,7 @@ const HomeFooter = () => {
 
         <div className="hidden xl:flex items-center px-4 py-1 bg-[#0d0e1b] border border-gray-800 rounded-lg min-w-[400px]">
           <div className="flex items-center space-x-3 w-full">
-            <img src="/imgs/avatar1.jpg" className="rounded w-6 h-6" />
+            <img src="/images/avatar1.jpg" className="rounded w-6 h-6" />
             <span className="text-xs text-white font-semibold">RealBob</span>
             <div className="flex items-center space-x-1">
               <span className="text-blue-500">

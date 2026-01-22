@@ -87,7 +87,7 @@ const ContestWinnerList = () => {
               <div className="flex items-center space-x-3">
                 <div className="w-4 h-4 overflow-hidden rounded-md">
                   <img
-                    src="/imgs/avatar1.jpg"
+                    src="/images/avatar1.jpg"
                     alt="Avatar"
                     className="object-cover w-full h-full"
                   />
@@ -114,17 +114,17 @@ const ContestWinnerList = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2 text-gray-500">
               <img
-                    src="imgs/wintag3.png"
+                    src="images/wintag3.png"
                     alt="Reward"
                     className=" w-3 h-3"
                   />
                <img
-                    src="imgs/wintag2.png"
+                    src="images/wintag2.png"
                     alt="Reward"
                     className=" w-3 h-3"
                   />
                 <img
-                    src="imgs/wintag1.png"
+                    src="images/wintag1.png"
                     alt="Reward"
                     className=" w-3 h-3"
                   />
@@ -136,7 +136,7 @@ const ContestWinnerList = () => {
               <div className="flex items-center p-1 space-x-2">
                 <div className="w-6 h-6 overflow-hidden border border-gray-700 rounded-md bg-red-900/30">
                   <img
-                    src="imgs/rare-avatar.jpg"
+                    src="images/rare-avatar.jpg"
                     alt="Reward"
                     className="object-cover w-full h-full"
                   />

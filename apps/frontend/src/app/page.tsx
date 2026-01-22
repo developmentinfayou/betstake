@@ -8,12 +8,12 @@ import ContestWinnerList from './homecomponents/contestWinnerList';
 import { Rakeback } from './homecomponents/rackback';
 
 const games = [
-  { id: 'dice', name: 'Dice', players: '58.8K', status: 'live' , image : "imgs/dice.png" },
-  { id: 'mines', name: 'Mines', players: '58.8K', status: 'live',image : "imgs/mines.png" },
-  { id: 'plinko', name: 'Plinko', players: '58.8K', status: 'live',image : "imgs/plinko.png" },
-  { id: 'coinflip', name: 'Coin Flip', players: '27.8K', status: 'live',image : "imgs/flip.png" },
-  { id: 'limbo', name: 'Limbo', players: '58.8K', status: 'live',image : "imgs/limbo.png" },
-  { id: 'pump', name: 'Pump', players: '58.8K', status: 'live',image : "imgs/pump.png" },
+  { id: 'dice', name: 'Dice', players: '58.8K', status: 'live' , image : "images/dice.png" },
+  { id: 'mines', name: 'Mines', players: '58.8K', status: 'live',image : "images/mines.png" },
+  { id: 'plinko', name: 'Plinko', players: '58.8K', status: 'live',image : "images/plinko.png" },
+  { id: 'coinflip', name: 'Coin Flip', players: '27.8K', status: 'live',image : "images/flip.png" },
+  { id: 'limbo', name: 'Limbo', players: '58.8K', status: 'live',image : "images/limbo.png" },
+  { id: 'pump', name: 'Pump', players: '58.8K', status: 'live',image : "images/pump.png" },
 ];
 
 export default function HomePage() {
@@ -317,83 +317,86 @@ export default function HomePage() {
             <div className="relative h-[86px] w-full rounded overflow-hidden border border-[#31313F]">
               {/* Glow effect */}
               <div
-                className="absolute top-[29px] left-[274px] w-px h-px rounded"
+                className="absolute top-[45px] left-[490px] w-px h-px rounded"
                 style={{ boxShadow: '0px 0px 24px 6px #ff4500' }}
                 aria-hidden="true"
               />
 
               {/* Game cards row - left side */}
               <div className="absolute top-3 left-[-107px] inline-flex h-[62px] items-center gap-3">
-                {/* Plinko card */}
-                <div className="relative self-stretch mt-[-145px] w-[48px] aspect-[0.78] rounded-lg bg-gradient-to-br from-pink-400 via-purple-300 to-pink-300 flex items-center justify-center overflow-hidden">
-                  <span className="text-[8px] font-bold text-purple-800 tracking-wider">PLINKO</span>
-                </div>
-                {/* Dice card */}
-                <div className="relative self-stretch w-[48px] aspect-[0.78] rounded-lg bg-gradient-to-br from-purple-600 via-purple-500 to-purple-400 flex items-center justify-center">
-                  <span className="text-[8px] font-bold text-white tracking-wider">DICE</span>
-                </div>
-                {/* Plinko variant card */}
-                <div className="relative self-stretch w-[48px] aspect-[0.78] rounded-lg bg-gradient-to-br from-pink-300 via-orange-200 to-yellow-200 flex items-center justify-center">
-                  <span className="text-[8px] font-bold text-purple-700 tracking-wider">PLINKO</span>
-                </div>
-                {/* Mines card */}
-                <div className="relative self-stretch w-[48px] aspect-[0.78] rounded-lg bg-gradient-to-br from-green-400 via-emerald-400 to-teal-300 flex items-center justify-center">
-                  <span className="text-[8px] font-bold text-white tracking-wider">MINES</span>
-                </div>
-                {/* Additional cards */}
-                <div className="relative self-stretch w-[48px] aspect-[0.78] rounded-lg bg-gradient-to-br from-orange-400 to-red-400 flex items-center justify-center">
-                  <span className="text-[8px] font-bold text-white tracking-wider">SLOTS</span>
-                </div>
-                <div className="relative self-stretch w-[48px] aspect-[0.78] rounded-lg bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center">
-                  <span className="text-[8px] font-bold text-white tracking-wider">WHEEL</span>
-                </div>
-              </div>
+  
+  {[
+    "/images/plinko.png",
+    "/images/dice.png",
+    "/images/plinko.png",
+    "/images/mines.png",
+    "/images/limbo.png",
+    "/images/wheel.png",
+  ].map((img, i) => (
+    <div
+      key={i}
+      className={`relative self-stretch w-[48px] aspect-[0.78] rounded overflow-hidden ${
+        i === 0 ? "mt-[-145px]" : ""
+      }`}
+    >
+      <img
+        src={img}
+        alt=""
+        className="h-full w-full object-cover"
+      />
+    </div>
+  ))}
+</div>
+
 
               {/* Orange glow on right */}
-              <div
+              {/* <div
                 className="absolute top-14 left-[484px] w-0.5 h-[3px] bg-[#d9d9d9] rounded"
                 style={{ boxShadow: '0px 0px 48px 14px #db5506' }}
                 aria-hidden="true"
-              />
+              /> */}
 
               {/* Crypto tabs */}
-              <nav className="absolute top-[18px] left-[267px] flex w-[307px] h-3.5 items-center gap-4 overflow-hidden">
-                {['Bitcoin', 'Tron', 'Dash', 'Litecoin', 'Dogecoin', 'Tron', 'Dogecoin'].map((crypto, index) => (
-                  <button
-                    key={index}
-                    className={`relative w-fit mt-[-1px] whitespace-nowrap text-xs tracking-[0.96px] leading-normal ${index === 0
-                      ? "font-['Barlow_Condensed'] font-semibold text-[#ff9168]"
-                      : "font-['Barlow_Condensed'] font-light text-white opacity-[0.24]"
-                      }`}
-                  >
-                    {crypto}
-                  </button>
-                ))}
-              </nav>
+              <nav className="absolute top-[18px] left-[267px] flex w-[307px] h-3.5 items-center gap-4 overflow-x-auto scrollbar-hidden">
+  {['Bitcoin', 'Tron', 'Dash', 'Litecoin', 'Dogecoin', 'Tron', 'Dogecoin'].map(
+    (crypto, index) => (
+      <button
+        key={index}
+        className="
+          relative w-fit mt-[-1px] whitespace-nowrap
+          text-xs tracking-[0.96px] leading-normal
+          font-['Barlow_Condensed'] font-light
+          text-white opacity-[0.24]
+          transition-all duration-200
+          hover:opacity-100
+          hover:text-[#ff9168]
+          
+        "
+      >
+        {crypto}
+      </button>
+    )
+  )}
+</nav>
+
+
 
               {/* Jackpot amount */}
               <div className="absolute top-[38px] left-[266px] w-[146px] h-[31px] flex border-b border-dashed border-[#818181]">
-                <span className="w-36 h-[29px] font-['Barlow_Condensed'] font-semibold text-white text-2xl tracking-[1.92px] leading-normal">
+                <span className="w-36 h-[29px] text-nowrap font-['Barlow_Condensed'] font-semibold text-white text-2xl leading-normal">
                   0.0021780 BTC
                 </span>
               </div>
 
               {/* Treasure illustration - stylized with gradient */}
-              <div
-                className="absolute w-[30.07%] h-[91.07%] top-[54.47%] left-[66.89%] -translate-y-1/2"
+              <img
+              src='images/gems.png'
+                className="absolute  top-[63.84px] left-[400px] -translate-y-1/2"
                 style={{
                   background: 'radial-gradient(ellipse at center, rgba(255, 215, 0, 0.3) 0%, rgba(255, 165, 0, 0.2) 30%, transparent 70%)',
                 }}
-              >
-                {/* Coin representations */}
-                <div className="absolute bottom-0 right-4 flex flex-wrap gap-1 opacity-80">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-300 via-yellow-500 to-orange-500 shadow-lg" />
-                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-600 shadow-lg" />
-                  <div className="w-4 h-4 rounded-full bg-gradient-to-br from-emerald-300 to-emerald-600 shadow-lg" />
-                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-yellow-300 via-yellow-500 to-amber-600 shadow-lg" />
-                  <div className="w-3 h-3 rounded-full bg-gradient-to-br from-red-400 to-red-600 shadow-lg" />
-                </div>
-              </div>
+              
+              />
             </div>
 
             {/* Jackpot label */}
