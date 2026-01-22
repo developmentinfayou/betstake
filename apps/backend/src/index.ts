@@ -23,10 +23,10 @@ import blackjackRoutes from './routes/blackjack';
 import pvpRoutes from './routes/pvp';
 import rakebackRoutes from './routes/rakeback';
 import fastparityJackpotRoutes from './routes/fastparity-jackpot';
+import crashJackpotRoutes from './routes/crash-jackpot';
 
 // WebSocket handlers
 import { setupCrashSocket } from './websocket/crash';
-import { setupTrenballSocket } from './websocket/trenball';
 import { setupFastParitySocket } from './websocket/fastparity';
 import { setupLudoSocket } from './websocket/ludo';
 
@@ -76,6 +76,7 @@ async function start() {
   app.use('/api/pvp', pvpRoutes);
   app.use('/api/rakeback', rakebackRoutes);
   app.use('/api/fastparity-jackpot', fastparityJackpotRoutes);
+  app.use('/api/crash-jackpot', crashJackpotRoutes);
 
   // Setup Socket.IO
   const io = new Server(httpServer, {
@@ -105,7 +106,6 @@ async function start() {
   });
 
   setupCrashSocket(io);
-  setupTrenballSocket(io);
   setupFastParitySocket(io);
   setupLudoSocket(io);
 

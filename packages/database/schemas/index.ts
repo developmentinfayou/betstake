@@ -21,3 +21,4 @@ export * from './favoritegame.schema';
 export * from './useractivity.schema';
 export * from './pvpgame.schema';
 export * from './fastparity-jackpot.schema';
+export * from './crash-jackpot.schema';

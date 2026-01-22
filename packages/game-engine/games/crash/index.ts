@@ -69,4 +69,36 @@ export class CrashGame {
 
     return false;
   }
+
+  /**
+   * Determine trenball result from crash point
+   * Based on BC.GAME payout structure:
+   * - crash: ~50% (payout 49.99x) - When multiplier < 2x
+   * - red: ~24% (payout 1.96x)
+   * - green: ~24% (payout 2x) 
+   * - moon: ~2% (payout 10x) - When multiplier >= 10x
+   */
+  static getTrenballResult(crashPoint: number): {
+    type: 'crash' | 'red' | 'green' | 'moon';
+    multiplier: number;
+  } {
+    // Moon: crash point >= 10x
+    if (crashPoint >= 10) {
+      return { type: 'moon', multiplier: 10 };
+    }
+
+    // Crash: crash point < 2x (crashed before reaching 2x)
+    if (crashPoint < 2) {
+      return { type: 'crash', multiplier: 49.99 };
+    }
+
+    // Green vs Red: determined by crash point decimals
+    // Use the second decimal to alternate between red/green
+    const decimalPart = Math.floor(crashPoint * 100) % 10;
+    const isGreen = decimalPart % 2 === 0;
+
+    return isGreen
+      ? { type: 'green', multiplier: 2 }
+      : { type: 'red', multiplier: 1.96 };
+  }
 }

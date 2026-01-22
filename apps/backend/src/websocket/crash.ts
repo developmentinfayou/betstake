@@ -1,9 +1,11 @@
 import { Server, Socket } from 'socket.io';
 import { CrashGame } from '@casino/game-engine';
-import { CrashRound, CrashBet } from '@casino/database';
+import { CrashRound, CrashBet, CrashGameMode, TrenballBetType, TrenballResult } from '@casino/database';
 import { generateServerSeed, generateClientSeed } from '@casino/fairness';
+import { CrashJackpotService } from '../services/crash-jackpot-service';
 
-interface CrashBet {
+// Bet interfaces
+interface ClassicBet {
   userId: string;
   username: string;
   amount: number;
@@ -12,45 +14,143 @@ interface CrashBet {
   cashedOut: boolean;
   cashoutAt?: number;
   payout: number;
+  won: boolean;
+}
+
+interface TrenballBet {
+  userId: string;
+  username: string;
+  amount: number;
+  currency: string;
+  betType: TrenballBetType;
+  payout: number;
+  won: boolean;
+}
+
+type GameState = 'waiting' | 'betting' | 'playing' | 'crashed';
+
+interface RoundHistory {
+  roundNumber: number;
+  crashPoint: number;
+  trenballResult?: TrenballResult;
+}
+
+// State structure for each mode
+interface ModeState {
+  roundNumber: number;
+  gameState: GameState;
+  crashPoint: number;
+  currentMultiplier: number;
+  startTime: number;
+  history: RoundHistory[];
+}
+
+interface ClassicModeState extends ModeState {
+  bets: ClassicBet[];
+}
+
+interface TrenballModeState extends ModeState {
+  bets: TrenballBet[];
+  trenballResult: TrenballResult | null;
 }
 
 /**
- * Crash multiplayer game socket handler
+ * Unified Crash multiplayer game socket handler
+ * Supports both Classic and Trenball modes
  */
 export function setupCrashSocket(io: Server) {
   const crashNamespace = io.of('/crash');
-  
-  let currentRound: any = null;
-  let roundNumber = 1;
-  let bets: CrashBet[] = [];
-  let gameState: 'waiting' | 'betting' | 'playing' | 'crashed' = 'waiting';
-  let startTime: number = 0;
-  let crashPoint: number = 0;
-  let currentMultiplier: number = 1.0;
 
-  // Start first round
-  startNewRound();
+  // Classic mode state
+  const classic: ClassicModeState = {
+    roundNumber: 1,
+    bets: [],
+    gameState: 'waiting',
+    crashPoint: 0,
+    currentMultiplier: 1.0,
+    startTime: 0,
+    history: []
+  };
+
+  // Trenball mode state
+  const trenball: TrenballModeState = {
+    roundNumber: 1,
+    bets: [],
+    gameState: 'betting',
+    crashPoint: 0,
+    currentMultiplier: 1.0,
+    startTime: 0,
+    history: [],
+    trenballResult: null
+  };
+
+  // Track which mode each socket is in
+  const socketModes = new Map<string, CrashGameMode>();
+
+  // Start games for both modes
+  startNewRound('classic');
+  startNewRound('trenball');
 
   crashNamespace.on('connection', (socket: Socket) => {
     console.log('Crash player connected:', socket.id);
 
-    // Send current game state
-    socket.emit('game-state', {
-      state: gameState,
-      roundNumber,
-      currentMultiplier,
-      crashPoint: gameState === 'crashed' ? crashPoint : null,
-      bets,
+    // Default to classic mode
+    let currentMode: CrashGameMode = 'classic';
+    socketModes.set(socket.id, currentMode);
+
+    // Join mode room
+    socket.join(`mode:${currentMode}`);
+
+    // Send current game state for default mode
+    sendGameState(socket, currentMode);
+
+    // Switch mode
+    socket.on('switch-mode', (mode: CrashGameMode) => {
+      if (mode !== 'classic' && mode !== 'trenball') {
+        socket.emit('error', { message: 'Invalid mode' });
+        return;
+      }
+
+      // Leave old mode room
+      socket.leave(`mode:${currentMode}`);
+
+      // Join new mode room
+      currentMode = mode;
+      socketModes.set(socket.id, mode);
+      socket.join(`mode:${mode}`);
+
+      // Send game state for new mode
+      sendGameState(socket, mode);
     });
 
-    // Place bet
-    socket.on('place-bet', async (data: { userId: string; username: string; amount: number; currency: string; autoCashout?: number }) => {
-      if (gameState !== 'betting') {
+    // Place bet (Classic mode)
+    socket.on('place-bet', async (data: {
+      userId: string;
+      username: string;
+      amount: number;
+      currency: string;
+      autoCashout?: number;
+      mode?: CrashGameMode;
+    }) => {
+      const mode = data.mode || currentMode;
+
+      if (mode !== 'classic') {
+        socket.emit('error', { message: 'Use place-trenball-bet for trenball mode' });
+        return;
+      }
+
+      if (classic.gameState !== 'betting') {
         socket.emit('error', { message: 'Betting is closed' });
         return;
       }
 
-      const bet: CrashBet = {
+      // Check if user already has a bet
+      if (classic.bets.find(b => b.userId === data.userId)) {
+        socket.emit('error', { message: 'Already placed a bet this round' });
+        return;
+      }
+
+      const bet: ClassicBet = {
         userId: data.userId,
         username: data.username,
         amount: data.amount,
@@ -58,160 +158,333 @@ export function setupCrashSocket(io: Server) {
         autoCashout: data.autoCashout,
         cashedOut: false,
         payout: 0,
+        won: false,
       };
 
-      bets.push(bet);
-      crashNamespace.emit('bet-placed', bet);
+      classic.bets.push(bet);
+      crashNamespace.to('mode:classic').emit('bet-placed', { mode: 'classic', bet });
     });
 
-    // Cash out
+    // Place bet (Trenball mode)
+    socket.on('place-trenball-bet', async (data: {
+      userId: string;
+      username: string;
+      amount: number;
+      currency: string;
+      betType: TrenballBetType;
+    }) => {
+      if (trenball.gameState !== 'betting') {
+        socket.emit('error', { message: 'Betting is closed' });
+        return;
+      }
+
+      const bet: TrenballBet = {
+        userId: data.userId,
+        username: data.username,
+        amount: data.amount,
+        currency: data.currency,
+        betType: data.betType,
+        payout: 0,
+        won: false,
+      };
+
+      trenball.bets.push(bet);
+      crashNamespace.to('mode:trenball').emit('bet-placed', { mode: 'trenball', bet });
+    });
+
+    // Cash out (Classic mode only)
     socket.on('cashout', (data: { userId: string }) => {
-      if (gameState !== 'playing') {
+      if (classic.gameState !== 'playing') {
         socket.emit('error', { message: 'Cannot cash out now' });
         return;
       }
 
-      const bet = bets.find(b => b.userId === data.userId && !b.cashedOut);
+      const bet = classic.bets.find(b => b.userId === data.userId && !b.cashedOut);
       if (!bet) {
         socket.emit('error', { message: 'No active bet found' });
         return;
       }
 
       bet.cashedOut = true;
-      bet.cashoutAt = currentMultiplier;
-      bet.payout = bet.amount * currentMultiplier;
+      bet.cashoutAt = classic.currentMultiplier;
+      bet.payout = bet.amount * classic.currentMultiplier;
+      bet.won = true;
 
-      crashNamespace.emit('player-cashed-out', {
+      crashNamespace.to('mode:classic').emit('player-cashed-out', {
+        mode: 'classic',
         userId: bet.userId,
         username: bet.username,
-        multiplier: currentMultiplier,
+        multiplier: classic.currentMultiplier,
         payout: bet.payout,
       });
+
+      // Process jackpot for this bet
+      CrashJackpotService.processPlayerBet({
+        userId: bet.userId,
+        gameType: 'crash_classic',
+        betAmount: bet.amount,
+        crashPoint: classic.crashPoint,
+        cashoutMultiplier: bet.cashoutAt,
+        won: true
+      }).then(result => {
+        if (result.triggered) {
+          socket.emit('jackpot-triggered', result);
+        }
+      }).catch(console.error);
     });
 
     socket.on('disconnect', () => {
+      socketModes.delete(socket.id);
       console.log('Crash player disconnected:', socket.id);
     });
   });
 
-  function startNewRound() {
-    gameState = 'betting';
-    bets = [];
-    currentMultiplier = 1.0;
+  function sendGameState(socket: Socket, mode: CrashGameMode) {
+    if (mode === 'classic') {
+      socket.emit('game-state', {
+        mode: 'classic',
+        state: classic.gameState,
+        roundNumber: classic.roundNumber,
+        currentMultiplier: classic.currentMultiplier,
+        crashPoint: classic.gameState === 'crashed' ? classic.crashPoint : null,
+        bets: classic.bets,
+        history: classic.history.slice(-10),
+      });
+    } else {
+      socket.emit('game-state', {
+        mode: 'trenball',
+        state: trenball.gameState,
+        roundNumber: trenball.roundNumber,
+        currentMultiplier: trenball.currentMultiplier,
+        crashPoint: trenball.gameState === 'crashed' ? trenball.crashPoint : null,
+        trenballResult: trenball.trenballResult,
+        bets: trenball.bets,
+        history: trenball.history.slice(-10),
+      });
+    }
+  }
+
+  function startNewRound(mode: CrashGameMode) {
+    const state = mode === 'classic' ? classic : trenball;
+
+    state.gameState = 'betting';
+    if (mode === 'classic') {
+      (state as ClassicModeState).bets = [];
+    } else {
+      (state as TrenballModeState).bets = [];
+      (state as TrenballModeState).trenballResult = null;
+    }
+    state.currentMultiplier = 1.0;
 
     // Generate crash point
     const serverSeed = generateServerSeed();
     const clientSeed = generateClientSeed();
-    crashPoint = CrashGame.generateCrashPoint({
+    state.crashPoint = CrashGame.generateCrashPoint({
       serverSeed,
       clientSeed,
-      nonce: roundNumber,
+      nonce: state.roundNumber,
     });
+
+    // Calculate trenball result if trenball mode
+    let trenballResult: TrenballResult | undefined;
+    if (mode === 'trenball') {
+      trenballResult = CrashGame.getTrenballResult(state.crashPoint);
+    }
 
     // Save round to database
     CrashRound.findOneAndUpdate(
-      { roundNumber },
+      { roundNumber: state.roundNumber, mode },
       {
-        roundNumber,
-        crashPoint,
+        roundNumber: state.roundNumber,
+        mode,
+        crashPoint: state.crashPoint,
         hash: serverSeed,
         startedAt: new Date(),
+        trenballResult: trenballResult,
       },
       { upsert: true, new: true }
     ).catch(console.error);
 
-    crashNamespace.emit('round-starting', {
-      roundNumber,
-      bettingTime: 5000, // 5 seconds to bet
+    crashNamespace.to(`mode:${mode}`).emit('round-starting', {
+      mode,
+      roundNumber: state.roundNumber,
+      bettingTime: 5000,
     });
 
     // Start game after betting period
     setTimeout(() => {
-      startGame();
+      startGame(mode);
     }, 5000);
   }
 
-  function startGame() {
-    gameState = 'playing';
-    startTime = Date.now();
+  function startGame(mode: CrashGameMode) {
+    const state = mode === 'classic' ? classic : trenball;
 
-    crashNamespace.emit('game-started', {
-      roundNumber,
-      startTime,
+    state.gameState = 'playing';
+    state.startTime = Date.now();
+
+    crashNamespace.to(`mode:${mode}`).emit('game-started', {
+      mode,
+      roundNumber: state.roundNumber,
+      startTime: state.startTime,
     });
 
     // Game loop
     const interval = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      currentMultiplier = CrashGame.getMultiplierAtTime(elapsed);
+      const elapsed = Date.now() - state.startTime;
+      state.currentMultiplier = CrashGame.getMultiplierAtTime(elapsed);
 
-      // Check auto cashouts
-      bets.forEach(bet => {
-        if (!bet.cashedOut && bet.autoCashout && currentMultiplier >= bet.autoCashout) {
-          bet.cashedOut = true;
-          bet.cashoutAt = currentMultiplier;
-          bet.payout = bet.amount * currentMultiplier;
+      // Classic mode: Check auto cashouts
+      if (mode === 'classic') {
+        classic.bets.forEach(bet => {
+          if (!bet.cashedOut && bet.autoCashout && state.currentMultiplier >= bet.autoCashout) {
+            bet.cashedOut = true;
+            bet.cashoutAt = state.currentMultiplier;
+            bet.payout = bet.amount * state.currentMultiplier;
+            bet.won = true;
 
-          crashNamespace.emit('player-cashed-out', {
-            userId: bet.userId,
-            username: bet.username,
-            multiplier: currentMultiplier,
-            payout: bet.payout,
-          });
-        }
-      });
+            crashNamespace.to('mode:classic').emit('player-cashed-out', {
+              mode: 'classic',
+              userId: bet.userId,
+              username: bet.username,
+              multiplier: state.currentMultiplier,
+              payout: bet.payout,
+            });
+          }
+        });
+      }
 
       // Check if crashed
-      if (CrashGame.hasCrashed(currentMultiplier, crashPoint)) {
+      if (CrashGame.hasCrashed(state.currentMultiplier, state.crashPoint)) {
         clearInterval(interval);
-        endGame();
+        endGame(mode);
         return;
       }
 
       // Broadcast current multiplier
-      crashNamespace.emit('multiplier-update', {
-        multiplier: currentMultiplier,
+      crashNamespace.to(`mode:${mode}`).emit('multiplier-update', {
+        mode,
+        multiplier: state.currentMultiplier,
       });
-    }, 50); // Update every 50ms
+    }, 50);
   }
 
-  function endGame() {
-    gameState = 'crashed';
+  function endGame(mode: CrashGameMode) {
+    const state = mode === 'classic' ? classic : trenball;
 
-    crashNamespace.emit('game-crashed', {
-      crashPoint,
-      bets,
+    state.gameState = 'crashed';
+
+    // Calculate trenball result
+    if (mode === 'trenball') {
+      const result = CrashGame.getTrenballResult(state.crashPoint);
+      (state as TrenballModeState).trenballResult = result;
+
+      // Calculate payouts for trenball bets
+      trenball.bets.forEach(bet => {
+        if (bet.betType === result.type) {
+          bet.won = true;
+          bet.payout = bet.amount * result.multiplier;
+        }
+      });
+    } else {
+      // Classic mode: mark non-cashed out bets as lost
+      classic.bets.forEach(bet => {
+        if (!bet.cashedOut) {
+          bet.won = false;
+          bet.payout = 0;
+        }
+      });
+    }
+
+    // Add to history
+    const historyEntry: RoundHistory = {
+      roundNumber: state.roundNumber,
+      crashPoint: state.crashPoint,
+    };
+    if (mode === 'trenball') {
+      historyEntry.trenballResult = (state as TrenballModeState).trenballResult!;
+    }
+    state.history.push(historyEntry);
+    if (state.history.length > 20) {
+      state.history.shift();
+    }
+
+    crashNamespace.to(`mode:${mode}`).emit('game-crashed', {
+      mode,
+      crashPoint: state.crashPoint,
+      trenballResult: mode === 'trenball' ? (state as TrenballModeState).trenballResult : undefined,
+      bets: mode === 'classic' ? classic.bets : trenball.bets,
     });
 
     // Save bets to database
-    saveBets();
+    saveBets(mode);
+
+    // Process jackpots for all bets
+    processRoundJackpots(mode);
 
     // Start new round after delay
     setTimeout(() => {
-      roundNumber++;
-      startNewRound();
+      state.roundNumber++;
+      startNewRound(mode);
     }, 3000);
   }
 
-  async function saveBets() {
+  async function saveBets(mode: CrashGameMode) {
     try {
-      const round = await CrashRound.findOne({ roundNumber });
+      const state = mode === 'classic' ? classic : trenball;
+      const round = await CrashRound.findOne({ roundNumber: state.roundNumber, mode });
       if (!round) return;
+
+      const bets = mode === 'classic' ? classic.bets : trenball.bets;
 
       const crashBets = bets.map(bet => ({
         roundId: round._id,
         userId: bet.userId,
+        username: bet.username,
         currency: bet.currency,
         amount: bet.amount,
-        autoCashout: bet.autoCashout,
-        cashedOut: bet.cashedOut,
-        cashoutAt: bet.cashoutAt,
+        autoCashout: mode === 'classic' ? (bet as ClassicBet).autoCashout : undefined,
+        cashedOut: mode === 'classic' ? (bet as ClassicBet).cashedOut : false,
+        cashoutAt: mode === 'classic' ? (bet as ClassicBet).cashoutAt : undefined,
+        betType: mode === 'trenball' ? (bet as TrenballBet).betType : undefined,
         payout: bet.payout,
+        won: bet.won,
       }));
 
       await CrashBet.insertMany(crashBets);
     } catch (error) {
       console.error('Error saving crash bets:', error);
+    }
+  }
+
+  async function processRoundJackpots(mode: CrashGameMode) {
+    try {
+      const gameType = mode === 'classic' ? 'crash_classic' : 'crash_trenball';
+      const state = mode === 'classic' ? classic : trenball;
+      const bets = mode === 'classic' ? classic.bets : trenball.bets;
+
+      for (const bet of bets) {
+        const result = await CrashJackpotService.processPlayerBet({
+          userId: bet.userId,
+          gameType: gameType as any,
+          betAmount: bet.amount,
+          crashPoint: state.crashPoint,
+          cashoutMultiplier: mode === 'classic' ? (bet as ClassicBet).cashoutAt : undefined,
+          betType: mode === 'trenball' ? (bet as TrenballBet).betType : undefined,
+          won: bet.won
+        });
+
+        if (result.triggered) {
+          crashNamespace.to(`mode:${mode}`).emit('jackpot-triggered', {
+            mode,
+            userId: bet.userId,
+            conditionName: result.conditionName,
+            prizeAmount: result.prizeAmount
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error processing jackpots:', error);
     }
   }
 }
