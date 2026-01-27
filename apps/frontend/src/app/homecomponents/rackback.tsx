@@ -106,7 +106,7 @@ export const Rakeback = (): JSX.Element => {
                   )}
 
                   <span
-                    className={`relative w-fit mt-[-1.00px] [font-family:'Barlow_Condensed-Regular',Helvetica] font-normal ${
+                    className={`relative w-fit mt-[-1.00px]  font-normal ${
                       badge.isActive ? "text-white" : "text-[#818181]"
                     } text-sm tracking-[1.12px] leading-[normal]`}
                   >
@@ -140,7 +140,7 @@ export const Rakeback = (): JSX.Element => {
                         role="tooltip"
                         aria-label="Percentage value with additional information"
                       >
-                        <span className="relative w-fit [font-family:'Barlow_Condensed-SemiBold',Helvetica] font-semibold text-white text-sm tracking-[1.12px] leading-[normal]">
+                        <span className="relative w-fit  font-semibold text-white text-sm tracking-[1.12px] leading-[normal]">
                           {stat.value}
                         </span>
                       </div>
@@ -171,7 +171,7 @@ export const Rakeback = (): JSX.Element => {
                         aria-hidden="true"
                       />
 
-                      <span className="relative w-fit mt-[-1.00px] [font-family:'Barlow_Condensed-Regular',Helvetica] font-normal text-white text-sm tracking-[1.12px] leading-[normal]">
+                      <span className="relative w-fit mt-[-1.00px]  font-normal text-white text-sm tracking-[1.12px] leading-[normal]">
                         {stat.changeValue}
                       </span>
                     </div>
@@ -183,13 +183,13 @@ export const Rakeback = (): JSX.Element => {
             </div>
           </header>
 
-          <p className="relative self-stretch [font-family:'Barlow_Condensed-Light',Helvetica] font-light text-[#818181] text-xs tracking-[0.96px] leading-[normal]">
+          <p className="relative self-stretch font-light text-[#818181] text-xs tracking-[0.96px] leading-[normal]">
             {cardDescription}
           </p>
         </div>
       </section>
 
-      <footer className="relative self-stretch [font-family:'Barlow_Condensed-Regular',Helvetica] font-normal text-[#5b5b79] text-xs tracking-[0.96px] leading-[normal]">
+      <footer className="relative self-stretch  font-normal text-[#5b5b79] text-xs tracking-[0.96px] leading-[normal]">
         {footerLabel}
       </footer>
     </article>

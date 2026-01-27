@@ -8,7 +8,7 @@ import ContestWinnerList from './homecomponents/contestWinnerList';
 import { Rakeback } from './homecomponents/rackback';
 
 const games = [
-  { id: 'dice', name: 'Dice', players: '58.8K', status: 'live' , image : "images/dice.png" },
+  { id: 'dice', name: 'Dice', players: '58.8K', status: 'live' , image : "images/dice.svg" },
   { id: 'mines', name: 'Mines', players: '58.8K', status: 'live',image : "images/mines.png" },
   { id: 'plinko', name: 'Plinko', players: '58.8K', status: 'live',image : "images/plinko.png" },
   { id: 'coinflip', name: 'Coin Flip', players: '27.8K', status: 'live',image : "images/flip.png" },
@@ -182,8 +182,8 @@ export default function HomePage() {
               <div className="h-[26px] w-[26px] rounded-full bg-[#73FFD7]" />
             </div>
             <div className="flex items-baseline gap-1">
-              <span className="font-['Barlow_Condensed'] text-[19px] tracking-[0.08em]">ORBIT</span>
-              <span className="font-['Barlow_Condensed'] text-[#73FFD7] text-[14px] tracking-[0.08em]">
+              <span className=" text-[19px] tracking-[0.08em]">ORBIT</span>
+              <span className=" text-[#73FFD7] text-[14px] tracking-[0.08em]">
                 ~Play
               </span>
             </div>
@@ -212,7 +212,7 @@ export default function HomePage() {
                   >
                     {renderNavIcon(item.id, isActive)}
                     <span
-                      className={`font-['Barlow_Condensed'] text-sm tracking-[1.12px] ${isActive ? 'text-white' : 'text-[#818181]'
+                      className={` text-sm tracking-[1.12px] ${isActive ? 'text-white' : 'text-[#818181]'
                         }`}
                     >
                       {item.label}
@@ -241,7 +241,7 @@ export default function HomePage() {
                       >
                         {renderGameIcon(tab.id, isActive)}
                         <span
-                          className={`font-['Barlow_Condensed'] text-sm tracking-[1.12px] ${isActive ? 'text-white' : 'text-[#818181]'
+                          className={` text-sm tracking-[1.12px] ${isActive ? 'text-white' : 'text-[#818181]'
                             }`}
                         >
                           {tab.name}
@@ -277,7 +277,7 @@ export default function HomePage() {
                 <path d="M6 1L4 3" stroke="white" strokeLinecap="round" />
                 <path d="M6 1V4" stroke="white" strokeLinecap="round" />
               </svg>
-              <span className="font-['Barlow_Condensed'] text-sm tracking-[1.12px] text-white">
+              <span className=" text-sm tracking-[1.12px] text-white">
                 Spin
               </span>
             </button>
@@ -290,7 +290,7 @@ export default function HomePage() {
                 <path d="M6 8H9V10C9 10.5523 8.55228 11 8 11H7C6.44772 11 6 10.5523 6 10V8Z" fill="#FFD700" />
                 <path d="M5 11H10" stroke="#FFD700" strokeLinecap="round" />
               </svg>
-              <p className="font-['Barlow_Condensed'] text-sm tracking-[1.12px]">
+              <p className=" text-sm tracking-[1.12px]">
                 <span className="text-white">Winner </span>
                 <span className="text-[#73FFD7]">CrispyPotato</span>
                 <span className="text-white"> 🎉</span>
@@ -365,7 +365,7 @@ export default function HomePage() {
         className="
           relative w-fit mt-[-1px] whitespace-nowrap
           text-xs tracking-[0.96px] leading-normal
-          font-['Barlow_Condensed'] font-light
+           font-light
           text-white opacity-[0.24]
           transition-all duration-200
           hover:opacity-100
@@ -383,14 +383,14 @@ export default function HomePage() {
 
               {/* Jackpot amount */}
               <div className="absolute top-[38px] left-[266px] w-[146px] h-[31px] flex border-b border-dashed border-[#818181]">
-                <span className="w-36 h-[29px] text-nowrap font-['Barlow_Condensed'] font-semibold text-white text-2xl leading-normal">
+                <span className="w-36 h-[29px] text-nowrap  font-semibold text-white text-2xl leading-normal">
                   0.0021780 BTC
                 </span>
               </div>
 
               {/* Treasure illustration - stylized with gradient */}
               <img
-              src='images/gems.png'
+              src='images/gems.svg'
                 className="absolute  top-[63.84px] left-[400px] -translate-y-1/2"
                 style={{
                   background: 'radial-gradient(ellipse at center, rgba(255, 215, 0, 0.3) 0%, rgba(255, 165, 0, 0.2) 30%, transparent 70%)',
@@ -400,7 +400,7 @@ export default function HomePage() {
             </div>
 
             {/* Jackpot label */}
-            <p className="font-['Barlow_Condensed'] text-xs tracking-[0.96px] leading-normal text-[#5b5b79]">
+            <p className=" text-xs tracking-[0.96px] leading-normal text-[#5b5b79]">
               Jackpot!
             </p>
           </div>
@@ -428,7 +428,7 @@ export default function HomePage() {
 
               
             </div>
-            <p className="font-['Barlow_Condensed'] text-xs tracking-[0.96px] leading-normal text-[#5b5b79]">
+            <p className=" text-xs tracking-[0.96px] leading-normal text-[#5b5b79]">
               Rackback
             </p></div>
        
@@ -460,7 +460,7 @@ export default function HomePage() {
                           <path d="M5 0L6.12 3.38L9.51 3.82L7.03 6.12L7.64 9.47L5 7.94L2.36 9.47L2.97 6.12L0.49 3.82L3.88 3.38L5 0Z" fill="#1a1a1a" />
                         </svg>
                       </div>
-                      <span className="font-['Barlow_Condensed'] text-sm tracking-[1.12px] text-white">
+                      <span className=" text-sm tracking-[1.12px] text-white">
                         Premium
                       </span>
                     </div>
@@ -471,7 +471,7 @@ export default function HomePage() {
                         <path d="M7 0L9.5 3H4.5L7 0Z" fill="#818181" />
                         <path d="M1 3H13L12 9H2L1 3Z" fill="#818181" />
                       </svg>
-                      <span className="font-['Barlow_Condensed'] text-sm tracking-[1.12px] text-[#818181]">
+                      <span className=" text-sm tracking-[1.12px] text-[#818181]">
                         VIP
                       </span>
                     </div>
@@ -485,7 +485,7 @@ export default function HomePage() {
                         <path d="M8 1L14 5V11L8 15L2 11V5L8 1Z" fill="#FF9900" />
                       </svg>
                       <div className="inline-flex items-center border-b border-dashed border-[#818181]">
-                        <span className="font-['Barlow_Condensed'] font-semibold text-white text-sm tracking-[1.12px]">
+                        <span className=" font-semibold text-white text-sm tracking-[1.12px]">
                           9.01%
                         </span>
                       </div>
@@ -496,7 +496,7 @@ export default function HomePage() {
                       <svg width="6" height="5" viewBox="0 0 6 5" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M3 5L0 0H6L3 5Z" fill="white" />
                       </svg>
-                      <span className="font-['Barlow_Condensed'] text-white text-sm tracking-[1.12px]">
+                      <span className=" text-white text-sm tracking-[1.12px]">
                         18.6%
                       </span>
                     </div>
@@ -504,11 +504,11 @@ export default function HomePage() {
                 </div>
 
                 {/* Description */}
-                <p className="font-['Barlow_Condensed'] font-light text-[#818181] text-xs tracking-[0.96px]">
+                <p className="barlow-condensed-light font-light text-[#818181] text-xs tracking-[0.96px]">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit
                 </p>
               </div>
-              <span className="font-['Barlow_Condensed'] text-xs tracking-[0.96px] text-[#5b5b79]">
+              <span className=" text-xs tracking-[0.96px] text-[#5b5b79]">
               House Edge
             </span>
             </div>
