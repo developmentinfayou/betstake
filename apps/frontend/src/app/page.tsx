@@ -6,6 +6,7 @@ import Challenge from './homecomponents/challanges';
 import HomeFooter from './homecomponents/homefooter';
 import ContestWinnerList from './homecomponents/contestWinnerList';
 import { Rakeback } from './homecomponents/rackback';
+import TrendingText from './homecomponents/trendingtext';
 
 const games = [
   { id: 'dice', name: 'Dice', players: '58.8K', status: 'live' , image : "images/dice.svg" },
@@ -674,9 +675,8 @@ export default function HomePage() {
 
           {/* RIGHT: trending */}
           <aside className="rounded border border-[#31313F] bg-white/5 p-4">
-            <div className="text-lg font-semibold tracking-[0.08em]">
-              TRENDING
-            </div>
+          <TrendingText />
+
             <p className="mt-3 text-xs text-[#828282]">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit...
             </p>

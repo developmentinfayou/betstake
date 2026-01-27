@@ -217,3 +217,76 @@ input[type="range"]::-moz-range-track {
 .scrollbar-hidden::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
 }
+
+/* Trending Text ui  */
+/* Hollow / Outline text */
+.stroke-text {
+  -webkit-text-stroke: 2px rgba(255,255,255,0.25);
+  text-stroke: 2px rgba(255,255,255,0.25);
+}
+
+/* Light beam */
+.light-beam {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 6px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    #ff5a00,
+    transparent
+  );
+  filter: blur(2px);
+  animation: beamMove 4s linear infinite;
+}
+
+/* Beam animation */
+@keyframes beamMove {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+.stroke-text {
+  -webkit-text-stroke: 2px rgba(255,255,255,0.25);
+}
+
+.beam {
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    #ff5a00,
+    transparent
+  );
+  filter: blur(2px);
+}
+
+.beam-dot {
+  display: inline-block;
+  width: 2px;
+  height: 2px;
+  background: #ff3b00;
+  border-radius: 4px;
+  opacity: 100%;
+
+  /* Glow */
+  box-shadow:
+    0 0 7px 3px rgba(255, 59, 0, 0.9),
+    0 0 24px rgba(255, 59, 0, 0.7),
+    0 0 48px rgba(255, 59, 0, 0.5);
+
+  animation: pulseBeam 1.5s ease-in-out infinite;
+}
+
