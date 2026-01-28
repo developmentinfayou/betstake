@@ -6,15 +6,15 @@ const ContestWinnerList = () => {
       <div className="flex flex-wrap items-center justify-between w-full gap-4 p-4 bg-[#0a0b14] text-gray-400 ">
         <div className="flex items-center space-x-4 overflow-x-auto ">
           <div className="flex p-1 bg-[#1a1c2e] rounded-md border border-gray-800">
-            <button className="px-4 py-1.5 text-xs font-bold uppercase tracking-wider rounded transition hover:text-white">
+            <button className="px-4 py-1.5 text-xs  uppercase tracking-wider rounded transition hover:text-white">
               Leaderboard
             </button>
-            <button className="px-4 py-1.5 text-xs font-bold uppercase tracking-wider bg-[#ff4d00] text-white rounded shadow-lg">
+            <button className="px-4 py-1.5 text-xs uppercase tracking-wider bg-[#ff4d00] text-white rounded shadow-lg">
               Contest
             </button>
           </div>
 
-          <button className="flex items-center space-x-2 px-4 py-2 text-xs font-bold uppercase tracking-widest border border-gray-800 rounded-md bg-[#1a1c2e] hover:border-gray-600 transition">
+          <button className="flex items-center space-x-2 px-4 py-2 text-xs  uppercase tracking-widest border border-gray-800 rounded-md bg-[#1a1c2e] hover:border-gray-600 transition">
             <span>Wins</span>
             <svg
               className="w-3 h-3 text-orange-500"
@@ -34,11 +34,11 @@ const ContestWinnerList = () => {
           <div className="flex items-center space-x-2 ml-2">
             <div className="flex items-center px-3 py-1.5 space-x-2 bg-orange-900/20 border border-orange-900/30 rounded-md">
               <span className="text-orange-500 text-sm">🎁</span>
-              <span className="text-sm  font-bold text-white tracking-tighter">
+              <span className="text-sm text-white tracking-tighter">
                 4h: 32m: 21s
               </span>
             </div>
-            <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter">
+            <span className="text-[10px] text-gray-400 uppercase tracking-tighter">
               ~Prize Distribution
             </span>
           </div>
@@ -83,7 +83,7 @@ const ContestWinnerList = () => {
                   : "bg-[linear-gradient(180deg,#FF416C_0%,#FFA72B_100%)]"
               } border-r border-gray-800`}
             >
-              <span className="font-bold text-white uppercase transform -rotate-90">
+              <span className="font-medium text-white uppercase transform -rotate-90">
                 {String(idx + 1).padStart(2, "0")}
               </span>
             </div>

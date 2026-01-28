@@ -9,12 +9,12 @@ import { Rakeback } from './homecomponents/rackback';
 import TrendingText from './homecomponents/trendingtext';
 
 const games = [
-  { id: 'dice', name: 'Dice', players: '58.8K', status: 'live' , image : "images/dice.svg" },
-  { id: 'mines', name: 'Mines', players: '58.8K', status: 'live',image : "images/mines.png" },
-  { id: 'plinko', name: 'Plinko', players: '58.8K', status: 'live',image : "images/plinko.png" },
-  { id: 'coinflip', name: 'Coin Flip', players: '27.8K', status: 'live',image : "images/flip.png" },
-  { id: 'limbo', name: 'Limbo', players: '58.8K', status: 'live',image : "images/limbo.png" },
-  { id: 'pump', name: 'Pump', players: '58.8K', status: 'live',image : "images/pump.png" },
+  { id: 'dice', name: 'Dice', players: '58.8K', status: 'live' , image : "/images/dice.svg" },
+  { id: 'mines', name: 'Mines', players: '58.8K', status: 'live',image : "/images/mines.png" },
+  { id: 'plinko', name: 'Plinko', players: '58.8K', status: 'live',image : "/images/plinko.png" },
+  { id: 'coinflip', name: 'Coin Flip', players: '27.8K', status: 'live',image : "/images/flip.png" },
+  { id: 'limbo', name: 'Limbo', players: '58.8K', status: 'live',image : "/images/limbo.png" },
+  { id: 'pump', name: 'Pump', players: '58.8K', status: 'live',image : "/images/pump.png" },
 ];
 
 export default function HomePage() {
@@ -22,7 +22,7 @@ export default function HomePage() {
 
   // Navigation items configuration
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard' },
+    { id: 'dashboard', label: 'Dashboard' , icon : "/images/dashicon.svg" },
     { id: 'casino', label: 'Casino' },
     { id: 'multiplayer', label: 'Multiplayer' },
   ];
@@ -115,7 +115,7 @@ export default function HomePage() {
   };
 
   // Render icon based on id and active state
-  const renderNavIcon = (id: string, isActive: boolean) => {
+  const renderNavIcon = (id: string, isActive: boolean , icon:any) => {
     const activeColor = '#73FFD7';
     const inactiveColor = '#818181';
     const color = isActive ? activeColor : inactiveColor;
@@ -179,12 +179,9 @@ export default function HomePage() {
         <nav className="mx-auto flex h-[81px] max-w-[1440px] items-center justify-between px-8">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
-              <div className="h-[26px] w-[26px] rounded-full bg-[#73FFD7]" />
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className=" text-[19px] tracking-[0.08em]">ORBIT</span>
-              <span className=" text-[#73FFD7] text-[14px] tracking-[0.08em]">
+            <div className="flex relative items-baseline gap-1">
+              <img src='/images/logo.svg' className=" text-[19px] tracking-[0.08em]"/>
+              <span className=" text-[#73FFD7] text-[14px] tracking-[0.08em] absolute left-[80px] top-[22px]">
                 ~Play
               </span>
             </div>
@@ -211,7 +208,7 @@ export default function HomePage() {
                     aria-current={isActive ? 'page' : undefined}
                     type="button"
                   >
-                    {renderNavIcon(item.id, isActive)}
+                    {renderNavIcon(item.id, isActive , item.icon)}
                     <span
                       className={` text-sm tracking-[1.12px] ${isActive ? 'text-white' : 'text-[#818181]'
                         }`}
@@ -225,7 +222,7 @@ export default function HomePage() {
 
             {/* Game Category Tabs */}
             <nav
-              className="relative w-[462px] h-[41px] rounded overflow-hidden border border-[#31313F]"
+              className="relative  h-[41px] rounded overflow-hidden border border-[#31313F]"
               role="navigation"
               aria-label="Casino games navigation"
             >
@@ -270,27 +267,20 @@ export default function HomePage() {
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2">
             {/* Spin Button */}
-            <button className="flex items-center gap-1.5 rounded border border-[#31313F] p-3">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1 6C1 8.76142 3.23858 11 6 11C8.76142 11 11 8.76142 11 6C11 3.23858 8.76142 1 6 1" stroke="white" strokeLinecap="round" />
-                <path d="M6 1L4 3" stroke="white" strokeLinecap="round" />
-                <path d="M6 1V4" stroke="white" strokeLinecap="round" />
-              </svg>
+            <button className="flex items-center gap-1.5 rounded border border-[#31313F] h-[41px] px-3">
+              <img src='/images/spin.svg' />
+              
               <span className=" text-sm tracking-[1.12px] text-white">
                 Spin
               </span>
             </button>
 
             {/* Winner Notification */}
-            <div className="flex items-center gap-1.5 rounded border border-[#31313F] p-3 overflow-hidden">
-              <svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 0H11L12 3H3L4 0Z" fill="#FFD700" />
-                <path d="M3 3H12V5C12 6.65685 10.6569 8 9 8H6C4.34315 8 3 6.65685 3 5V3Z" fill="#FFD700" />
-                <path d="M6 8H9V10C9 10.5523 8.55228 11 8 11H7C6.44772 11 6 10.5523 6 10V8Z" fill="#FFD700" />
-                <path d="M5 11H10" stroke="#FFD700" strokeLinecap="round" />
-              </svg>
+            <div className="flex h-[41px] items-center gap-1.5 rounded border border-[#31313F] px-3 overflow-hidden">
+              <img src='/images/winner.svg'/>
+              
               <p className=" text-sm tracking-[1.12px]">
                 <span className="text-white">Winner </span>
                 <span className="text-[#73FFD7]">CrispyPotato</span>
@@ -391,7 +381,7 @@ export default function HomePage() {
 
               {/* Treasure illustration - stylized with gradient */}
               <img
-              src='images/gems.svg'
+              src='/images/gems.svg'
                 className="absolute  top-[63.84px] left-[400px] -translate-y-1/2"
                 style={{
                   background: 'radial-gradient(ellipse at center, rgba(255, 215, 0, 0.3) 0%, rgba(255, 165, 0, 0.2) 30%, transparent 70%)',
@@ -672,16 +662,18 @@ export default function HomePage() {
               })}
             </div>
           </div>
+          
 
           {/* RIGHT: trending */}
-          <aside className="rounded border border-[#31313F] bg-white/5 p-4">
+          <aside className=" p-4">
           <TrendingText />
+          
 
             <p className="mt-3 text-xs text-[#828282]">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit...
             </p>
-            <button className="mt-4 rounded bg-[#FF4500] px-4 py-2 text-sm">
-              ORBIT Originals
+            <button className="mt-4 flex items-center gap-2 rounded bg-[#FF45001F] px-1 py-1 text-xs">
+            <img src='/images/star.svg' />ORBEit Originals
             </button>
           </aside>
         </section>
