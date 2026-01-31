@@ -71,8 +71,8 @@ const Challenge = () => {
                 </span>
               </div>
               <div className="flex items-center space-x-1 text-xs text-gray-400">
-                <span className="text-orange-500">🏆</span>
-                <span className="text-white font-bold">27.8K</span>
+              <img src="/images/winners.svg"/>
+                <span className="text-white">27.8K</span>
                 <span>~Winners</span>
               </div>
             </div>
@@ -92,7 +92,7 @@ const Challenge = () => {
                 Complete Challenge
               </button>
               <div className="flex items-center space-x-2">
-                <span className="text-orange-500">🎁</span>
+              <img src="/images/gift.svg"/>
                 <span className="text-sm text-gray-200">
                   0.01000000 BTC
                 </span>

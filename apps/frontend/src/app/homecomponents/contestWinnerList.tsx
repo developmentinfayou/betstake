@@ -33,7 +33,7 @@ const ContestWinnerList = () => {
 
           <div className="flex items-center space-x-2 ml-2">
             <div className="flex items-center px-3 py-1.5 space-x-2 bg-orange-900/20 border border-orange-900/30 rounded-md">
-              <span className="text-orange-500 text-sm">🎁</span>
+              <img src="/images/gift.svg"/>
               <span className="text-sm text-white tracking-tighter">
                 4h: 32m: 21s
               </span>
