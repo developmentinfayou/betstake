@@ -22,7 +22,7 @@ export default function PlinkoPage() {
   const [gameParams, setGameParams] = useState<PlinkoGameParams>({ risk: 'medium', rows: 12, superMode: false });
   const [payoutSeed, setPayoutSeed] = useState<string>('');
   const [isDropping, setIsDropping] = useState(false);
-  const [trajectoryHistory, setTrajectoryHistory] = useState<Array<{path: number[], slot: number, multiplier: number, won: boolean}>>([]);
+  const [trajectoryHistory, setTrajectoryHistory] = useState<Array<{ path: number[], slot: number, multiplier: number, won: boolean }>>([]);
   const [showTrajectoryHistory, setShowTrajectoryHistory] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
@@ -78,7 +78,7 @@ export default function PlinkoPage() {
   const generateNewPayoutSeed = () => {
     const seed = Math.random().toString(36).substring(2, 8);
     setPayoutSeed(seed);
-    
+
     // Generate golden pegs and dead zones for preview (if lightning mode)
     if (gameParams.risk.startsWith('lightning-')) {
       generateLightningPreview(seed);
@@ -88,32 +88,32 @@ export default function PlinkoPage() {
   const generateLightningPreview = async (seed: string) => {
     // Client-side preview generation using Web Crypto API
     const encoder = new TextEncoder();
-    
+
     // Generate golden pegs hash
     const goldenData = encoder.encode(seed + 'golden');
     const goldenHashBuffer = await crypto.subtle.digest('SHA-256', goldenData);
     const goldenHash = new Uint8Array(goldenHashBuffer);
-    
+
     // Generate dead zones hash
     const deadData = encoder.encode(seed + 'dead');
     const deadHashBuffer = await crypto.subtle.digest('SHA-256', deadData);
     const deadHash = new Uint8Array(deadHashBuffer);
-    
+
     // Golden peg count based on rows
     const goldenPegCount: Record<number, number> = {
       8: 3, 9: 3, 10: 4, 11: 4, 12: 5, 13: 5, 14: 6, 15: 7, 16: 8
     };
-    
+
     // Multiplier pools
     const multiplierPools: Record<string, number[]> = {
       'lightning-low': [2, 3, 4, 5, 6, 8, 10],
       'lightning-medium': [5, 8, 10, 12, 15, 20, 25, 30],
       'lightning-high': [10, 15, 20, 30, 40, 50, 80, 100]
     };
-    
+
     const count = goldenPegCount[gameParams.rows] || 5;
     const multiplierPool = multiplierPools[gameParams.risk] || multiplierPools['lightning-medium'];
-    
+
     const newGoldenPegs: Array<{ row: number; position: number; multiplier: number }> = [];
     for (let i = 0; i < count; i++) {
       const row = 2 + (goldenHash[i * 3] % Math.max(1, gameParams.rows - 4));
@@ -121,25 +121,25 @@ export default function PlinkoPage() {
       const multiplier = multiplierPool[goldenHash[i * 3 + 2] % multiplierPool.length];
       newGoldenPegs.push({ row, position, multiplier });
     }
-    
+
     // Dead zones
     const deadZoneCount: Record<string, number> = {
       'lightning-low': 2,
       'lightning-medium': 3,
       'lightning-high': 4
     };
-    
+
     const deadCount = deadZoneCount[gameParams.risk] || 3;
     const totalSlots = gameParams.rows + 1;
     const newDeadZones: number[] = [];
-    
+
     for (let i = 0; i < deadCount && i < deadHash.length; i++) {
       const slot = deadHash[i] % totalSlots;
       if (!newDeadZones.includes(slot)) {
         newDeadZones.push(slot);
       }
     }
-    
+
     setGoldenPegs(newGoldenPegs);
     setDeadZones(newDeadZones.sort((a, b) => a - b));
   };
@@ -153,15 +153,19 @@ export default function PlinkoPage() {
     setLoading(true);
     setIsDropping(true);
     setResult(null);
-    
+
     // Simulate ball drop duration
     setTimeout(() => setIsDropping(false), 2500);
-    
+
     try {
       const params = gameParams.superMode ? { ...gameParams, payoutSeed } : gameParams;
       const response = await betAPI.place({ gameType: 'PLINKO', currency: 'USD', amount, gameParams: params });
       const { bet, result: gameResult } = response.data;
       const resultData = gameResult.result || gameResult;
+      // gameResult.won is the authoritative source (BetResult from game engine)
+      // bet.status is 'WON' or 'LOST' (MongoDB document)
+      const isWin = gameResult.won ?? bet.status === 'WON';
+      resultData.won = isWin;
       setResult(resultData);
 
       // Update golden pegs and dead zones from result if lightning mode
@@ -178,11 +182,11 @@ export default function PlinkoPage() {
           path: resultData.path,
           slot: resultData.finalSlot,
           multiplier: resultData.multiplier,
-          won: bet.won
+          won: isWin
         }].slice(-20)); // Keep last 20
       }
 
-      if (bet.won) {
+      if (isWin) {
         toast.success(`Won $${bet.profit.toFixed(2)}!`);
         setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + bet.profit, wagered: s.wagered + amount }));
       } else {
@@ -244,8 +248,8 @@ export default function PlinkoPage() {
                 {(gameParams.superMode || gameParams.risk.startsWith('lightning-')) && (
                   <div className="mb-4 p-3 bg-gray-800 rounded-lg">
                     <div className="text-sm text-gray-400 mb-2">
-                      {gameParams.risk.startsWith('lightning-') 
-                        ? 'Change payout seed to update golden pegs & dead zones' 
+                      {gameParams.risk.startsWith('lightning-')
+                        ? 'Change payout seed to update golden pegs & dead zones'
                         : 'Change payout seed to update the position'}
                     </div>
                     <div className="flex gap-2 items-center">
@@ -259,8 +263,8 @@ export default function PlinkoPage() {
                     </div>
                   </div>
                 )}
-                
-                <PlinkoBoard 
+
+                <PlinkoBoard
                   rows={gameParams.rows}
                   risk={gameParams.risk}
                   result={result}
@@ -269,14 +273,14 @@ export default function PlinkoPage() {
                   goldenPegs={goldenPegs}
                   deadZones={deadZones}
                 />
-                
+
                 {result && !isDropping && (
-                  <div className={`mt-4 p-4 rounded-lg text-center ${result.multiplier >= 1 ? 'bg-green-900/20 border border-green-500' : 'bg-red-900/20 border border-red-500'}`}>
-                    <div className="text-2xl mb-2">{result.multiplier >= 1 ? '🎉 WIN!' : '😢 LOST'}</div>
+                  <div className={`mt-4 p-4 rounded-lg text-center ${result.won ? 'bg-green-900/20 border border-green-500' : 'bg-red-900/20 border border-red-500'}`}>
+                    <div className="text-2xl mb-2">{result.won ? '🎉 WIN!' : '😢 LOST'}</div>
                     <div className="text-lg">
-                      {result.multiplier >= 1000 ? `${(result.multiplier/1000).toFixed(0)}k` : 
-                       result.multiplier >= 100 ? result.multiplier.toFixed(0) : 
-                       result.multiplier.toFixed(1)}x Multiplier
+                      {result.multiplier >= 1000 ? `${(result.multiplier / 1000).toFixed(0)}k` :
+                        result.multiplier >= 100 ? result.multiplier.toFixed(0) :
+                          result.multiplier.toFixed(1)}x Multiplier
                     </div>
                     {result.goldenPegHits && result.goldenPegHits.length > 0 && (
                       <div className="mt-2 text-sm text-yellow-400">
@@ -328,7 +332,7 @@ export default function PlinkoPage() {
             )}
 
             {gameParams.jackpotMode && (
-              <TrajectoryHistory 
+              <TrajectoryHistory
                 trajectories={trajectoryHistory}
                 jackpotCondition={gameParams.jackpotCondition}
                 showHistory={showTrajectoryHistory}
