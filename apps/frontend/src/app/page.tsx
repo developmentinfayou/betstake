@@ -45,7 +45,7 @@ const games = [
     image: "/images/limbo.png",
   },
   {
-    id: "pump",
+    id: "balloon",
     name: "Pump",
     players: "58.8K",
     status: "live",
@@ -341,19 +341,17 @@ export default function HomePage() {
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded transition-all duration-200 ${
-                      isActive
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded transition-all duration-200 ${isActive
                         ? "bg-[#ffffff0f]"
                         : "bg-transparent hover:bg-[#ffffff08]"
-                    }`}
+                      }`}
                     aria-current={isActive ? "page" : undefined}
                     type="button"
                   >
                     {renderNavIcon(item.id, isActive, item.icon)}
                     <span
-                      className={` text-sm tracking-[1.12px] ${
-                        isActive ? "text-white" : "text-[#818181]"
-                      }`}
+                      className={` text-sm tracking-[1.12px] ${isActive ? "text-white" : "text-[#818181]"
+                        }`}
                     >
                       {item.label}
                     </span>
@@ -381,9 +379,8 @@ export default function HomePage() {
                       >
                         {renderGameIcon(tab.id, isActive)}
                         <span
-                          className={` text-sm tracking-[1.12px] ${
-                            isActive ? "text-white" : "text-[#818181]"
-                          }`}
+                          className={` text-sm tracking-[1.12px] ${isActive ? "text-white" : "text-[#818181]"
+                            }`}
                         >
                           {tab.name}
                         </span>
@@ -465,9 +462,8 @@ export default function HomePage() {
                 ].map((img, i) => (
                   <div
                     key={i}
-                    className={`relative self-stretch w-[48px] aspect-[0.78] rounded overflow-hidden ${
-                      i === 0 ? "mt-[-145px]" : ""
-                    }`}
+                    className={`relative self-stretch w-[48px] aspect-[0.78] rounded overflow-hidden ${i === 0 ? "mt-[-145px]" : ""
+                      }`}
                   >
                     <img
                       src={img}
@@ -701,56 +697,56 @@ export default function HomePage() {
           </div>
 
           <div className="mt-3 flex gap-6 overflow-x-auto pb-2">
-     
-              {games?.map((g, i) => (
-                <div
-                  key={i}
-                  className="group relative h-[187px] w-[147px] flex-shrink-0 rounded
+
+            {games?.map((g, i) => (
+              <div
+                key={i}
+                className="group relative h-[187px] w-[147px] flex-shrink-0 rounded
                border border-transparent bg-white/5 p-1
                transition-all duration-300
                group-hover:border-[#ffffff]"
-                >
-                  {/* IMAGE WRAPPER */}
-                  <div className="relative h-full w-full overflow-hidden rounded">
-                    {/* IMAGE */}
-                    <img
-                      src={g.image}
-                      className="h-full w-full object-cover transition-all duration-300 group-hover:blur-sm"
-                      alt=""
-                    />
+              >
+                {/* IMAGE WRAPPER */}
+                <div className="relative h-full w-full overflow-hidden rounded">
+                  {/* IMAGE */}
+                  <img
+                    src={g.image}
+                    className="h-full w-full object-cover transition-all duration-300 group-hover:blur-sm"
+                    alt=""
+                  />
 
-                    {/* CONTINUE OVERLAY */}
-                    <div
-                      className="absolute inset-0 flex items-end justify-center
+                  {/* CONTINUE OVERLAY */}
+                  <div
+                    className="absolute inset-0 flex items-end justify-center
                 pb-6 opacity-0 group-hover:opacity-100 transition-all duration-300"
-                    >
-                      <button className="flex items-center gap-1 rounded bg-[#FF4500] px-3 py-1.5 text-xs text-white">
-                        <svg
-                          className="h-4 w-4"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                        Continue
-                      </button>
-                    </div>
-
-                    {/* HEART ICON (HOLLOW) */}
-                    <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                  >
+                    <button className="flex items-center gap-1 rounded bg-[#FF4500] px-3 py-1.5 text-xs text-white">
                       <svg
-                        className="h-5 w-5 text-white/80"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
+                        className="h-4 w-4"
+                        fill="currentColor"
                         viewBox="0 0 24 24"
                       >
-                        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+                        <path d="M8 5v14l11-7z" />
                       </svg>
-                    </div>
+                      Continue
+                    </button>
+                  </div>
+
+                  {/* HEART ICON (HOLLOW) */}
+                  <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <svg
+                      className="h-5 w-5 text-white/80"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+                    </svg>
                   </div>
                 </div>
-              ))}
+              </div>
+            ))}
 
 
             {/* Boom Balloon Card */}
@@ -765,7 +761,7 @@ export default function HomePage() {
                   <img
                     src="/images/users.svg"
                     alt="users"
-                    
+
                   />
                   <span className="text-xs underline decoration-dashed underline-offset-4">
                     58.8K
@@ -810,7 +806,7 @@ export default function HomePage() {
                 </div>
 
                 <button className="h-[26px] flex items-center gap-1.5 rounded border border-[#31313F] px-4 text-xs text-[#424252]">
-                <img src="/images/filter.svg" />  Filter
+                  <img src="/images/filter.svg" />  Filter
                 </button>
 
                 <span className="text-xs text-[#AEAEAE]">
@@ -889,8 +885,8 @@ export default function HomePage() {
 
                       <div className="flex items-center justify-center py-2 bg-[#14151a]">
                         <div className="flex items-center gap-2 text-gray-400">
-                        <img src="/images/person.svg" alt="play"
-                           />
+                          <img src="/images/person.svg" alt="play"
+                          />
                           <span className="text-xs font-semibold tracking-wide">
                             58.8K
                           </span>
