@@ -8,6 +8,8 @@ export * from './jackpot-condition.schema';
 export * from './strategy.schema';
 export * from './contest.schema';
 export * from './rakeback.schema';
+export * from './rakeback-config.schema';
+export * from './platform-settings.schema';
 export * from './gameconfig.schema';
 export * from './usersettings.schema';
 export * from './userstats.schema';
