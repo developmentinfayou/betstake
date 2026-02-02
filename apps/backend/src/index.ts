@@ -26,6 +26,10 @@ import fastparityJackpotRoutes from './routes/fastparity-jackpot';
 import crashJackpotRoutes from './routes/crash-jackpot';
 import challengeAdminRoutes from './routes/challenge-admin';
 import activityLogsRoutes from './routes/activity-logs';
+import jackpotConditionsRoutes from './routes/jackpot-conditions';
+import rakebackAdminRoutes from './routes/rakeback-admin';
+import financialReportsRoutes from './routes/financial-reports';
+import platformSettingsRoutes from './routes/platform-settings';
 
 // WebSocket handlers
 import { setupCrashSocket } from './websocket/crash';
@@ -81,6 +85,10 @@ async function start() {
   app.use('/api/crash-jackpot', crashJackpotRoutes);
   app.use('/api/admin/challenges', challengeAdminRoutes);
   app.use('/api/admin/logs', activityLogsRoutes);
+  app.use('/api/admin/jackpot-conditions', jackpotConditionsRoutes);
+  app.use('/api/admin/rakeback', rakebackAdminRoutes);
+  app.use('/api/admin/reports', financialReportsRoutes);
+  app.use('/api/admin/settings', platformSettingsRoutes);
 
   // Setup Socket.IO
   const io = new Server(httpServer, {

@@ -81,6 +81,30 @@ export default function AdminPanel() {
   const [activityLogs, setActivityLogs] = useState<any[]>([]);
   const [logStats, setLogStats] = useState<any>(null);
 
+  // Jackpot Conditions (Phase 3)
+  const [jackpotConditions, setJackpotConditions] = useState<any[]>([]);
+  const [selectedGameConditions, setSelectedGameConditions] = useState<any>(null);
+  const [showTriggerModal, setShowTriggerModal] = useState(false);
+  const [triggerData, setTriggerData] = useState({ userId: '', amount: 0, reason: '' });
+
+  // Rakeback Management (Phase 4)
+  const [rakebackConfig, setRakebackConfig] = useState<any>(null);
+  const [rakebackStats, setRakebackStats] = useState<any>(null);
+  const [pendingClaims, setPendingClaims] = useState<any[]>([]);
+  const [selectedCurrency, setSelectedCurrency] = useState('USD');
+
+  // Financial Reports (Phase 5)
+  const [revenueReport, setRevenueReport] = useState<any>(null);
+  const [pnlByGame, setPnlByGame] = useState<any[]>([]);
+  const [reportDateRange, setReportDateRange] = useState({
+    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+    end: new Date().toISOString().slice(0, 10)
+  });
+
+  // Platform Settings (Phase 6)
+  const [platformSettings, setPlatformSettings] = useState<any>(null);
+  const [settingsSaving, setSettingsSaving] = useState(false);
+
   useEffect(() => {
     if (!user || (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN')) {
       router.push('/');
@@ -297,6 +321,272 @@ export default function AdminPanel() {
     }
   };
 
+  // Jackpot Conditions Functions (Phase 3)
+  const loadJackpotConditions = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/jackpot-conditions`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setJackpotConditions(await res.json());
+      }
+    } catch (error) {
+      console.error('Failed to load jackpot conditions:', error);
+    }
+  };
+
+  const loadGameConditions = async (gameType: string) => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/jackpot-conditions/${gameType}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setSelectedGameConditions(await res.json());
+      }
+    } catch (error) {
+      console.error('Failed to load game conditions:', error);
+    }
+  };
+
+  const updateGameConditions = async (gameType: string, updates: any) => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/jackpot-conditions/${gameType}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(updates)
+      });
+      if (res.ok) {
+        toast.success(`${gameType} conditions updated`);
+        loadJackpotConditions();
+        setSelectedGameConditions(await res.json());
+      } else {
+        toast.error('Failed to update conditions');
+      }
+    } catch (error) {
+      toast.error('Failed to update conditions');
+    }
+  };
+
+  const initializeJackpotConditions = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/jackpot-conditions/initialize`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const result = await res.json();
+        toast.success(`Initialized: ${result.results.filter((r: any) => r.status === 'created').length} games`);
+        loadJackpotConditions();
+      }
+    } catch (error) {
+      toast.error('Failed to initialize');
+    }
+  };
+
+  const triggerJackpot = async (gameType: string) => {
+    if (!triggerData.reason || triggerData.reason.length < 5) {
+      toast.error('Reason is required (min 5 chars)');
+      return;
+    }
+    try {
+      const res = await fetch(`${API_URL}/api/admin/jackpot-conditions/${gameType}/trigger`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(triggerData)
+      });
+      if (res.ok) {
+        const result = await res.json();
+        toast.success(`Jackpot triggered! Payout: $${result.payoutAmount.toFixed(2)}`);
+        setShowTriggerModal(false);
+        setTriggerData({ userId: '', amount: 0, reason: '' });
+      } else {
+        const err = await res.json();
+        toast.error(err.error || 'Failed to trigger');
+      }
+    } catch (error) {
+      toast.error('Failed to trigger jackpot');
+    }
+  };
+
+  // Rakeback Management Functions (Phase 4)
+  const loadRakebackConfig = async (currency: string) => {
+    try {
+      const [configRes, statsRes, claimsRes] = await Promise.all([
+        fetch(`${API_URL}/api/admin/rakeback/config/${currency}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        fetch(`${API_URL}/api/admin/rakeback/stats`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        fetch(`${API_URL}/api/admin/rakeback/pending?currency=${currency}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      ]);
+
+      if (configRes.ok) setRakebackConfig(await configRes.json());
+      if (statsRes.ok) setRakebackStats(await statsRes.json());
+      if (claimsRes.ok) {
+        const data = await claimsRes.json();
+        setPendingClaims(data.claims || []);
+      }
+    } catch (error) {
+      console.error('Failed to load rakeback data:', error);
+    }
+  };
+
+  const updateRakebackConfig = async (updates: any) => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/rakeback/config/${selectedCurrency}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(updates)
+      });
+      if (res.ok) {
+        toast.success('Rakeback config updated');
+        setRakebackConfig(await res.json());
+      } else {
+        toast.error('Failed to update config');
+      }
+    } catch (error) {
+      toast.error('Failed to update config');
+    }
+  };
+
+  const approveClaim = async (claimId: string) => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/rakeback/${claimId}/approve`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        toast.success('Claim approved');
+        loadRakebackConfig(selectedCurrency);
+      } else {
+        toast.error('Failed to approve claim');
+      }
+    } catch (error) {
+      toast.error('Failed to approve claim');
+    }
+  };
+
+  // Financial Reports Functions (Phase 5)
+  const loadRevenueReport = async () => {
+    try {
+      const res = await fetch(
+        `${API_URL}/api/admin/reports/revenue?startDate=${reportDateRange.start}&endDate=${reportDateRange.end}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (res.ok) {
+        setRevenueReport(await res.json());
+      }
+    } catch (error) {
+      console.error('Failed to load revenue report:', error);
+    }
+  };
+
+  const loadPnlByGame = async () => {
+    try {
+      const res = await fetch(
+        `${API_URL}/api/admin/reports/pnl-by-game?startDate=${reportDateRange.start}&endDate=${reportDateRange.end}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        setPnlByGame(data.data || []);
+      }
+    } catch (error) {
+      console.error('Failed to load P&L by game:', error);
+    }
+  };
+
+  const exportReport = async (type: string) => {
+    try {
+      const res = await fetch(
+        `${API_URL}/api/admin/reports/export?type=${type}&startDate=${reportDateRange.start}&endDate=${reportDateRange.end}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${type}_report.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success(`${type} report downloaded`);
+      } else {
+        toast.error('Failed to export');
+      }
+    } catch (error) {
+      toast.error('Failed to export');
+    }
+  };
+
+  // Platform Settings Functions (Phase 6)
+  const loadPlatformSettings = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/settings`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setPlatformSettings(await res.json());
+      }
+    } catch (error) {
+      console.error('Failed to load settings:', error);
+    }
+  };
+
+  const savePlatformSettings = async () => {
+    setSettingsSaving(true);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/settings`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(platformSettings)
+      });
+      if (res.ok) {
+        toast.success('Settings saved successfully');
+        setPlatformSettings(await res.json());
+      } else {
+        toast.error('Failed to save settings');
+      }
+    } catch (error) {
+      toast.error('Failed to save settings');
+    }
+    setSettingsSaving(false);
+  };
+
+  const resetPlatformSettings = async () => {
+    if (!confirm('Reset all settings to defaults? This cannot be undone.')) return;
+    try {
+      const res = await fetch(`${API_URL}/api/admin/settings/reset`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        toast.success('Settings reset to defaults');
+        loadPlatformSettings();
+      } else {
+        const err = await res.json();
+        toast.error(err.error || 'Failed to reset settings');
+      }
+    } catch (error) {
+      toast.error('Failed to reset settings');
+    }
+  };
+
   const createChallenge = async () => {
     try {
       const res = await fetch(`${API_URL}/api/admin/challenges`, {
@@ -505,6 +795,9 @@ export default function AdminPanel() {
                   { id: 'dashboard', label: '📊 Dashboard', icon: '📊' },
                   { id: 'games', label: '🎮 Games Config', icon: '🎮' },
                   { id: 'jackpots', label: '🎰 Jackpots', icon: '🎰' },
+                  { id: 'jackpot-conditions', label: '⚡ Jackpot Rules', icon: '⚡' },
+                  { id: 'rakeback', label: '💰 Rakeback', icon: '💰' },
+                  { id: 'reports', label: '📈 Reports', icon: '📈' },
                   { id: 'users', label: '👥 Users', icon: '👥' },
                   { id: 'challenges', label: '🏆 Challenges', icon: '🏆' },
                   { id: 'contests', label: '🎯 Contests', icon: '🎯' },
@@ -1557,29 +1850,892 @@ export default function AdminPanel() {
               </div>
             )}
 
+            {/* Jackpot Conditions Tab (Phase 3) */}
+            {activeTab === 'jackpot-conditions' && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-3xl font-bold gradient-text">⚡ Game-Specific Jackpot Conditions</h2>
+                  <button
+                    onClick={initializeJackpotConditions}
+                    className="btn-secondary"
+                  >
+                    🔄 Initialize All Defaults
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-3 gap-6">
+                  {/* Game List */}
+                  <div className="col-span-1 card">
+                    <h3 className="text-lg font-bold mb-4">Select Game</h3>
+                    <div className="space-y-2">
+                      {['DICE', 'LIMBO', 'CRASH', 'PLINKO', 'MINES', 'FASTPARITY', 'BALLOON',
+                        'COINFLIP', 'WHEEL', 'ROULETTE', 'KENO', 'HILO', 'BLACKJACK', 'TOWER', 'STAIRS'].map(game => (
+                          <button
+                            key={game}
+                            onClick={() => loadGameConditions(game)}
+                            className={`w-full text-left px-4 py-3 rounded-lg transition-all ${selectedGameConditions?.gameType === game
+                              ? 'bg-primary text-white'
+                              : 'bg-gray-800/50 hover:bg-gray-800 text-gray-300'
+                              }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium">{game}</span>
+                              {jackpotConditions.find(c => c.gameType === game) ? (
+                                <span className="text-xs text-green-400">✓ Configured</span>
+                              ) : (
+                                <span className="text-xs text-gray-500">Default</span>
+                              )}
+                            </div>
+                          </button>
+                        ))}
+                    </div>
+                  </div>
+
+                  {/* Condition Editor */}
+                  <div className="col-span-2">
+                    {selectedGameConditions ? (
+                      <div className="card">
+                        <div className="flex items-center justify-between mb-6">
+                          <h3 className="text-xl font-bold">{selectedGameConditions.gameType} Conditions</h3>
+                          <div className="flex items-center gap-3">
+                            <label className="flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                checked={selectedGameConditions.enabled}
+                                onChange={(e) => updateGameConditions(selectedGameConditions.gameType, {
+                                  ...selectedGameConditions,
+                                  enabled: e.target.checked
+                                })}
+                                className="w-5 h-5"
+                              />
+                              <span className="text-sm">Enabled</span>
+                            </label>
+                            <button
+                              onClick={() => { setShowTriggerModal(true); }}
+                              className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm"
+                            >
+                              🎯 Manual Trigger
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Conditions List */}
+                        <div className="mb-6">
+                          <h4 className="text-sm text-gray-400 mb-3">Win Conditions</h4>
+                          <div className="space-y-3">
+                            {selectedGameConditions.conditions?.map((cond: any, idx: number) => (
+                              <div key={idx} className={`p-4 rounded-lg border ${cond.enabled ? 'bg-gray-800/50 border-green-800/50' : 'bg-gray-900/50 border-gray-700 opacity-60'}`}>
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-3">
+                                    <input
+                                      type="checkbox"
+                                      checked={cond.enabled}
+                                      onChange={(e) => {
+                                        const newConditions = [...selectedGameConditions.conditions];
+                                        newConditions[idx] = { ...cond, enabled: e.target.checked };
+                                        updateGameConditions(selectedGameConditions.gameType, {
+                                          ...selectedGameConditions,
+                                          conditions: newConditions
+                                        });
+                                      }}
+                                      className="w-4 h-4"
+                                    />
+                                    <span className="font-bold text-primary">{cond.type.replace(/_/g, ' ')}</span>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-3 gap-3 text-sm">
+                                  {cond.value !== undefined && (
+                                    <div>
+                                      <label className="text-xs text-gray-500">Target Value</label>
+                                      <input
+                                        type="number"
+                                        value={cond.value}
+                                        onChange={(e) => {
+                                          const newConditions = [...selectedGameConditions.conditions];
+                                          newConditions[idx] = { ...cond, value: parseFloat(e.target.value) };
+                                          updateGameConditions(selectedGameConditions.gameType, {
+                                            ...selectedGameConditions,
+                                            conditions: newConditions
+                                          });
+                                        }}
+                                        className="w-full bg-gray-700 rounded px-2 py-1 mt-1"
+                                        step="0.01"
+                                      />
+                                    </div>
+                                  )}
+                                  {cond.count !== undefined && (
+                                    <div>
+                                      <label className="text-xs text-gray-500">Count</label>
+                                      <input
+                                        type="number"
+                                        value={cond.count}
+                                        onChange={(e) => {
+                                          const newConditions = [...selectedGameConditions.conditions];
+                                          newConditions[idx] = { ...cond, count: parseInt(e.target.value) };
+                                          updateGameConditions(selectedGameConditions.gameType, {
+                                            ...selectedGameConditions,
+                                            conditions: newConditions
+                                          });
+                                        }}
+                                        className="w-full bg-gray-700 rounded px-2 py-1 mt-1"
+                                      />
+                                    </div>
+                                  )}
+                                  {cond.probability !== undefined && (
+                                    <div>
+                                      <label className="text-xs text-gray-500">Probability %</label>
+                                      <input
+                                        type="number"
+                                        value={cond.probability}
+                                        onChange={(e) => {
+                                          const newConditions = [...selectedGameConditions.conditions];
+                                          newConditions[idx] = { ...cond, probability: parseFloat(e.target.value) };
+                                          updateGameConditions(selectedGameConditions.gameType, {
+                                            ...selectedGameConditions,
+                                            conditions: newConditions
+                                          });
+                                        }}
+                                        className="w-full bg-gray-700 rounded px-2 py-1 mt-1"
+                                        step="0.001"
+                                      />
+                                    </div>
+                                  )}
+                                  {cond.inARow !== undefined && (
+                                    <label className="flex items-center gap-2">
+                                      <input
+                                        type="checkbox"
+                                        checked={cond.inARow}
+                                        onChange={(e) => {
+                                          const newConditions = [...selectedGameConditions.conditions];
+                                          newConditions[idx] = { ...cond, inARow: e.target.checked };
+                                          updateGameConditions(selectedGameConditions.gameType, {
+                                            ...selectedGameConditions,
+                                            conditions: newConditions
+                                          });
+                                        }}
+                                      />
+                                      <span className="text-xs text-gray-400">In a Row</span>
+                                    </label>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Payout Tiers */}
+                        <div className="mb-6">
+                          <h4 className="text-sm text-gray-400 mb-3">Payout Tiers</h4>
+                          <div className="grid grid-cols-3 gap-3">
+                            {selectedGameConditions.payoutTiers?.map((tier: any, idx: number) => (
+                              <div key={idx} className="bg-gray-800/50 rounded-lg p-3">
+                                <div className="text-xs text-gray-500 mb-1">Min Bet: ${tier.minBetAmount}</div>
+                                <div className="text-lg font-bold text-green-400">{tier.payoutPercent}%</div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* House Edge Contribution */}
+                        <div className="bg-gray-800/30 rounded-lg p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="text-sm text-gray-400">House Edge → Jackpot</div>
+                              <div className="text-2xl font-bold text-primary">{selectedGameConditions.houseEdgeContribution || 10}%</div>
+                            </div>
+                            <input
+                              type="range"
+                              min="0"
+                              max="50"
+                              value={selectedGameConditions.houseEdgeContribution || 10}
+                              onChange={(e) => updateGameConditions(selectedGameConditions.gameType, {
+                                ...selectedGameConditions,
+                                houseEdgeContribution: parseInt(e.target.value)
+                              })}
+                              className="w-32"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="card text-center text-gray-500 py-16">
+                        <div className="text-5xl mb-4">⚡</div>
+                        <div className="text-lg">Select a game to configure jackpot conditions</div>
+                        <div className="text-sm mt-2">Each game has unique win conditions based on its mechanics</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Manual Trigger Modal */}
+                {showTriggerModal && selectedGameConditions && (
+                  <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+                    <div className="bg-gray-900 rounded-lg p-6 w-full max-w-md border border-gray-700">
+                      <h3 className="text-xl font-bold mb-4">🎯 Manual Jackpot Trigger - {selectedGameConditions.gameType}</h3>
+
+                      <div className="bg-yellow-900/30 border border-yellow-800 rounded-lg p-3 mb-4 text-sm text-yellow-400">
+                        ⚠️ This will trigger a jackpot payout for testing purposes. Use with caution!
+                      </div>
+
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-sm text-gray-400">User ID (optional - for testing)</label>
+                          <input
+                            type="text"
+                            value={triggerData.userId}
+                            onChange={(e) => setTriggerData(prev => ({ ...prev, userId: e.target.value }))}
+                            className="w-full bg-gray-800 rounded px-3 py-2 mt-1"
+                            placeholder="Leave empty for no payout"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm text-gray-400">Amount (0 = full jackpot)</label>
+                          <input
+                            type="number"
+                            value={triggerData.amount}
+                            onChange={(e) => setTriggerData(prev => ({ ...prev, amount: parseFloat(e.target.value) || 0 }))}
+                            className="w-full bg-gray-800 rounded px-3 py-2 mt-1"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm text-gray-400">Reason (required for audit) *</label>
+                          <textarea
+                            value={triggerData.reason}
+                            onChange={(e) => setTriggerData(prev => ({ ...prev, reason: e.target.value }))}
+                            className="w-full bg-gray-800 rounded px-3 py-2 mt-1 h-20"
+                            placeholder="Testing jackpot system..."
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3 mt-6">
+                        <button
+                          onClick={() => { setShowTriggerModal(false); setTriggerData({ userId: '', amount: 0, reason: '' }); }}
+                          className="btn-secondary flex-1"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={() => triggerJackpot(selectedGameConditions.gameType)}
+                          className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg flex-1"
+                        >
+                          🎯 Trigger Jackpot
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Rakeback Management Tab (Phase 4) */}
+            {activeTab === 'rakeback' && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-3xl font-bold gradient-text">💰 Rakeback Management</h2>
+                  <div className="flex items-center gap-3">
+                    <select
+                      value={selectedCurrency}
+                      onChange={(e) => {
+                        setSelectedCurrency(e.target.value);
+                        loadRakebackConfig(e.target.value);
+                      }}
+                      className="bg-gray-800 rounded px-3 py-2"
+                    >
+                      <option value="USD">USD</option>
+                      <option value="BTC">BTC</option>
+                      <option value="ETH">ETH</option>
+                    </select>
+                    <button
+                      onClick={() => loadRakebackConfig(selectedCurrency)}
+                      className="btn-secondary"
+                    >
+                      🔄 Refresh
+                    </button>
+                  </div>
+                </div>
+
+                {/* Stats Overview */}
+                {rakebackStats && (
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="card bg-gradient-to-br from-orange-900/30 to-orange-800/10 border border-orange-800/50">
+                      <div className="text-sm text-orange-400">Pending Payouts</div>
+                      <div className="text-3xl font-bold text-orange-400">
+                        ${(rakebackStats.pending?.[selectedCurrency]?.total || 0).toFixed(2)}
+                      </div>
+                      <div className="text-xs text-gray-400">{rakebackStats.pending?.[selectedCurrency]?.count || 0} claims</div>
+                    </div>
+                    <div className="card bg-gradient-to-br from-green-900/30 to-green-800/10 border border-green-800/50">
+                      <div className="text-sm text-green-400">Total Paid Out</div>
+                      <div className="text-3xl font-bold text-green-400">
+                        ${(rakebackStats.claimed?.[selectedCurrency]?.total || 0).toFixed(2)}
+                      </div>
+                      <div className="text-xs text-gray-400">{rakebackStats.claimed?.[selectedCurrency]?.count || 0} claims</div>
+                    </div>
+                    <div className="card">
+                      <div className="text-sm text-gray-400">Configuration Status</div>
+                      <div className="text-3xl font-bold text-primary">
+                        {rakebackConfig?.enabled ? '✅ Active' : '⏸ Paused'}
+                      </div>
+                      <div className="text-xs text-gray-400">{rakebackConfig?.tiers?.length || 0} tiers configured</div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-6">
+                  {/* Config Form */}
+                  <div className="card">
+                    <h3 className="text-lg font-bold mb-4">Configuration</h3>
+                    {rakebackConfig ? (
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-400">Rakeback Enabled</span>
+                          <input
+                            type="checkbox"
+                            checked={rakebackConfig.enabled}
+                            onChange={(e) => updateRakebackConfig({ ...rakebackConfig, enabled: e.target.checked })}
+                            className="w-5 h-5"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm text-gray-400">Min Claim Amount</label>
+                          <input
+                            type="number"
+                            value={rakebackConfig.minClaimAmount || 1}
+                            onChange={(e) => updateRakebackConfig({ ...rakebackConfig, minClaimAmount: parseFloat(e.target.value) })}
+                            className="w-full bg-gray-700 rounded px-3 py-2 mt-1"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm text-gray-400">Max Claim Amount</label>
+                          <input
+                            type="number"
+                            value={rakebackConfig.maxClaimAmount || 10000}
+                            onChange={(e) => updateRakebackConfig({ ...rakebackConfig, maxClaimAmount: parseFloat(e.target.value) })}
+                            className="w-full bg-gray-700 rounded px-3 py-2 mt-1"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm text-gray-400">House Edge Contribution %</label>
+                          <div className="flex items-center gap-3 mt-1">
+                            <input
+                              type="range"
+                              min="0"
+                              max="20"
+                              value={rakebackConfig.contributionPercent || 5}
+                              onChange={(e) => updateRakebackConfig({ ...rakebackConfig, contributionPercent: parseInt(e.target.value) })}
+                              className="flex-1"
+                            />
+                            <span className="text-primary font-bold w-12">{rakebackConfig.contributionPercent || 5}%</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-400">Auto Credit to Wallet</span>
+                          <input
+                            type="checkbox"
+                            checked={rakebackConfig.autoCredit}
+                            onChange={(e) => updateRakebackConfig({ ...rakebackConfig, autoCredit: e.target.checked })}
+                            className="w-5 h-5"
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center text-gray-500 py-8">
+                        Click Refresh to load configuration
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Tiers */}
+                  <div className="card">
+                    <h3 className="text-lg font-bold mb-4">Rakeback Tiers</h3>
+                    {rakebackConfig?.tiers ? (
+                      <div className="space-y-3">
+                        {rakebackConfig.tiers.map((tier: any, idx: number) => (
+                          <div key={idx} className="bg-gray-800/50 rounded-lg p-3 flex items-center justify-between">
+                            <div>
+                              <div className="font-bold text-primary">{tier.name}</div>
+                              <div className="text-xs text-gray-400">Min Wagered: ${tier.minWagered.toLocaleString()}</div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-2xl font-bold text-green-400">{tier.percentage}%</div>
+                              <div className="text-xs text-gray-500">{tier.claimFrequency}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center text-gray-500 py-8">
+                        No tiers configured
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Pending Claims Table */}
+                <div className="card">
+                  <h3 className="text-lg font-bold mb-4">Pending Claims ({pendingClaims.length})</h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="border-b border-gray-700">
+                        <tr>
+                          <th className="text-left py-3 text-gray-400">User</th>
+                          <th className="text-left py-3 text-gray-400">Amount</th>
+                          <th className="text-left py-3 text-gray-400">Created</th>
+                          <th className="text-left py-3 text-gray-400">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pendingClaims.map((claim: any) => (
+                          <tr key={claim._id} className="border-b border-gray-800">
+                            <td className="py-3">
+                              <span className="text-primary">{claim.userId?.username || 'Unknown'}</span>
+                            </td>
+                            <td className="py-3">
+                              <span className="font-bold text-green-400">
+                                ${claim.amount.toFixed(2)} {claim.currency}
+                              </span>
+                            </td>
+                            <td className="py-3 text-gray-400">
+                              {new Date(claim.createdAt).toLocaleDateString()}
+                            </td>
+                            <td className="py-3">
+                              <button
+                                onClick={() => approveClaim(claim._id)}
+                                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
+                              >
+                                ✓ Approve
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                        {pendingClaims.length === 0 && (
+                          <tr>
+                            <td colSpan={4} className="py-8 text-center text-gray-500">
+                              No pending claims
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Financial Reports Tab (Phase 5) */}
+            {activeTab === 'reports' && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-3xl font-bold gradient-text">📈 Financial Reports</h2>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="date"
+                      value={reportDateRange.start}
+                      onChange={(e) => setReportDateRange(prev => ({ ...prev, start: e.target.value }))}
+                      className="bg-gray-800 rounded px-3 py-2"
+                    />
+                    <span className="text-gray-500">to</span>
+                    <input
+                      type="date"
+                      value={reportDateRange.end}
+                      onChange={(e) => setReportDateRange(prev => ({ ...prev, end: e.target.value }))}
+                      className="bg-gray-800 rounded px-3 py-2"
+                    />
+                    <button
+                      onClick={() => { loadRevenueReport(); loadPnlByGame(); }}
+                      className="btn-primary"
+                    >
+                      📊 Generate Report
+                    </button>
+                  </div>
+                </div>
+
+                {/* Summary Stats */}
+                {revenueReport?.summary && (
+                  <div className="grid grid-cols-4 gap-4">
+                    <div className="card bg-gradient-to-br from-blue-900/30 to-blue-800/10 border border-blue-800/50">
+                      <div className="text-sm text-blue-400">Total Wagered</div>
+                      <div className="text-3xl font-bold text-blue-400">
+                        ${revenueReport.summary.totalWagered.toLocaleString()}
+                      </div>
+                    </div>
+                    <div className="card bg-gradient-to-br from-purple-900/30 to-purple-800/10 border border-purple-800/50">
+                      <div className="text-sm text-purple-400">Total Payout</div>
+                      <div className="text-3xl font-bold text-purple-400">
+                        ${revenueReport.summary.totalPayout.toLocaleString()}
+                      </div>
+                    </div>
+                    <div className={`card bg-gradient-to-br ${revenueReport.summary.totalProfit >= 0 ? 'from-green-900/30 to-green-800/10 border-green-800/50' : 'from-red-900/30 to-red-800/10 border-red-800/50'} border`}>
+                      <div className="text-sm text-gray-400">Net Profit</div>
+                      <div className={`text-3xl font-bold ${revenueReport.summary.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        ${revenueReport.summary.totalProfit.toLocaleString()}
+                      </div>
+                    </div>
+                    <div className="card">
+                      <div className="text-sm text-gray-400">Total Bets</div>
+                      <div className="text-3xl font-bold text-primary">
+                        {revenueReport.summary.totalBets.toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Export Buttons */}
+                <div className="card">
+                  <h3 className="text-lg font-bold mb-4">Export Data</h3>
+                  <div className="flex gap-3">
+                    <button onClick={() => exportReport('revenue')} className="btn-secondary flex items-center gap-2">
+                      📥 Revenue CSV
+                    </button>
+                    <button onClick={() => exportReport('users')} className="btn-secondary flex items-center gap-2">
+                      📥 Users CSV
+                    </button>
+                    <button onClick={() => exportReport('bets')} className="btn-secondary flex items-center gap-2">
+                      📥 Bets CSV
+                    </button>
+                  </div>
+                </div>
+
+                {/* P&L by Game */}
+                <div className="card">
+                  <h3 className="text-lg font-bold mb-4">P&L by Game</h3>
+                  {pnlByGame.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="border-b border-gray-700">
+                          <tr>
+                            <th className="text-left py-3 text-gray-400">Game</th>
+                            <th className="text-right py-3 text-gray-400">Wagered</th>
+                            <th className="text-right py-3 text-gray-400">Payout</th>
+                            <th className="text-right py-3 text-gray-400">Profit</th>
+                            <th className="text-right py-3 text-gray-400">Margin %</th>
+                            <th className="text-right py-3 text-gray-400">Bets</th>
+                            <th className="text-right py-3 text-gray-400">Players</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {pnlByGame.map((game: any, idx: number) => (
+                            <tr key={idx} className="border-b border-gray-800">
+                              <td className="py-3 font-bold text-primary">{game.gameType}</td>
+                              <td className="py-3 text-right">${game.wagered.toLocaleString()}</td>
+                              <td className="py-3 text-right text-purple-400">${game.payout.toLocaleString()}</td>
+                              <td className={`py-3 text-right font-bold ${game.profit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                ${game.profit.toLocaleString()}
+                              </td>
+                              <td className={`py-3 text-right ${parseFloat(game.profitMargin) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                {game.profitMargin}%
+                              </td>
+                              <td className="py-3 text-right text-gray-400">{game.bets.toLocaleString()}</td>
+                              <td className="py-3 text-right text-gray-400">{game.uniquePlayers}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="text-center text-gray-500 py-8">
+                      Click "Generate Report" to load P&L data
+                    </div>
+                  )}
+                </div>
+
+                {/* Daily Revenue Table */}
+                {revenueReport?.data && revenueReport.data.length > 0 && (
+                  <div className="card">
+                    <h3 className="text-lg font-bold mb-4">Daily Revenue</h3>
+                    <div className="overflow-x-auto max-h-96">
+                      <table className="w-full">
+                        <thead className="border-b border-gray-700 sticky top-0 bg-gray-900">
+                          <tr>
+                            <th className="text-left py-3 text-gray-400">Date</th>
+                            <th className="text-right py-3 text-gray-400">Wagered</th>
+                            <th className="text-right py-3 text-gray-400">Payout</th>
+                            <th className="text-right py-3 text-gray-400">Profit</th>
+                            <th className="text-right py-3 text-gray-400">Bets</th>
+                            <th className="text-right py-3 text-gray-400">Win Rate</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {revenueReport.data.map((day: any, idx: number) => (
+                            <tr key={idx} className="border-b border-gray-800">
+                              <td className="py-2">{day.date}</td>
+                              <td className="py-2 text-right">${day.wagered.toFixed(2)}</td>
+                              <td className="py-2 text-right text-purple-400">${day.payout.toFixed(2)}</td>
+                              <td className={`py-2 text-right ${day.profit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                ${day.profit.toFixed(2)}
+                              </td>
+                              <td className="py-2 text-right text-gray-400">{day.bets}</td>
+                              <td className="py-2 text-right text-gray-400">{day.winRate}%</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Settings Tab */}
             {activeTab === 'settings' && (
               <div className="space-y-6">
-                <h2 className="text-3xl font-bold gradient-text">Platform Settings</h2>
-
-                <div className="card">
-                  <h3 className="text-xl font-bold mb-4">Global Configuration</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-sm text-gray-400">Default House Edge (%)</label>
-                      <input type="number" className="w-full bg-gray-800 rounded px-3 py-2 mt-1" defaultValue="1.0" step="0.1" />
-                    </div>
-                    <div>
-                      <label className="text-sm text-gray-400">Max Bet Multiplier</label>
-                      <input type="number" className="w-full bg-gray-800 rounded px-3 py-2 mt-1" defaultValue="10000" />
-                    </div>
-                    <div>
-                      <label className="text-sm text-gray-400">Jackpot Contribution (%)</label>
-                      <input type="number" className="w-full bg-gray-800 rounded px-3 py-2 mt-1" defaultValue="0.1" step="0.01" />
-                    </div>
-                    <button className="btn-primary w-full">Save Settings</button>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-3xl font-bold gradient-text">⚙️ Platform Settings</h2>
+                  <div className="flex items-center gap-3">
+                    <button onClick={loadPlatformSettings} className="btn-secondary">
+                      🔄 Load
+                    </button>
+                    <button
+                      onClick={savePlatformSettings}
+                      disabled={settingsSaving || !platformSettings}
+                      className="btn-primary"
+                    >
+                      {settingsSaving ? '💾 Saving...' : '💾 Save Settings'}
+                    </button>
+                    <button
+                      onClick={resetPlatformSettings}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+                    >
+                      ⚠️ Reset to Defaults
+                    </button>
                   </div>
                 </div>
+
+                {platformSettings ? (
+                  <div className="grid grid-cols-2 gap-6">
+                    {/* General Settings */}
+                    <div className="card">
+                      <h3 className="text-xl font-bold mb-4 text-blue-400">🌐 General Settings</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-sm text-gray-400">Site Name</label>
+                          <input
+                            type="text"
+                            value={platformSettings.siteName || ''}
+                            onChange={(e) => setPlatformSettings({ ...platformSettings, siteName: e.target.value })}
+                            className="w-full bg-gray-800 rounded px-3 py-2 mt-1"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm text-gray-400">Site Description</label>
+                          <input
+                            type="text"
+                            value={platformSettings.siteDescription || ''}
+                            onChange={(e) => setPlatformSettings({ ...platformSettings, siteDescription: e.target.value })}
+                            className="w-full bg-gray-800 rounded px-3 py-2 mt-1"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between bg-yellow-900/20 p-3 rounded-lg">
+                          <div>
+                            <div className="font-bold text-yellow-400">⚠️ Maintenance Mode</div>
+                            <div className="text-xs text-gray-400">Disable all games for maintenance</div>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={platformSettings.maintenanceMode || false}
+                            onChange={(e) => setPlatformSettings({ ...platformSettings, maintenanceMode: e.target.checked })}
+                            className="w-6 h-6"
+                          />
+                        </div>
+                        {platformSettings.maintenanceMode && (
+                          <div>
+                            <label className="text-sm text-gray-400">Maintenance Message</label>
+                            <textarea
+                              value={platformSettings.maintenanceMessage || ''}
+                              onChange={(e) => setPlatformSettings({ ...platformSettings, maintenanceMessage: e.target.value })}
+                              className="w-full bg-gray-800 rounded px-3 py-2 mt-1"
+                              rows={2}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Game Settings */}
+                    <div className="card">
+                      <h3 className="text-xl font-bold mb-4 text-green-400">🎮 Game Settings</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-sm text-gray-400">Default House Edge (%)</label>
+                          <div className="flex items-center gap-3 mt-1">
+                            <input
+                              type="range"
+                              min="0.1"
+                              max="10"
+                              step="0.1"
+                              value={platformSettings.defaultHouseEdge || 1}
+                              onChange={(e) => setPlatformSettings({ ...platformSettings, defaultHouseEdge: parseFloat(e.target.value) })}
+                              className="flex-1"
+                            />
+                            <span className="text-primary font-bold w-16">{platformSettings.defaultHouseEdge || 1}%</span>
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-sm text-gray-400">Max Bet Multiplier</label>
+                          <input
+                            type="number"
+                            value={platformSettings.maxBetMultiplier || 10000}
+                            onChange={(e) => setPlatformSettings({ ...platformSettings, maxBetMultiplier: parseInt(e.target.value) })}
+                            className="w-full bg-gray-800 rounded px-3 py-2 mt-1"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm text-gray-400">Min Bet (USD)</label>
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={platformSettings.minBetAmount?.USD || 0.1}
+                            onChange={(e) => setPlatformSettings({
+                              ...platformSettings,
+                              minBetAmount: { ...platformSettings.minBetAmount, USD: parseFloat(e.target.value) }
+                            })}
+                            className="w-full bg-gray-800 rounded px-3 py-2 mt-1"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm text-gray-400">Max Bet (USD)</label>
+                          <input
+                            type="number"
+                            value={platformSettings.maxBetAmount?.USD || 10000}
+                            onChange={(e) => setPlatformSettings({
+                              ...platformSettings,
+                              maxBetAmount: { ...platformSettings.maxBetAmount, USD: parseFloat(e.target.value) }
+                            })}
+                            className="w-full bg-gray-800 rounded px-3 py-2 mt-1"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Jackpot Settings */}
+                    <div className="card">
+                      <h3 className="text-xl font-bold mb-4 text-purple-400">🎰 Jackpot Settings</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-sm text-gray-400">Jackpot Contribution (%)</label>
+                          <div className="flex items-center gap-3 mt-1">
+                            <input
+                              type="range"
+                              min="0"
+                              max="50"
+                              value={platformSettings.jackpotContributionPercent || 10}
+                              onChange={(e) => setPlatformSettings({ ...platformSettings, jackpotContributionPercent: parseInt(e.target.value) })}
+                              className="flex-1"
+                            />
+                            <span className="text-primary font-bold w-16">{platformSettings.jackpotContributionPercent || 10}%</span>
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-sm text-gray-400">Min Jackpot Seed (USD)</label>
+                          <input
+                            type="number"
+                            value={platformSettings.jackpotMinSeed?.USD || 1000}
+                            onChange={(e) => setPlatformSettings({
+                              ...platformSettings,
+                              jackpotMinSeed: { ...platformSettings.jackpotMinSeed, USD: parseFloat(e.target.value) }
+                            })}
+                            className="w-full bg-gray-800 rounded px-3 py-2 mt-1"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* User Settings */}
+                    <div className="card">
+                      <h3 className="text-xl font-bold mb-4 text-orange-400">👤 User Settings</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-sm text-gray-400">Max Daily Withdrawal (USD)</label>
+                          <input
+                            type="number"
+                            value={platformSettings.maxDailyWithdrawal?.USD || 50000}
+                            onChange={(e) => setPlatformSettings({
+                              ...platformSettings,
+                              maxDailyWithdrawal: { ...platformSettings.maxDailyWithdrawal, USD: parseFloat(e.target.value) }
+                            })}
+                            className="w-full bg-gray-800 rounded px-3 py-2 mt-1"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm text-gray-400">Max Withdrawals Per Day</label>
+                          <input
+                            type="number"
+                            value={platformSettings.maxWithdrawalsPerDay || 5}
+                            onChange={(e) => setPlatformSettings({ ...platformSettings, maxWithdrawalsPerDay: parseInt(e.target.value) })}
+                            className="w-full bg-gray-800 rounded px-3 py-2 mt-1"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-bold">🎁 New User Bonus</div>
+                            <div className="text-xs text-gray-400">Enable welcome bonus</div>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={platformSettings.newUserBonusEnabled || false}
+                            onChange={(e) => setPlatformSettings({ ...platformSettings, newUserBonusEnabled: e.target.checked })}
+                            className="w-5 h-5"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Security Settings */}
+                    <div className="card col-span-2">
+                      <h3 className="text-xl font-bold mb-4 text-red-400">🔒 Security Settings</h3>
+                      <div className="grid grid-cols-4 gap-4">
+                        <div>
+                          <label className="text-sm text-gray-400">Max Login Attempts</label>
+                          <input
+                            type="number"
+                            value={platformSettings.maxLoginAttempts || 5}
+                            onChange={(e) => setPlatformSettings({ ...platformSettings, maxLoginAttempts: parseInt(e.target.value) })}
+                            className="w-full bg-gray-800 rounded px-3 py-2 mt-1"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm text-gray-400">Lockout Duration (min)</label>
+                          <input
+                            type="number"
+                            value={platformSettings.lockoutDurationMinutes || 30}
+                            onChange={(e) => setPlatformSettings({ ...platformSettings, lockoutDurationMinutes: parseInt(e.target.value) })}
+                            className="w-full bg-gray-800 rounded px-3 py-2 mt-1"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm text-gray-400">Session Timeout (min)</label>
+                          <input
+                            type="number"
+                            value={platformSettings.sessionTimeoutMinutes || 60}
+                            onChange={(e) => setPlatformSettings({ ...platformSettings, sessionTimeoutMinutes: parseInt(e.target.value) })}
+                            className="w-full bg-gray-800 rounded px-3 py-2 mt-1"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-bold">🔐 Require 2FA</div>
+                            <div className="text-xs text-gray-400">For all users</div>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={platformSettings.require2FA || false}
+                            onChange={(e) => setPlatformSettings({ ...platformSettings, require2FA: e.target.checked })}
+                            className="w-5 h-5"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="card text-center py-12">
+                    <div className="text-6xl mb-4">⚙️</div>
+                    <div className="text-xl text-gray-400 mb-4">Click "Load" to fetch platform settings</div>
+                    <button onClick={loadPlatformSettings} className="btn-primary">
+                      🔄 Load Settings
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
