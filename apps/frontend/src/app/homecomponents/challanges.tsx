@@ -88,7 +88,7 @@ const Challenge = () => {
             </p>
 
             <div className="flex items-center space-x-6">
-              <button className="px-6 py-2 bg-[#ff4d00] text-white font-bold rounded-md hover:bg-orange-600 transition shadow-lg shadow-orange-900/20">
+              <button className="px-6 py-2 bg-[#ff4d00] text-white rounded-md hover:bg-orange-600 transition shadow-lg shadow-orange-900/20">
                 Complete Challenge
               </button>
               <div className="flex items-center space-x-2">
