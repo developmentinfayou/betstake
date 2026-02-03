@@ -8,6 +8,7 @@ import ContestWinnerList from "./homecomponents/contestWinnerList";
 import { Rakeback } from "./homecomponents/rackback";
 import TrendingText from "./homecomponents/trendingtext";
 
+
 const games = [
   {
     id: "dice",
@@ -51,6 +52,13 @@ const games = [
     status: "live",
     image: "/images/pump.png",
   },
+  {
+    id: "balloon",
+    name: "Pump",
+    players: "58.8K",
+    status: "live",
+    image: "/images/pump.png",
+  }
 ];
 
 export default function HomePage() {
@@ -261,16 +269,12 @@ export default function HomePage() {
           >
             <svg
               width="12"
-              height="14"
-              viewBox="0 0 12 14"
-              fill="none"
+              height="12"
+              viewBox="0 0 12 12"
+              fill={color}
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path
-                d="M6 1C6 1 11 4 11 7.5C11 10 9 12 6 12C3 12 1 10 1 7.5C1 4 6 1 6 1Z"
-                fill={color}
-              />
-              <ellipse cx="6" cy="12.5" rx="2" ry="1" fill={color} />
+              <path d="M10.6526 4.31742C8.77907 2.85493 7.06028 0.971865 6.34753 0.157452C6.16379 -0.0524839 5.83625 -0.0524839 5.65252 0.157452C4.93975 0.971841 3.22097 2.85491 1.34749 4.31742C0.497458 4.98098 0 5.97875 0 7.03594C0 8.91225 1.57103 10.4333 3.50898 10.4333C4.16441 10.4333 4.76061 10.1881 5.20536 9.78741V10.4499C5.20536 11.2564 4.62449 11.3564 4.17377 11.733C4.06537 11.8236 4.13193 12 4.27347 12H7.71465C7.85569 12 7.92233 11.8248 7.8151 11.7336C7.36901 11.3542 6.79464 11.2696 6.79464 10.4559V9.78738C7.23939 10.1881 7.83559 10.4333 8.49102 10.4333C10.429 10.4333 12 8.91223 12 7.03591C12 5.97875 11.5026 4.98098 10.6526 4.31742Z" />
             </svg>
           </div>
         );
@@ -312,10 +316,10 @@ export default function HomePage() {
       }}
     >
       {/* ✅ HEADER */}
-      <header className="border-b border-[#31313F]">
+      <header className="border-bk bordejjr-[#31313F]">
         <nav className="mx-auto flex h-[81px] max-w-[1440px] items-center justify-between px-8">
           {/* Logo */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-16 w-[163px]">
             <div className="flex relative items-baseline gap-1">
               <img
                 src="/images/logo.svg"
@@ -328,10 +332,10 @@ export default function HomePage() {
           </div>
 
           {/* Center Navigation */}
-          <div className="hidden items-center gap-4 lg:flex">
+          <div className="hidden relative items-center gap-4 lg:flex">
             {/* Primary Nav Tabs */}
             <nav
-              className="inline-flex items-start gap-3 p-1.5 bg-[#73ffd70f] rounded overflow-hidden"
+              className="inline-flex items-start gap-3 p-1.5 bg-[#73ffd70f] h-[41px] w-[326px] rounded overflow-hidden"
               role="navigation"
               aria-label="Main navigation"
             >
@@ -341,17 +345,19 @@ export default function HomePage() {
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded transition-all duration-200 ${isActive
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded transition-all duration-200 ${
+                      isActive
                         ? "bg-[#ffffff0f]"
                         : "bg-transparent hover:bg-[#ffffff08]"
-                      }`}
+                    }`}
                     aria-current={isActive ? "page" : undefined}
                     type="button"
                   >
                     {renderNavIcon(item.id, isActive, item.icon)}
                     <span
-                      className={` text-sm tracking-[1.12px] ${isActive ? "text-white" : "text-[#818181]"
-                        }`}
+                      className={` text-sm tracking-[1.12px] ${
+                        isActive ? "text-white" : "text-[#818181]"
+                      }`}
                     >
                       {item.label}
                     </span>
@@ -362,11 +368,11 @@ export default function HomePage() {
 
             {/* Game Category Tabs */}
             <nav
-              className="relative  h-[41px] rounded overflow-hidden border border-[#31313F]"
+              className="relative  h-[41px] w-[462px] rounded overflow-hidden border border-[#31313F]"
               role="navigation"
               aria-label="Casino games navigation"
             >
-              <div className="flex items-center h-full px-3">
+              <div className="flex items-center h-full gap-1.5 px-3">
                 {gameTabs.map((tab, index) => {
                   const isActive = activeGameTab === tab.id;
                   return (
@@ -379,15 +385,16 @@ export default function HomePage() {
                       >
                         {renderGameIcon(tab.id, isActive)}
                         <span
-                          className={` text-sm tracking-[1.12px] ${isActive ? "text-white" : "text-[#818181]"
-                            }`}
+                          className={` text-sm tracking-[1.12px] ${
+                            isActive ? "text-white" : "text-[#818181]"
+                          }`}
                         >
                           {tab.name}
                         </span>
                       </button>
                       {/* Separator - don't show after last item */}
                       {index < gameTabs.length - 1 && (
-                        <div className="w-px h-4 bg-[#31313F] mx-2" />
+                        <div className="w-px h-4 bg-[#31313F] mx-1" />
                       )}
                     </div>
                   );
@@ -403,11 +410,19 @@ export default function HomePage() {
                 }}
                 aria-hidden="true"
               />
+               
             </nav>
+            <div className="absolute right-[134px] top-[53.5px] z-50">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute image-dot inline-flex h-full w-full  rounded-full bg-emerald-400 opacity-75"></span><span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400"></span></span>
+              </div>
+
+            <hr className="w-[221px] absolute right-0 top-[56px] border-[#31313F]"/>
+
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-6">
             {/* Spin Button */}
             <button className="flex items-center gap-1.5 rounded border border-[#31313F] h-[41px] px-3">
               <img src="/images/spin.svg" />
@@ -434,12 +449,13 @@ export default function HomePage() {
             </button>
           </div>
         </nav>
+      
       </header>
 
       {/* ✅ PAGE CONTAINER */}
       <main className="mx-auto max-w-[1440px] px-8 pb-20 pt-8">
         {/* ✅ TOP CARDS ROW */}
-        <section className="grid gap-3 lg:grid-cols-[592px_335px_1fr]">
+        <section className="grid gap-3 lg:grid-cols-[592px_335px_385px]">
           {/* Jackpot card */}
           <div className="flex flex-col gap-1.5">
             <div className="relative h-[86px] w-full rounded overflow-hidden border border-[#31313F]">
@@ -462,8 +478,9 @@ export default function HomePage() {
                 ].map((img, i) => (
                   <div
                     key={i}
-                    className={`relative self-stretch w-[48px] aspect-[0.78] rounded overflow-hidden ${i === 0 ? "mt-[-145px]" : ""
-                      }`}
+                    className={`relative self-stretch w-[48.22px] h-[62px] aspect-[0.78] rounded overflow-hidden ${
+                      i === 0 ? "mt-[-145px]" : ""
+                    }`}
                   >
                     <img
                       src={img}
@@ -511,8 +528,11 @@ export default function HomePage() {
               </nav>
 
               {/* Jackpot amount */}
-              <div className="absolute top-[38px] left-[266px] w-[146px] h-[31px] flex border-b border-dashed border-[#818181]">
-                <span className="w-36 h-[29px] text-nowrap  font-semibold text-white text-2xl leading-normal">
+              <div className="absolute top-[38px] left-[266px] w-[146px] h-[31px] flex " style={{
+    borderBottom: "1px solid",
+    borderImage: "repeating-linear-gradient(to right, #818181 0 6px, transparent 6px 12px) 1",
+  }}>
+                <span className="w-36 h-[29px] text-nowrap  font-semibold text-white text-2xl leading-normal tracking-[2.5px]  ">
                   0.0021780 BTC
                 </span>
               </div>
@@ -543,12 +563,14 @@ export default function HomePage() {
                 <div className="flex items-center gap-2">
                   <img src="/images/percent.svg" alt="percent" />
 
-                  <span className="text-sm font-medium underline decoration-dashed text-white">
-                    14.18%
-                  </span>
+                  <span className="relative text-sm font text-white tracking-widest">
+  14.18%
+  <span className="pointer-events-none absolute left-0 bottom-[1px] w-full h-px bg-[repeating-linear-gradient(to_right,#818181_0_2px,transparent_2px_4px)]" />
+</span>
 
-                  <span className="flex items-center rounded bg-[#1F8F55] px-2 py-0.5 text-[11px] font-medium text-white">
-                    ▲ 23.1%
+
+                  <span className="flex items-center gap-1 px-[3px] rounded-[3px] bg-[#1F8F55] w-[50px] h-[17px] text-sm tracking-widest text-white">
+                    <span className="text-[6px]">▲</span> 23.1%
                   </span>
                 </div>
 
@@ -559,8 +581,8 @@ export default function HomePage() {
               </div>
 
               {/* Bottom Row */}
-              <div className="mt-3 flex items-center justify-between">
-                <div className="flex items-center gap-2 rounded bg-[#FFFFFF0F] px-3 py-1.5">
+              <div className="mt-3 flex items-center gap-3 ">
+                <div className="flex items-center gap-2 rounded bg-[#FFFFFF0F] px-3 py-1.5 w-[243px] h-[29px]">
                   <img src="/images/inr.svg" alt="inr" />
                   <span className="text-sm text-[#C1C1C1]">5412.81 INR</span>
                   <img
@@ -570,7 +592,7 @@ export default function HomePage() {
                   />
                 </div>
 
-                <button className="rounded-md bg-[#FF4500] px-5 py-1.5 text-sm font-medium text-white hover:opacity-90">
+                <button className="rounded bg-[#FF4500] text-sm font-medium text-white hover:opacity-90 w-[56px] h-[29px] tracking-wide  ">
                   Claim
                 </button>
               </div>
@@ -659,7 +681,7 @@ export default function HomePage() {
                     </div>
 
                     {/* Growth badge */}
-                    <div className="inline-flex items-center gap-1 px-[3px] bg-[#24a654] rounded-[3px]">
+                    <div className="inline-flex w-[50px] h-[17px] items-center gap-1 px-[3px] bg-[#24a654] rounded-[3px]">
                       <svg
                         width="6"
                         height="5"
@@ -692,65 +714,93 @@ export default function HomePage() {
 
         {/* ✅ RECENTLY PLAYED */}
         <section className="mt-10">
-          <div className="text-xs tracking-[0.08em] text-[#5B5B79]">
-            Recently Played
-          </div>
+         
 
-          <div className="mt-3 flex gap-6 overflow-x-auto pb-2">
-
-            {games?.map((g, i) => (
-              <div
-                key={i}
-                className="group relative h-[187px] w-[147px] flex-shrink-0 rounded
-               border border-transparent bg-white/5 p-1
-               transition-all duration-300
-               group-hover:border-[#ffffff]"
-              >
-                {/* IMAGE WRAPPER */}
-                <div className="relative h-full w-full overflow-hidden rounded">
-                  {/* IMAGE */}
-                  <img
-                    src={g.image}
-                    className="h-full w-full object-cover transition-all duration-300 group-hover:blur-sm"
-                    alt=""
-                  />
-
-                  {/* CONTINUE OVERLAY */}
-                  <div
-                    className="absolute inset-0 flex items-end justify-center
-                pb-6 opacity-0 group-hover:opacity-100 transition-all duration-300"
-                  >
-                    <button className="flex items-center gap-1 rounded bg-[#FF4500] px-3 py-1.5 text-xs text-white">
-                      <svg
-                        className="h-4 w-4"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                      Continue
-                    </button>
-                  </div>
-
-                  {/* HEART ICON (HOLLOW) */}
-                  <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <svg
-                      className="h-5 w-5 text-white/80"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            ))}
+        <div className=" flex items-center gap-4 justify-between">
 
 
-            {/* Boom Balloon Card */}
-            <div className="w-full rounded-xl bg-gradient-to-br from-[#1A1A2B] via-[#0F0F1C] to-[#05050A] p-6 shadow-lg">
+          <div className=" flex items-center  overflow-x-auto">
+
+  {games?.map((g, i) => (
+    <div
+      key={i}
+      className="group relative w-[147px] h-[187px] flex-shrink-0"
+    >
+      {/* HOVER FRAME */}
+      <div
+        className="
+          absolute inset-0 rounded
+          border border-[#32323F]
+          opacity-0 group-hover:opacity-100
+          transition-all duration-300
+        "
+      />
+
+      {/* IMAGE WRAPPER */}
+      <div className="absolute left-[12px] top-[12px] w-[123px] h-[163px] overflow-hidden rounded">
+        {/* IMAGE */}
+        <img
+          src={g.image}
+          alt=""
+          className="
+            h-full w-full object-cover
+            transition-all duration-300
+            group-hover:blur-[1px]
+          "
+        />
+
+        {/* DARK OVERLAY */}
+        <div
+          className="
+            absolute inset-0
+            bg-black/20
+            opacity-0 group-hover:opacity-100
+            transition-all duration-300
+          "
+        />
+      </div>
+
+      {/* CONTINUE BUTTON */}
+      <button
+        className="
+          absolute left-[29px] top-[130px]
+          w-[88px] h-[29px]
+          flex items-center justify-center gap-[6px]
+          rounded bg-[#FF4500]
+          text-xs text-white
+          opacity-0 group-hover:opacity-100
+          transition-all duration-300
+        "
+      >
+        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+        Continue
+      </button>
+
+      {/* HEART ICON */}
+      <div
+        className="
+          absolute left-[109px] top-[24px]
+          opacity-0 group-hover:opacity-100
+          transition-all duration-300
+        "
+      >
+        <svg
+          className="w-[14px] h-[12px]"
+          fill="none"
+          stroke="#828282"
+          strokeWidth="1.5"
+          viewBox="0 0 24 24"
+        >
+          <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+        </svg>
+      </div>
+    </div>
+  ))}
+  </div>
+
+<div className="w-[339px] h-[163px] rounded bg-[#FFFFFF0F] p-3 shadow-lg">
               {/* Header */}
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-white">
@@ -758,12 +808,8 @@ export default function HomePage() {
                 </h2>
 
                 <div className="flex items-center gap-2 text-[#CFCFE6]">
-                  <img
-                    src="/images/users.svg"
-                    alt="users"
-
-                  />
-                  <span className="text-xs underline decoration-dashed underline-offset-4">
+                  <img src="/images/users.svg" alt="users" />
+                  <span className="text-xs underline underline-offset-1">
                     58.8K
                   </span>
                 </div>
@@ -781,13 +827,23 @@ export default function HomePage() {
 
               {/* Footer Button */}
               <div className="mt-6">
-                <button className="flex text-xs items-center gap-2 rounded-md bg-[#FF4500] px-4 py-1.5 font-semibold text-white hover:opacity-90">
+                <button className="flex text-xs items-center gap-2 rounded-[3px] bg-[#FF4500] px-4 py-1.5 font-semibold text-white hover:opacity-90">
                   <img src="/images/whitestar.svg" alt="star" />
                   ORBEIT Originals
                 </button>
               </div>
             </div>
+
+
+</div>
+
+<div className="text-xs tracking-[0.08em] text-[#5B5B79]">
+            Recently Played
           </div>
+
+
+
+
         </section>
 
         {/* ✅ MAIN GRID + TRENDING */}
@@ -797,7 +853,7 @@ export default function HomePage() {
             {/* search/filter row */}
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex flex-wrap items-center gap-4">
-                <div className="flex h-[26px] items-center gap-3 rounded border border-[#31313F] px-3">
+                <div className="flex w-[291.57px] h-[26px] items-center gap-3 rounded border border-[#31313F] px-3">
                   <img src="/images/search.svg" />
                   <input
                     placeholder="Search games..."
@@ -806,11 +862,15 @@ export default function HomePage() {
                 </div>
 
                 <button className="h-[26px] flex items-center gap-1.5 rounded border border-[#31313F] px-4 text-xs text-[#424252]">
-                  <img src="/images/filter.svg" />  Filter
+                  <img src="/images/filter.svg" /> Filter
                 </button>
 
                 <span className="text-xs text-[#AEAEAE]">
-                  Sort by: <span className="text-[#FF4500] underline"> Players Count</span>
+                  Sort by:{" "}
+                  <span className="text-[#FF4500] underline">
+                    {" "}
+                    Players Count
+                  </span>
                 </span>
               </div>
             </div>
@@ -885,8 +945,7 @@ export default function HomePage() {
 
                       <div className="flex items-center justify-center py-2 bg-[#14151a]">
                         <div className="flex items-center gap-2 text-gray-400">
-                          <img src="/images/person.svg" alt="play"
-                          />
+                          <img src="/images/person.svg" alt="play" />
                           <span className="text-xs font-semibold tracking-wide">
                             58.8K
                           </span>
@@ -906,7 +965,7 @@ export default function HomePage() {
             <p className="mt-3 text-xs text-[#828282]">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit...
             </p>
-            <button className="mt-4 flex items-center gap-2 rounded bg-[#FF45001F] px-1 py-1 text-xs">
+            <button className="mt-4 flex items-center gap-2 rounded-[3px] bg-[#FF45001F] px-1 py-1 text-xs">
               <img src="/images/star.svg" />
               ORBEit Originals
             </button>

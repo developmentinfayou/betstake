@@ -38,10 +38,10 @@ const Challenge = () => {
                 </svg>
               </button>
             </div>
-            <span className="text-sm font-semibold text-gray-500">
+            <span className="text-sm  text-gray-500">
               Challenges
             </span>
-            <span className="text-sm font-semibold text-orange-500 border-b border-orange-500 cursor-pointer">
+            <span className="text-sm  text-orange-500 border-b border-orange-500 cursor-pointer">
               View All
             </span>
           </div>

@@ -169,7 +169,7 @@ const HomeFooter = () => {
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="text-white font-bold text-sm tracking-wide">
+                <span className="text-white font-normal text-sm tracking-wide">
                   CrispyPotato
                 </span>
                 <svg
@@ -208,7 +208,7 @@ const HomeFooter = () => {
 
           <button
             onClick={() => depositCoin()}
-            className="flex items-center px-4 py-1.5 bg-[#a2ffda] text-[#0a0b14] font-bold rounded-md hover:bg-[#85eec5] transition shadow-lg shadow-emerald-500/10"
+            className="flex items-center px-4 py-1.5 bg-[#a2ffda] text-[#0a0b14] font-medium rounded-md hover:bg-[#85eec5] transition shadow-lg shadow-emerald-500/10"
           >
             <span className="mr-1 text-lg leading-none">+</span> Deposit
           </button>
@@ -220,7 +220,65 @@ const HomeFooter = () => {
           </div>
         </div>
 
-        <div className="hidden relative xl:flex items-center justify-between px-4 py-1 bg-[#0d0e1b] border border-gray-800 rounded-lg min-w-[720px]">
+        <div className="hidden relative group xl:flex items-center justify-between px-4 py-1 bg-[#0d0e1b] border border-gray-800 rounded-lg min-w-[720px]">
+
+          {/* 🔥 Hover List */}
+<div className="
+  absolute top- bottom-full left-0 mt-1 w-full
+  bg-[#0d0e1b]
+  border border-gray-800 border-b-0
+  rounded-lg
+  rounded-b-none
+  opacity-0 scale-95
+  pointer-events-none
+  transition-all duration-200
+  group-hover:opacity-100
+  group-hover:scale-100
+  group-hover:pointer-events-auto
+  z-50
+">
+    {[...Array(10)].map((_, i) => (
+    <div
+      key={i}
+      className="flex items-center justify-between px-4 py-1 hover:bg-[#16182c] cursor-pointer"
+    >
+      <div className="flex items-center space-x-3">
+        <img src="/images/avatar1.jpg" className="w-6 h-6 rounded" />
+        <span className="text-xs text-white font-semibold">RealBob</span>
+
+        <div className="flex items-center space-x-1">
+          <img src="/images/verified.svg" />
+          <img src="/images/color-star.svg" />
+          <span className="px-1 text-[8px] font-black bg-yellow-400 rounded text-black">
+            VIP
+          </span>
+        </div>
+
+        <span className="text-gray-700">|</span>
+
+        <div className="flex items-center space-x-1">
+          <img src="/images/poker-card.svg" />
+          <span className="text-[10px]">Poker</span>
+        </div>
+
+        <span className="text-gray-700">|</span>
+
+        <div className="flex items-center space-x-2">
+          <img src="/images/trx-currency.svg" />
+          <span className="text-xs text-white">342 TRX</span>
+          <span className="px-2 text-[10px] bg-emerald-400 text-black font-bold rounded">
+            12x
+          </span>
+        </div>
+      </div>
+
+      <span className="text-xs text-gray-500">6:26 PM</span>
+    </div>
+  ))}
+</div>
+
+
+
 
           <div className="flex items-center space-x-3 w-full">
             <img src="/images/avatar1.jpg" className="rounded w-6 h-6" />

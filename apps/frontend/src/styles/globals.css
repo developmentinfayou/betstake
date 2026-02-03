@@ -263,6 +263,12 @@ input[type="range"]::-moz-range-track {
   -webkit-text-stroke: 2px rgba(255,255,255,0.25);
 }
 
+
+.image-dot {
+  box-shadow:
+  0px 0px 13px 2px rgba(115, 255, 215, 1), 0 0 24px rgba(115, 255, 215, 0.64), 0 0 48px ;
+}
+
 .beam {
   background: linear-gradient(
     to bottom,
@@ -272,6 +278,7 @@ input[type="range"]::-moz-range-track {
   );
   filter: blur(2px);
 }
+
 
 .beam-dot {
   display: inline-block;
