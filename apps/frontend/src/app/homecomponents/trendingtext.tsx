@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 
 export default function TrendingText() {
+ 
+
+
+
+
+const text = ["T", "R", "E", "N", "D", "I", "N", "G"];
+
+
   const positions = [
     { top: "50%", left: "5%", width: "3px", height: "1rem" },
     { top: "38%", left: "5%", width: "3px", height: "1rem" },
@@ -52,26 +60,69 @@ export default function TrendingText() {
 
    
   ];
+  const [beamIndex, setBeamIndex] = useState(0);
+  const [filledCount, setFilledCount] = useState(0);
 
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % positions.length);
-    }, 100); // 0.1 second
+      setBeamIndex((prev) => {
+        const next = prev + 1;
+  
+        // cycle complete
+        if (next == positions.length) {
+          
+          setFilledCount((c) =>
+            c == text.length ? 0 : c + 1
+          );
+          return 0;
+        }
 
+         // if (filledCount == text.length) {
+        //   setFilledCount(0);
+        // }
+  
+       
+        return next;
+
+
+        
+      });
+    }, 100);
+  
     return () => clearInterval(interval);
   }, []);
+  
 
   return (
     <div className="">
-      <div className="relative text-[4rem] font-bold tracking-widest text-transparent stroke-text">
-        TRENDING
-        <span
-          className="beam-dot absolute"
-          style={positions[index]}
-        ></span>
-      </div>
+    <div
+  style={{
+    letterSpacing: "7px",
+    WebkitTextStroke: "1px #31313F",
+    fontWeight: 900,
+  }}
+  className="relative text-[5rem] text-transparent"
+>
+  {text.map((char, i) => (
+    <span
+      key={i}
+      className="transition-colors duration-300"
+      style={{
+        color: i < filledCount ? "#FFFFFF0F" : "",
+      }}
+    >
+      {char}
+    </span>
+  ))}
+
+  <span
+    className="beam-dot absolute"
+    style={positions[beamIndex]}
+  />
+</div>
+
     </div>
   );
 }
