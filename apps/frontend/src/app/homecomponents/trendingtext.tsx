@@ -1,128 +1,177 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export default function TrendingText() {
- 
+  const letters = ["T", "R", "E", "N", "D", "I", "N", "G"];
+  const hasFilledRef = useRef(false);
 
+  const [letterIndex, setLetterIndex] = useState(0); // kaunsa letter chal raha
+  const [beamIndex, setBeamIndex] = useState(0); // us letter ka position
+  const [filledCount, setFilledCount] = useState(0); // kitne letters fill ho chuke
 
-
-
-const text = ["T", "R", "E", "N", "D", "I", "N", "G"];
-
-
-  const positions = [
-    { top: "50%", left: "5%", width: "3px", height: "1rem" },
-    { top: "38%", left: "5%", width: "3px", height: "1rem" },
-    { top: "37%", left: "5%", width: "11px", height: "2px" },
-    { top: "29%", left: "8%", width: "2px", height: "9px" },
-    { top: "29%", left: "4%", width: "12px", height: "2px" },
-    { top: "29%", left: "1%", width: "12px", height: "2px" },
-    { top: "29%", left: "0%", width: "3px", height: "9px" },
-    { top: "36%", left: "0%", width: "3px", height: "3px" },
-    { top: "36%", left: "0%", width: "11px", height: "3px" },
-    { top: "36%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "40%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "46%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "50%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "54%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "58%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "62%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "63%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "64%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "65%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "66%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "67%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "68%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "69%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "70%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "71%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "72%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "73%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "74%", left: "2.5%", width: "3px", height: "3px" },
-    { top: "74%", left: "3%", width: "3px", height: "3px" },
-    { top: "74%", left: "3.5%", width: "3px", height: "3px" },
-    { top: "74%", left: "4%", width: "3px", height: "3px" },
-    { top: "74%", left: "4.5%", width: "3px", height: "3px" },
-    { top: "74%", left: "5%", width: "3px", height: "3px" },
-    { top: "73%", left: "5%", width: "3px", height: "3px" },
-    { top: "72%", left: "5%", width: "3px", height: "3px" },
-    { top: "71%", left: "5%", width: "3px", height: "3px" },
-    { top: "70%", left: "5%", width: "3px", height: "3px" },
-    { top: "69%", left: "5%", width: "3px", height: "3px" },
-    { top: "68%", left: "5%", width: "3px", height: "3px" },
-    { top: "67%", left: "5%", width: "3px", height: "3px" },
-    { top: "66%", left: "5%", width: "3px", height: "3px" },
-    { top: "65%", left: "5%", width: "3px", height: "3px" },
-    { top: "64%", left: "5%", width: "3px", height: "3px" },
-    { top: "63%", left: "5%", width: "3px", height: "3px" },
-    { top: "62%", left: "5%", width: "3px", height: "3px" },
-    { top: "61%", left: "5%", width: "3px", height: "3px" },
-
-
-   
+  const positionsT = [
+    { top: "40%", left: "25.25px", width: "1px", height: "44px" },
+    { top: "39%", left: "25.25px", width: "11.5px", height: "1px" },
+    { top: "30%", left: "36.25px", width: "1px", height: "11px" },
+    { top: "29.5%", left: "1.25px", width: "36px", height: "1px" },
+    { top: "30%", left: "1.25px", width: "1px", height: "11px" },
+    { top: "39%", left: "12.25px", width: "1px", height: "45px" },
+    { top: "76%", left: "12.25px", width: "13.5px", height: "1px" },
+    { top: "40%", left: "25.25px", width: "1px", height: "44px" },
   ];
-  const [beamIndex, setBeamIndex] = useState(0);
-  const [filledCount, setFilledCount] = useState(0);
 
-  const [index, setIndex] = useState(0);
+  const positionsR = [
+    { top: "56%", left: "78.8px", width: "1px", height: "25px", transform: "rotate3d(1, 1, 1, 335deg)" },
+    { top: "39%", left: "25.25px", width: "11.5px", height: "1px" },
+    { top: "30%", left: "36.25px", width: "1px", height: "11px" },
+    { top: "29.5%", left: "1.25px", width: "36px", height: "1px" },
+    { top: "30%", left: "1.25px", width: "1px", height: "11px" },
+    { top: "39%", left: "12.25px", width: "1px", height: "45px" },
+    { top: "76%", left: "12.25px", width: "13.5px", height: "1px" },
+    { top: "40%", left: "25.25px", width: "1px", height: "44px" },
+  ];
+
+  const positionsE = [
+    { top: "40%", left: "25.25px", width: "1px", height: "44px" },
+    { top: "39%", left: "25.25px", width: "11.5px", height: "1px" },
+    { top: "30%", left: "36.25px", width: "1px", height: "11px" },
+    { top: "29.5%", left: "1.25px", width: "36px", height: "1px" },
+    { top: "30%", left: "1.25px", width: "1px", height: "11px" },
+    { top: "39%", left: "12.25px", width: "1px", height: "45px" },
+    { top: "76%", left: "12.25px", width: "13.5px", height: "1px" },
+    { top: "40%", left: "25.25px", width: "1px", height: "44px" },
+  ];
+
+  const positionsN = [
+    { top: "40%", left: "25.25px", width: "1px", height: "44px" },
+    { top: "39%", left: "25.25px", width: "11.5px", height: "1px" },
+    { top: "30%", left: "36.25px", width: "1px", height: "11px" },
+    { top: "29.5%", left: "1.25px", width: "36px", height: "1px" },
+    { top: "30%", left: "1.25px", width: "1px", height: "11px" },
+    { top: "39%", left: "12.25px", width: "1px", height: "45px" },
+    { top: "76%", left: "12.25px", width: "13.5px", height: "1px" },
+    { top: "40%", left: "25.25px", width: "1px", height: "44px" },
+  ];
+
+  const positionsD = [
+    { top: "40%", left: "25.25px", width: "1px", height: "44px" },
+    { top: "39%", left: "25.25px", width: "11.5px", height: "1px" },
+    { top: "30%", left: "36.25px", width: "1px", height: "11px" },
+    { top: "29.5%", left: "1.25px", width: "36px", height: "1px" },
+    { top: "30%", left: "1.25px", width: "1px", height: "11px" },
+    { top: "39%", left: "12.25px", width: "1px", height: "45px" },
+    { top: "76%", left: "12.25px", width: "13.5px", height: "1px" },
+    { top: "40%", left: "25.25px", width: "1px", height: "44px" },
+  ];
+
+  const positionsI = [
+    { top: "40%", left: "25.25px", width: "1px", height: "44px" },
+    { top: "39%", left: "25.25px", width: "11.5px", height: "1px" },
+    { top: "30%", left: "36.25px", width: "1px", height: "11px" },
+    { top: "29.5%", left: "1.25px", width: "36px", height: "1px" },
+    { top: "30%", left: "1.25px", width: "1px", height: "11px" },
+    { top: "39%", left: "12.25px", width: "1px", height: "45px" },
+    { top: "76%", left: "12.25px", width: "13.5px", height: "1px" },
+    { top: "40%", left: "25.25px", width: "1px", height: "44px" },
+  ];
+
+  const positionsN2 = [
+    { top: "40%", left: "25.25px", width: "1px", height: "44px" },
+    { top: "39%", left: "25.25px", width: "11.5px", height: "1px" },
+    { top: "30%", left: "36.25px", width: "1px", height: "11px" },
+    { top: "29.5%", left: "1.25px", width: "36px", height: "1px" },
+    { top: "30%", left: "1.25px", width: "1px", height: "11px" },
+    { top: "39%", left: "12.25px", width: "1px", height: "45px" },
+    { top: "76%", left: "12.25px", width: "13.5px", height: "1px" },
+    { top: "40%", left: "25.25px", width: "1px", height: "44px" },
+  ];
+
+  const positionsG = [
+    { top: "40%", left: "25.25px", width: "1px", height: "44px" },
+    { top: "39%", left: "25.25px", width: "11.5px", height: "1px" },
+    { top: "30%", left: "36.25px", width: "1px", height: "11px" },
+    { top: "29.5%", left: "1.25px", width: "36px", height: "1px" },
+    { top: "30%", left: "1.25px", width: "1px", height: "11px" },
+    { top: "39%", left: "12.25px", width: "1px", height: "45px" },
+    { top: "76%", left: "12.25px", width: "13.5px", height: "1px" },
+    { top: "40%", left: "25.25px", width: "1px", height: "44px" },
+  ];
+
+  const positionsMap = [
+    positionsT,
+    positionsR,
+    positionsE,
+    positionsN,
+    positionsD,
+    positionsI,
+    positionsN2,
+    positionsG,
+  ];
+
+  // React.useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     const currentPositions = positionsMap[letterIndex];
+
+  //     setBeamIndex((prev) => {
+  //       // beam move
+  //       if (prev < currentPositions.length - 1) {
+  //         hasFilledRef.current = false; // reset guard while animating
+  //         return prev + 1;
+  //       }
+
+  //       // 🛑 STRICT MODE GUARD
+  //       if (hasFilledRef.current) return 0;
+  //       hasFilledRef.current = true;
+
+  //       // ✅ EXACTLY ONE FILL
+  //       setFilledCount((f) => f + 1);
+
+  //       if (letterIndex < letters.length - 1) {
+  //         setLetterIndex((l) => l + 1);
+  //       } else {
+  //         // last letter (G)
+  //         setTimeout(() => {
+  //           setFilledCount(0);
+  //           setLetterIndex(0);
+  //         }, 400);
+  //       }
+
+  //       return 0;
+  //     });
+  //   }, 100);
+
+  //   return () => clearInterval(interval);
+  // }, [letterIndex]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setBeamIndex((prev) => {
-        const next = prev + 1;
-  
-        // cycle complete
-        if (next == positions.length) {
-          
-          setFilledCount((c) =>
-            c == text.length ? 0 : c + 1
-          );
-          return 0;
-        }
-
-         // if (filledCount == text.length) {
-        //   setFilledCount(0);
-        // }
-  
-       
-        return next;
-
-
-        
-      });
-    }, 100);
-  
-    return () => clearInterval(interval);
-  }, []);
-  
+    console.log({ letterIndex, filledCount, beamIndex });
+  }, [letterIndex, filledCount, beamIndex]);
 
   return (
     <div className="">
-    <div
-  style={{
-    letterSpacing: "7px",
-    WebkitTextStroke: "1px #31313F",
-    fontWeight: 900,
-  }}
-  className="relative text-[5rem] text-transparent"
->
-  {text.map((char, i) => (
-    <span
-      key={i}
-      className="transition-colors duration-300"
-      style={{
-        color: i < filledCount ? "#FFFFFF0F" : "",
-      }}
-    >
-      {char}
-    </span>
-  ))}
+      <div
+        style={{
+          letterSpacing: "7px",
+          WebkitTextStroke: "1px #31313F",
+          fontWeight: 900,
+        }}
+        className="relative text-[5rem]"
+      >
+        {letters?.map((char, i) => (
+          <span
+            key={i}
+            style={{
+              color: i < filledCount ? "#FFFFFF0F" : "transparent",
+            }}
+          >
+            {char}
+          </span>
+        ))}
 
-  <span
-    className="beam-dot absolute"
-    style={positions[beamIndex]}
-  />
-</div>
-
+        <span
+          className="beam-dot absolute"
+          style={positionsMap[letterIndex][beamIndex]}
+        />
+      </div>
     </div>
   );
 }
