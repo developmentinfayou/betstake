@@ -1,3 +1,4 @@
+// Environment is now loaded by @casino/database package
 import express from 'express';
 import { createServer } from 'http';
 import cors from 'cors';

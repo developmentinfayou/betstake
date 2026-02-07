@@ -1,7 +1,17 @@
+// CRITICAL: Load environment variables FIRST before any other imports read them
+import 'dotenv/config';
+import path from 'path';
+import dotenv from 'dotenv';
+
+// Load from monorepo root as fallback
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+
 import mongoose from 'mongoose';
 import { createOptimizedIndexes } from './indexes';
 
+// Now DATABASE_URL is available
 const MONGODB_URI = process.env.DATABASE_URL || 'mongodb://localhost:27017/casinobit';
+console.log('🔗 Database connecting to:', MONGODB_URI.includes('betstake') ? 'betstake' : MONGODB_URI.split('/').pop()?.split('?')[0]);
 
 let isConnected = false;
 
@@ -28,7 +38,7 @@ export const connectDB = async () => {
 
   try {
     mongoose.set('strictQuery', true);
-    
+
     // Connection event handlers
     mongoose.connection.on('connected', () => {
       console.log('✅ MongoDB connected with optimized configuration');
@@ -45,12 +55,12 @@ export const connectDB = async () => {
     });
 
     await mongoose.connect(MONGODB_URI, mongoOptions);
-    
+
     // Create optimized indexes
     console.log('🔧 Creating optimized MongoDB indexes...');
     await createOptimizedIndexes();
     console.log('✅ All MongoDB indexes created successfully');
-    
+
     isConnected = true;
   } catch (error) {
     console.error('❌ MongoDB connection failed:', error);
