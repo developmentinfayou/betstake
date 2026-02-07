@@ -76,6 +76,9 @@ router.post('/login', async (req, res) => {
 
     const user = await User.findOne({ email: body.email });
 
+    // DEBUG: Log the user object to see the role
+    console.log('🔍 LOGIN DEBUG:', { email: body.email, userFound: !!user, role: user?.role });
+
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }

@@ -105,13 +105,29 @@ export default function AdminPanel() {
   const [platformSettings, setPlatformSettings] = useState<any>(null);
   const [settingsSaving, setSettingsSaving] = useState(false);
 
+  // Add loading state for initial auth
+  const [authLoading, setAuthLoading] = useState(true);
+
+  // Initialize auth on mount - this is critical for page refresh
   useEffect(() => {
+    const initAuth = async () => {
+      const { loadUser } = useAuthStore.getState();
+      await loadUser();
+      setAuthLoading(false);
+    };
+    initAuth();
+  }, []);
+
+  // Check authorization after auth is loaded
+  useEffect(() => {
+    if (authLoading) return; // Wait for auth to load
+
     if (!user || (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN')) {
       router.push('/');
       return;
     }
     loadData();
-  }, [user, router]);
+  }, [user, router, authLoading]);
 
   const loadData = async () => {
     setLoading(true);
