@@ -1,13 +1,141 @@
 import React from "react";
 
 const Challenge = () => {
+  const games = [
+    {
+      id: 1,
+      title: "Boom Balloon",
+      image: "/images/limbo.png",
+      winners: "27.8K",
+      reward: "0.01000000 BTC",
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing Lorem ipsum dolor sit amet, consectetur adipiscingLorem ipsum dolor sit amet, consectetur adipiscingLorem ipsum dolor sit amet, consectetur adipiscingLorem ipsum dolor sit amet, consectetur adipiscingLorem ipsum dolor sit amet, consectetur adipiscing elit..."
+    },
+    {
+      id: 2,
+      title: "Crash X",
+      image: "/images/mines.png",
+      winners: "18.2K",
+      reward: "0.00500000 BTC",
+      description:
+        "Sed do eiusmod tempor incididunt ut labore et dolore magna Lorem ipsum dolor sit amet, consectetur adipiscingLorem ipsum dolor sit amet, consectetur adipiscingLorem ipsum dolor sit amet, consectetur adipiscingLorem ipsum dolor sit amet, consectetur adipiscing aliqua..."
+    },
+    {
+      id: 3,
+      title: "Dice Roll",
+      image: "/images/dice.svg",
+      winners: "9.4K",
+      reward: "0.00200000 BTC",
+      description:
+        "Ut enim ad minim veniam, quis nostrud Lorem ipsum dolor sit amet, consectetur adipiscingLorem ipsum dolor sit amet, consectetur adipiscing Lorem ipsum dolor sit amet, consectetur adipiscing exercitation..."
+    },
+    {
+      id: 4,
+      title: "Plinko",
+      image: "/images/plinko.png",
+      winners: "2.4K",
+      reward: "0.00200000 BTC",
+      description:
+        "Ut enim ad minim veniam, quis nostrud Lorem ipsum dolor sit amet, consectetur adipiscingLorem ipsum dolor sit amet, consectetur adipiscing Lorem ipsum dolor sit amet, consectetur adipiscing exercitation..."
+    },
+    {
+      id: 5,
+      title: "Flip",
+      image: "/images/flip.png",
+      winners: "12.4K",
+      reward: "0.00200000 BTC",
+      description:
+        "Ut enim ad minim veniam, quis nostrud Lorem ipsum dolor sit amet, consectetur adipiscingLorem ipsum dolor sit amet, consectetur adipiscing Lorem ipsum dolor sit amet, consectetur adipiscing exercitation..."
+    },
+    {
+      id: 6,
+      title: "Dice",
+      image: "/images/dice.svg",
+      winners: "58.8K",
+      reward: "0.00200000 BTC",
+      description: "Classic dice game with live players."
+    },
+    {
+      id: 7,
+      title: "Mines",
+      image: "/images/mines.png",
+      winners: "58.8K",
+      reward: "0.00300000 BTC",
+      description: "Avoid mines and win big rewards."
+    },
+    {
+      id: 8,
+      title: "Plinko",
+      image: "/images/plinko.png",
+      winners: "58.8K",
+      reward: "0.00250000 BTC",
+      description: "Drop the ball and test your luck."
+    },
+    {
+      id: 9,
+      title: "Coin Flip",
+      image: "/images/flip.png",
+      winners: "27.8K",
+      reward: "0.00150000 BTC",
+      description: "Simple heads or tails game."
+    },
+    {
+      id: 10,
+      title: "Limbo",
+      image: "/images/limbo.png",
+      winners: "58.8K",
+      reward: "0.00400000 BTC",
+      description: "High risk, high reward limbo game."
+    },
+    {
+      id: 11,
+      title: "Pump",
+      image: "/images/pump.png",
+      winners: "58.8K",
+      reward: "0.00350000 BTC",
+      description: "Pump before it bursts."
+    }
+
+  ];
+
+  const [activeIndex, setActiveIndex] = React.useState(1);
+
+const prevSlide = () => {
+  setActiveIndex((prev) =>
+    prev === 0 ? games.length - 1 : prev - 1
+  );
+};
+
+const nextSlide = () => {
+  setActiveIndex((prev) =>
+    prev === games.length - 1 ? 0 : prev + 1
+  );
+};
+
+const activeGame = games[activeIndex];
+
   return (
     <div className="mt-2">
       <div className="w-full p-6 text-gray-300 ">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-4  relative left-[110px]">
+          <div className="flex relative items-center space-x-4  left-[110px]">
+          <div className="absolute top-[45px] left-[366px] blureddimage flex items-center justify-center gap-6">
+        {games.map((game, index) => (
+          <img
+            key={game.id}
+            src={game.image}
+            alt={game.title}
+            className={`w-[86px] h-[114px] rounded transition-all duration-500
+              ${index === activeIndex
+                ? "blur-md scale-95 opacity-30"
+                : "blur-md scale-95 opacity-30"}
+            `}
+          />
+        ))}
+      </div>
+            
             <div className="flex space-x-1 items-center">
-              <button className=" py-1.5 px-2 w-[19px] h-[18px] bg-[#1a1c2e] rounded hover:bg-gray-700 transition">
+              <button onClick={prevSlide} className=" py-1.5 px-2 w-[19px] h-[18px] bg-[#1a1c2e] text-white rounded hover:bg-white/50 transition">
                 <svg
                   width="4"
                   height="7"
@@ -23,7 +151,7 @@ const Challenge = () => {
                   />
                 </svg>
               </button>
-              <button className="py-1.5 px-2 w-[19px] h-[18px] bg-white text-black rounded transition">
+              <button onClick={nextSlide}  className="py-1.5 px-2 w-[19px] h-[18px] bg-[#1a1c2e] text-white hover:bg-white/50  rounded transition">
                 <svg
                   width="4"
                   height="7"
@@ -33,7 +161,7 @@ const Challenge = () => {
                 >
                   <path
                     d="M0.5 6.5L3.5 3.5L0.5 0.5"
-                    stroke="#060612"
+                    stroke="#FEFEFE"
                     stroke-linecap="round"
                     stroke-linejoin="round"
                   />
@@ -56,7 +184,7 @@ const Challenge = () => {
             <div className="relative flex-shrink-0">
               <img
                 className="w-[86px] h-[113px] rounded bg-gradient-to-b from-yellow-400 via-orange-500 to-red-500 flex items-center justify-center overflow-hidden shadow-lg"
-                src="images/limbo.png"
+                src={activeGame.image}
               />
 
               <div className="mt-3 w-full h-1 bg-gray-700 rounded overflow-hidden">
@@ -68,7 +196,7 @@ const Challenge = () => {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-3">
                   <p className="text-sm font-semibold text-white tracking-widest">
-                    Boom Balloon
+                  {activeGame.title}
                   </p>
                   <span className="px-2 py-0.5 text-[10px] font-semibold tracking-widest  text-gray-400 bg-[#FFFFFF0F] border border-gray-700 rounded flex items-center">
                     <span className="text-orange-500 mr-1 ">✦</span> ORBEiT
@@ -85,7 +213,7 @@ const Challenge = () => {
                         "repeating-linear-gradient(to right, #828282 0 3px, transparent 3px 6px) 1",
                     }}
                   >
-                    <span className="text-white">27.8K</span>
+                    <span className="text-white">{activeGame.winners}</span>
                   </div>
 
                   <span className="tracking-wider">~Winners</span>
@@ -109,7 +237,7 @@ const Challenge = () => {
                 <div className="flex items-center space-x-2">
                   <img src="/images/gift.svg" />
                   <span className="text-sm tracking-widest text-gray-200">
-                    0.01000000 BTC
+                  {activeGame.reward}
                   </span>
                 </div>
               </div>

@@ -218,7 +218,7 @@ const HomeFooter = () => {
                 alt="Avatar"
                 className="w-10 h-10 rounded object-cover"
               />
-              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-[#0a0b14] rounded-full"></div>
+              {/* <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-[#0a0b14] rounded-full"></div> */}
             </div>
             <div>
               <div className="flex items-center space-x-2">

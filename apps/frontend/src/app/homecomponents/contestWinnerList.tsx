@@ -1,9 +1,51 @@
 import React from "react";
 
 const ContestWinnerList = () => {
+  const scrollRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const container:any = scrollRef.current;
+    if (!container) return;
+
+    let direction = "right";
+    let intervalId:any;
+
+    const startScrolling = () => {
+      intervalId = setInterval(() => {
+        if (direction === "right") {
+          container.scrollLeft += 1;
+
+          if (
+            container.scrollLeft + container.clientWidth >=
+            container.scrollWidth
+          ) {
+            clearInterval(intervalId);
+            setTimeout(() => {
+              direction = "left";
+              startScrolling();
+            }, 1000);
+          }
+        } else {
+          container.scrollLeft -= 1;
+
+          if (container.scrollLeft <= 0) {
+            clearInterval(intervalId);
+            setTimeout(() => {
+              direction = "right";
+              startScrolling();
+            }, 1000);
+          }
+        }
+      }, 10); // speed control
+    };
+
+    startScrolling();
+
+    return () => clearInterval(intervalId);
+  }, []);
   return (
     <div className="mt-2 mb-2">
-      <div className="flex mb-2 mt-12 flex-wrap items-center justify-between w-full h-[29px] gap-4 text-gray-400 ">
+      <div className="px-4 flex mb-2 mt-12 flex-wrap items-center justify-between w-full h-[29px] gap-4 text-gray-400 ">
         <div className="flex items-center space-x-4 overflow-x-auto ">
           <div className="flex items-center w-[154px] h-[29px]   rounded border border-gray-800">
             <button className=" h-[26px] w-[86px] text-xs  tracking-wider rounded transition hover:text-white">
@@ -72,7 +114,7 @@ const ContestWinnerList = () => {
         </div>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
+      <div className="px-4 mt-6 grid gap-6 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
         {[1, 2, 3, 4].map((i, idx) => (
           <div
             key={i}
@@ -161,9 +203,10 @@ const ContestWinnerList = () => {
           </div>
         ))}
       </div>
-      <div className="w-100 overflow-x-auto scrollbar-hide bg-rfed-400">
+
+      <div      ref={scrollRef} className="w-100 overflow-x-auto scrollbar-hidden bg-rfed-400">
         <div className="mt-6 flex gap-6 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
-          {[5, 6, 7, 8, 9].map((i, idx) => (
+          {Array.from({ length: 45 }, (_, i) => i + 5).map((i, idx) => (
             <div
               key={i}
               className="flex min-w-[326px] h-[74px] max-w-md overflow-hidden bg-[#0a0b14] bordedrrr border-gray-800ddd rounded group"
@@ -173,7 +216,7 @@ const ContestWinnerList = () => {
                  border-r border-gray-800`}
               >
                 <span className="font-medium text-sm text-white uppercase transform -rotate-90">
-                  {String(idx + 1).padStart(2, "0")}
+                  {String(idx + 5).padStart(2, "0")}
                 </span>
               </div>
 
