@@ -100,15 +100,17 @@ router.put('/:gameType', authenticate, requireAdmin, async (req: AuthRequest, re
 
         // Log to audit - wrapped in try-catch to not fail the update if logging fails
         try {
-            await AdminActivityLog.create({
-                adminId: req.user._id,
-                adminUsername: req.user.username || req.user.email || 'admin',
-                action: 'JACKPOT_CONFIG_UPDATE',
-                targetType: 'JACKPOT',
-                targetId: gameType.toUpperCase(),
-                newValue: { enabled, conditionsCount: conditions?.length, payoutTiersCount: payoutTiers?.length },
-                ipAddress: req.ip || req.headers?.['x-forwarded-for'] as string || 'unknown'
-            });
+            if (req.user?._id) {
+                await AdminActivityLog.create({
+                    adminId: req.user._id,
+                    adminUsername: req.user.username || req.user.email || 'admin',
+                    action: 'JACKPOT_CONFIG_UPDATE',
+                    targetType: 'JACKPOT',
+                    targetId: gameType.toUpperCase(),
+                    newValue: { enabled, conditionsCount: conditions?.length, payoutTiersCount: payoutTiers?.length },
+                    ipAddress: req.ip || req.headers?.['x-forwarded-for'] as string || 'unknown'
+                });
+            }
         } catch (logError) {
             console.error('Failed to log admin activity:', logError);
             // Continue - don't fail the update just because logging failed
@@ -190,22 +192,24 @@ router.post('/:gameType/trigger', authenticate, requireAdmin, async (req: AuthRe
 
         // Log to audit
         try {
-            await AdminActivityLog.create({
-                adminId: req.user._id,
-                adminUsername: req.user.username || req.user.email || 'admin',
-                action: 'JACKPOT_MANUAL_TRIGGER',
-                targetType: 'JACKPOT',
-                targetId: jackpot._id.toString(),
-                previousValue: { amount: previousAmount },
-                newValue: {
-                    gameType: gameType.toUpperCase(),
-                    payoutAmount,
-                    userId,
-                    isTest: true
-                },
-                reason,
-                ipAddress: req.ip || req.headers?.['x-forwarded-for'] as string || 'unknown'
-            });
+            if (req.user?._id) {
+                await AdminActivityLog.create({
+                    adminId: req.user._id,
+                    adminUsername: req.user.username || req.user.email || 'admin',
+                    action: 'JACKPOT_MANUAL_TRIGGER',
+                    targetType: 'JACKPOT',
+                    targetId: jackpot._id.toString(),
+                    previousValue: { amount: previousAmount },
+                    newValue: {
+                        gameType: gameType.toUpperCase(),
+                        payoutAmount,
+                        userId,
+                        isTest: true
+                    },
+                    reason,
+                    ipAddress: req.ip || req.headers?.['x-forwarded-for'] as string || 'unknown'
+                });
+            }
         } catch (logError) {
             console.error('Failed to log admin activity:', logError);
         }
