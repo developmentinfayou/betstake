@@ -94,14 +94,19 @@ router.put('/config/:currency', authenticate, requireAdmin, async (req: AuthRequ
         );
 
         // Log to audit
-        await AdminActivityLog.create({
-            adminId: req.user._id,
-            action: 'UPDATE_RAKEBACK_CONFIG',
-            targetType: 'RAKEBACK',
-            targetId: currency.toUpperCase(),
-            details: { enabled, tiersCount: tiers?.length, contributionPercent },
-            ipAddress: req.ip || 'unknown'
-        });
+        try {
+            await AdminActivityLog.create({
+                adminId: req.user._id,
+                adminUsername: req.user.username || req.user.email || 'admin',
+                action: 'UPDATE_RAKEBACK_CONFIG',
+                targetType: 'RAKEBACK',
+                targetId: currency.toUpperCase(),
+                newValue: { enabled, tiersCount: tiers?.length, contributionPercent },
+                ipAddress: req.ip || 'unknown'
+            });
+        } catch (logError) {
+            console.error('Failed to log admin activity:', logError);
+        }
 
         res.json(config);
     } catch (error) {
@@ -194,14 +199,19 @@ router.post('/:id/approve', authenticate, requireAdmin, async (req: AuthRequest,
         }
 
         // Log to audit
-        await AdminActivityLog.create({
-            adminId: req.user._id,
-            action: 'APPROVE_RAKEBACK',
-            targetType: 'RAKEBACK',
-            targetId: id,
-            details: { amount: claim.amount, currency: claim.currency, userId: claim.userId },
-            ipAddress: req.ip || 'unknown'
-        });
+        try {
+            await AdminActivityLog.create({
+                adminId: req.user._id,
+                adminUsername: req.user.username || req.user.email || 'admin',
+                action: 'APPROVE_RAKEBACK',
+                targetType: 'RAKEBACK',
+                targetId: id,
+                newValue: { amount: claim.amount, currency: claim.currency, userId: claim.userId },
+                ipAddress: req.ip || 'unknown'
+            });
+        } catch (logError) {
+            console.error('Failed to log admin activity:', logError);
+        }
 
         res.json({ success: true, claim });
     } catch (error) {
