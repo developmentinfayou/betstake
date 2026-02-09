@@ -190,6 +190,11 @@ router.post('/', authenticate, requireAdmin, async (req: AuthRequest, res) => {
             return res.status(400).json({ error: 'End time must be after start time' });
         }
 
+        // Ensure user is authenticated with valid ID
+        if (!req.user?._id) {
+            return res.status(401).json({ error: 'Authentication required' });
+        }
+
         const challenge = await Challenge.create({
             ...validated,
             createdBy: req.user._id,

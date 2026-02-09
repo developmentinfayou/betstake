@@ -198,17 +198,19 @@ router.put('/users/:id/balance', authenticate, requireAdmin, async (req: AuthReq
 
     // Log to audit trail
     try {
-      await AdminActivityLog.create({
-        adminId: req.user._id,
-        adminUsername: req.user.username || req.user.email || 'admin',
-        action: 'BALANCE_ADJUST',
-        targetType: 'USER',
-        targetId: id,
-        previousValue: { balance: oldBalance, currency },
-        newValue: { balance: newBalance, adjustment: amount, currency },
-        reason,
-        ipAddress: req.ip || 'unknown'
-      });
+      if (req.user?._id) {
+        await AdminActivityLog.create({
+          adminId: req.user._id,
+          adminUsername: req.user.username || req.user.email || 'admin',
+          action: 'BALANCE_ADJUST',
+          targetType: 'USER',
+          targetId: id,
+          previousValue: { balance: oldBalance, currency },
+          newValue: { balance: newBalance, adjustment: amount, currency },
+          reason,
+          ipAddress: req.ip || 'unknown'
+        });
+      }
     } catch (logError) {
       console.error('Failed to log admin activity:', logError);
     }
@@ -256,17 +258,19 @@ router.put('/users/:id/ban', authenticate, requireAdmin, async (req: AuthRequest
 
     // Log to audit trail
     try {
-      await AdminActivityLog.create({
-        adminId: req.user._id,
-        adminUsername: req.user.username || req.user.email || 'admin',
-        action: banned ? 'BAN_USER' : 'UNBAN_USER',
-        targetType: 'USER',
-        targetId: id,
-        previousValue: { banned: !banned },
-        newValue: { banned, username: user.username, email: user.email },
-        reason,
-        ipAddress: req.ip || 'unknown'
-      });
+      if (req.user?._id) {
+        await AdminActivityLog.create({
+          adminId: req.user._id,
+          adminUsername: req.user.username || req.user.email || 'admin',
+          action: banned ? 'BAN_USER' : 'UNBAN_USER',
+          targetType: 'USER',
+          targetId: id,
+          previousValue: { banned: !banned },
+          newValue: { banned, username: user.username, email: user.email },
+          reason,
+          ipAddress: req.ip || 'unknown'
+        });
+      }
     } catch (logError) {
       console.error('Failed to log admin activity:', logError);
     }
