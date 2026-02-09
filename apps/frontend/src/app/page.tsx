@@ -287,7 +287,7 @@ export default function HomePage() {
           <div className="hidden relative items-center gap-4 lg:flex">
             {/* Primary Nav Tabs */}
             <nav
-              className="inline-flex items-start gap-3 p-1.5 bg-[#73ffd70f] h-[41px] w-[326px] rounded overflow-hidden"
+              className="inline-flex items-start p-[6px] gap-[12px] bg-[#73ffd70f] h-[41px] w-[326px] rounded overflow-hidden"
               role="navigation"
               aria-label="Main navigation"
             >
@@ -297,7 +297,7 @@ export default function HomePage() {
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded transition-all duration-200 ${
+                    className={`inline-flex items-center w-[102px] h-[29px] gap-1.5 px-3 py-1.5 rounded transition-all duration-200 ${
                       isActive
                         ? "bg-[#ffffff0f]"
                         : "bg-transparent hover:bg-[#ffffff08]"
@@ -484,7 +484,7 @@ export default function HomePage() {
 
               {/* Jackpot amount */}
               <div
-                className="absolute top-[38px] left-[266px] w-[146px] h-[31px] flex "
+                className="absolute top-[38px] left-[266px] w-[146px] h-[33px] flex "
                 style={{
                   borderBottom: "1px solid",
                   borderImage:
@@ -519,7 +519,7 @@ export default function HomePage() {
             <div className="relative w-full h-[88px] rounded border border-[#2A2A3C] p-3">
               {/* Top Row */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <img src="/images/percent.svg" alt="percent" />
 
                   <span className="relative text-sm font text-white tracking-widest">
@@ -570,14 +570,14 @@ export default function HomePage() {
                 <div className="flex items-center justify-between w-full">
                   {/* Premium/VIP badge tabs */}
                   <div
-                    className="inline-flex items-center gap-3 p-1.5 rounded overflow-hidden"
+                    className="inline-flex items-center  gap-3 p-1.5 rounded overflow-hidden"
                     style={{
                       background:
                         "linear-gradient(148deg, rgba(255, 229, 0, 0.06) 0%, rgba(255, 106, 0, 0.06) 100%)",
                     }}
                   >
                     {/* Premium badge - active */}
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/[0.06] rounded">
+                    <div className="inline-flex items-center gap-[7px] px-3 py-1.5 bg-white/[0.06] rounded">
                       <div
                         className="w-3.5 h-3.5 rounded-full flex items-center justify-center"
                         style={{

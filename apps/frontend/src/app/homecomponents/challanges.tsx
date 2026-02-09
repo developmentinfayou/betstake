@@ -152,7 +152,7 @@ const activeGame = games[activeIndex];
         ))}
       </div>
             
-            <div className="flex space-x-1 items-center">
+            <div className="flex space-x-1 relative -left-[14px] items-center">
               <button onClick={prevSlide} className=" py-1.5 px-2 w-[19px] h-[18px] bg-[#1a1c2e] text-white rounded hover:bg-white/50 transition">
                 <svg
                   width="4"
@@ -186,11 +186,11 @@ const activeGame = games[activeIndex];
                 </svg>
               </button>
             </div>
-            <div className="flex space-x-1 items-center relative left-[51px]">
+            <div className="flex gap-6 items-center relative left-[37px]">
               <span className="text-xs tracking-wider text-gray-500">
                 Challenges
               </span>
-              <span className="text-xs tracking-wider  text-orange-500  underline border-orange-500 cursor-pointer">
+              <span className="text-xs tracking-wider  text-[#FF9169]  underline border-orange-500 cursor-pointer">
                 View All
               </span>
             </div>
