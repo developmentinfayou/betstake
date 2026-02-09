@@ -264,7 +264,7 @@ export default function TrendingText() {
   }, [letterIndex, filledCount, beamIndex]);
 
   return (
-    <div className="">
+
       <div
         style={{
           letterSpacing: "7px",
@@ -290,6 +290,6 @@ export default function TrendingText() {
           // style={positionsMap[7][0]}
         />
       </div>
-    </div>
+ 
   );
 }

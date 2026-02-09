@@ -240,20 +240,13 @@ export default function HomePage() {
               isActive ? { filter: `drop-shadow(0 0 6px ${activeColor})` } : {}
             }
           >
-            <svg
-              width="15"
-              height="12"
-              viewBox="0 0 15 12"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {/* Front person (larger) */}
-              <circle cx="5" cy="3" r="2.5" fill={color} />
-              <path d="M0 11C0 8 2.5 6 5 6C7.5 6 10 8 10 11" fill={color} />
-              {/* Back person (smaller, offset) */}
-              <circle cx="11" cy="4" r="2" fill={color} />
-              <path d="M7 11.5C7 9 9 7 11 7C13 7 15 9 15 11.5" fill={color} />
-            </svg>
+            <svg width="15" height="12" viewBox="0 0 15 12" fill={color} xmlns="http://www.w3.org/2000/svg">
+<path d="M5.2147 5.61438C5.77989 5.61438 6.33238 5.44973 6.80231 5.14125C7.27223 4.83277 7.63849 4.39432 7.85475 3.88134C8.07102 3.36837 8.12758 2.80391 8.01728 2.25935C7.90698 1.7148 7.63478 1.21461 7.2351 0.822034C6.83541 0.429461 6.32621 0.162141 5.77187 0.0538808C5.21753 -0.0543797 4.64296 0.00128186 4.12083 0.213827C3.59869 0.426371 3.15244 0.786252 2.83851 1.24796C2.52459 1.70966 2.35708 2.25245 2.35718 2.80768C2.35797 3.55191 2.6593 4.26542 3.19503 4.79163C3.73077 5.31783 4.45713 5.61373 5.2147 5.61438Z" fill={color}/>
+<path d="M8.95257 7.9334C8.22847 7.20377 7.29942 6.70275 6.28407 6.49433C5.26873 6.28592 4.21319 6.37957 3.25229 6.76333C2.29138 7.14709 1.46874 7.80353 0.889435 8.64881C0.310132 9.49408 0.000468696 10.4898 0 11.5088C0 11.6391 0.0526788 11.764 0.146448 11.8561C0.240217 11.9483 0.367395 12 0.500004 12H9.93008C10.0627 12 10.1899 11.9483 10.2836 11.8561C10.3774 11.764 10.4301 11.6391 10.4301 11.5088C10.432 10.988 10.3502 10.4701 10.1876 9.97432C9.94548 9.20786 9.52229 8.50852 8.95257 7.9334Z" fill={color}/>
+<path d="M11.2503 5.85986C12.4239 5.85986 13.3753 4.92522 13.3753 3.77228C13.3753 2.61934 12.4239 1.68469 11.2503 1.68469C10.0767 1.68469 9.12531 2.61934 9.12531 3.77228C9.12531 4.92522 10.0767 5.85986 11.2503 5.85986Z" fill={color}/>
+<path d="M11.25 6.43469C10.5798 6.43717 9.92253 6.61648 9.34698 6.95389C9.45549 7.04918 9.56499 7.143 9.66749 7.24615C10.3483 7.9336 10.8541 8.76942 11.1435 9.68543C11.2426 9.987 11.3157 10.2962 11.362 10.6099H14.5C14.6326 10.6099 14.7598 10.5581 14.8536 10.466C14.9473 10.3739 15 10.2489 15 10.1187C14.999 9.14194 14.6035 8.20551 13.9005 7.51485C13.1975 6.8242 12.2442 6.43573 11.25 6.43469Z" fill={color}/>
+</svg>
+
           </div>
         );
       default:
@@ -332,7 +325,7 @@ export default function HomePage() {
               aria-label="Casino games navigation"
             >
               <div className="flex items-center h-full gap-1.5 px-3">
-                {gameTabs.map((tab, index) => {
+                {gameTabs?.map((tab, index) => {
                   const isActive = activeGameTab === tab.id;
                   return (
                     <div key={tab.id} className="flex items-center">
@@ -411,7 +404,7 @@ export default function HomePage() {
       </header>
 
       {/* ✅ PAGE CONTAINER */}
-      <main className="mx-auto max-w-[1440px] px-8 pb-20 pt-8">
+      <main className="mx-auto max-w-[1440px] px-8 pb-10 pt-10">
         {/* ✅ TOP CARDS ROW */}
         <section className="grid gap-3 lg:grid-cols-[592px_335px_385px]">
           {/* Jackpot card */}
@@ -480,6 +473,7 @@ export default function HomePage() {
           transition-all duration-200
           hover:opacity-100
           hover:text-[#ff9168]
+          hover:font-semibold
           
         "
                   >
@@ -590,18 +584,17 @@ export default function HomePage() {
                             "linear-gradient(148deg, rgba(255, 229, 0, 1) 0%, rgba(255, 106, 0, 1) 100%)",
                         }}
                       >
-                        <svg
-                          width="10"
-                          height="10"
-                          viewBox="0 0 10 10"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M5 0L6.12 3.38L9.51 3.82L7.03 6.12L7.64 9.47L5 7.94L2.36 9.47L2.97 6.12L0.49 3.82L3.88 3.38L5 0Z"
-                            fill="#1a1a1a"
-                          />
-                        </svg>
+                       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="7" cy="7" r="7" fill="url(#paint0_linear_1_10819)"/>
+<path d="M6.60935 2.3372C6.73488 2.07047 6.79764 1.9371 6.88284 1.89449C6.95697 1.85742 7.04309 1.85742 7.11723 1.89449C7.20243 1.9371 7.26519 2.07047 7.39071 2.3372L8.58159 4.86775C8.61865 4.94649 8.63717 4.98587 8.66425 5.01643C8.68823 5.0435 8.71698 5.06543 8.74892 5.08101C8.78499 5.09861 8.82642 5.10496 8.90926 5.11766L11.5731 5.52605C11.8536 5.56906 11.9938 5.59056 12.0587 5.66242C12.1152 5.72495 12.1418 5.81086 12.131 5.89625C12.1187 5.99439 12.0171 6.09813 11.814 6.3056L9.88722 8.2741C9.82715 8.33546 9.79712 8.36614 9.77774 8.40265C9.76058 8.43497 9.74957 8.47048 9.74533 8.50721C9.74053 8.54869 9.74762 8.59203 9.76179 8.67871L10.2164 11.4591C10.2644 11.7524 10.2884 11.899 10.2433 11.986C10.2041 12.0617 10.1344 12.1148 10.0537 12.1305C9.96083 12.1486 9.8353 12.0793 9.58423 11.9408L7.20282 10.6272C7.12862 10.5863 7.09152 10.5659 7.05244 10.5578C7.01783 10.5507 6.98223 10.5507 6.94763 10.5578C6.90854 10.5659 6.87144 10.5863 6.79724 10.6272L4.41583 11.9408C4.16477 12.0793 4.03923 12.1486 3.94641 12.1305C3.86565 12.1148 3.79596 12.0617 3.75676 11.986C3.7117 11.899 3.73568 11.7524 3.78363 11.4591L4.23827 8.67871C4.25245 8.59203 4.25953 8.54869 4.25474 8.50721C4.25049 8.47048 4.23948 8.43497 4.22233 8.40265C4.20295 8.36614 4.17291 8.33546 4.11285 8.2741L2.18602 6.3056C1.98294 6.09813 1.8814 5.99439 1.86905 5.89625C1.85829 5.81086 1.88485 5.72495 1.94133 5.66242C2.00624 5.59056 2.14649 5.56906 2.427 5.52605L5.09081 5.11766C5.17365 5.10496 5.21507 5.09861 5.25114 5.08101C5.28308 5.06543 5.31184 5.0435 5.33581 5.01643C5.36289 4.98587 5.38142 4.94649 5.41848 4.86775L6.60935 2.3372Z" fill="#090919"/>
+<defs>
+<linearGradient id="paint0_linear_1_10819" x1="-0.0128802" y1="-2.76161e-08" x2="11.3052" y2="-1.88753" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFE500"/>
+<stop offset="1" stop-color="#FF6A00"/>
+</linearGradient>
+</defs>
+</svg>
+
                       </div>
                       <span className=" text-sm tracking-[1.12px] text-white">
                         Premium
@@ -610,16 +603,10 @@ export default function HomePage() {
 
                     {/* VIP badge - inactive */}
                     <div className="inline-flex items-center gap-1.5 px-[9px] py-1.5">
-                      <svg
-                        width="14"
-                        height="10"
-                        viewBox="0 0 14 10"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M7 0L9.5 3H4.5L7 0Z" fill="#818181" />
-                        <path d="M1 3H13L12 9H2L1 3Z" fill="#818181" />
-                      </svg>
+                    <svg width="15" height="11" viewBox="0 0 15 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M14.0424 3.34383L12.4086 9.63319C12.3611 9.81533 12.2545 9.97659 12.1057 10.0918C11.9568 10.207 11.774 10.2697 11.5858 10.27H2.48444C2.2962 10.2697 2.11338 10.207 1.96451 10.0918C1.81565 9.97659 1.70913 9.81533 1.6616 9.63319L0.0278403 3.34383C-0.0118874 3.19245 -0.0090482 3.03303 0.0360448 2.88315C0.0811378 2.73328 0.166734 2.59876 0.2834 2.49443C0.400065 2.39009 0.543271 2.32 0.697234 2.29186C0.851197 2.26372 1.00994 2.27864 1.15597 2.33496L3.86299 3.37722C3.89037 3.38787 3.92044 3.38944 3.94878 3.38172C3.97711 3.37399 4.00222 3.35736 4.0204 3.33429L6.3649 0.329139C6.44403 0.22671 6.54559 0.143782 6.66177 0.0867251C6.77795 0.0296681 6.90566 0 7.0351 0C7.16453 0 7.29225 0.0296681 7.40843 0.0867251C7.52461 0.143782 7.62616 0.22671 7.7053 0.329139L10.0498 3.33429C10.068 3.35736 10.0931 3.37399 10.1214 3.38172C10.1498 3.38944 10.1798 3.38787 10.2072 3.37722L12.9142 2.33496C13.0602 2.28111 13.2181 2.26803 13.3709 2.29712C13.5237 2.32621 13.6658 2.39638 13.7817 2.50009C13.8977 2.6038 13.9832 2.73714 14.0292 2.88579C14.0751 3.03444 14.0796 3.19279 14.0424 3.34383Z" fill="#828282"/>
+</svg>
+
                       <span className=" text-sm tracking-[1.12px] text-[#818181]">
                         VIP
                       </span>
@@ -783,7 +770,7 @@ export default function HomePage() {
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
                 enim ad minim veniam, quis n...
-                <span className="ml-1 cursor-pointer text-[#FF4500] hover:underline">
+                <span className="ml-1 cursor-pointer text-[#FF9169] underline">
                   see more
                 </span>
               </p>
@@ -804,9 +791,9 @@ export default function HomePage() {
         </section>
 
         {/* ✅ MAIN GRID + TRENDING */}
-        <section className="mt-8 grid gap-6 lg:grid-cols-[1fr_385px]">
+        <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_385px]">
           {/* LEFT: games */}
-          <div>
+          <div className="mt-8">
             {/* search/filter row */}
             <div className="flex flex-wrapk items-center justify-between gap-4">
        
@@ -1081,17 +1068,22 @@ export default function HomePage() {
           </div>
 
           {/* RIGHT: trending */}
-          <aside className=" p-4">
+          <div className="">
             <TrendingText />
 
-            <p className="mt-3 text-xs text-[#828282]">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-            </p>
+            <p className="mt-4  text-xs text-[#B5B5C9]">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                enim ad minim veniam, quis n...
+                <span className="ml-1 cursor-pointer text-[#FF9169] underline">
+                  see more
+                </span>
+              </p>
             <button className="mt-4 flex items-center gap-2 rounded-[3px] bg-[#FF45001F] px-1 py-1 text-xs">
               <img src="/images/star.svg" />
               ORBEit Originals
             </button>
-          </aside>
+          </div>
         </section>
 
         {/* ✅ LEADERBOARD */}

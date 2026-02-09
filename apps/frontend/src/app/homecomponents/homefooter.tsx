@@ -1,4 +1,5 @@
 import React from "react";
+import ViewIcon from "../../../public/icons/ViewIcon";
 
 const HomeFooter = () => {
   const [depositShow, setDepositShow] = React.useState<any>(false);
@@ -210,8 +211,8 @@ const HomeFooter = () => {
         </div>
       )}
       <div className="flex  items-center justify-between w-full px-4 py-2  text-gray-400">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-3">
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-4">
             <div className="relative">
               <img
                 src="/images/footer-men.png"
@@ -281,7 +282,7 @@ const HomeFooter = () => {
           </div>
         </div>
 
-        <div className="hidden relative group xl:flex items-center justify-between p-3 border-[#31313F] border hover:rounded-t-none hover:bg-[#000000f6] bg-[#FFFFFF08] rounded w-[764.79px]">
+        <div className="hidden relative group xl:flex items-center justify-between p-3 border-[#31313F] border hover:rounded-t-none hover:bg-[#000000f6] bg-[#FFFFFF08] rounded w-[764.79px] h-[41px] ">
           {/* 🔥 Hover List */}
           <div
             className="
@@ -302,7 +303,7 @@ const HomeFooter = () => {
             {[...Array(10)].map((_, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between p-3 hover:bg-[#FFFFFF0F] cursor-pointer"
+                className="flex items-center group/row relative justify-between p-3 hover:bg-[#FFFFFF0F] cursor-pointer"
               >
                 <div className="flex items-center space-x-3">
                   <img src="/images/avatar1.jpg" className="w-6 h-6 rounded" />
@@ -336,7 +337,11 @@ const HomeFooter = () => {
                   </div>
                 </div>
 
-                <span className="text-xs text-gray-500">6:26 PM</span>
+                <span className="text-xs group-hover/row:hidden block  text-gray-500">6:26 PM</span>
+                <span className="text-xs  items-center group-hover/row:flex gap-[7px] hidden text-gray-500">View Bet 
+             <ViewIcon />
+</span>
+
               </div>
             ))}
           </div>
@@ -368,12 +373,15 @@ const HomeFooter = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-3 text-gray-500  pr-4">
+          <div className="flex group-hover:hidden items-center space-x-3 text-gray-500  pr-4">
             <img src="/images/profile-bars.svg" />
 
             <img src="/images/profile-headphone.svg" />
             <img src="/images/profile-chip.svg" />
+
           </div>
+
+          <span className="text-xs text-nowrap group-hover:block hidden  text-gray-500">6:26 PM</span>
 
           <div className="absolute top-[48px]">
             <div className="inline-flex items-center gap-2">

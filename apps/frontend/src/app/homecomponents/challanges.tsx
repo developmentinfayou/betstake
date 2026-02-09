@@ -94,7 +94,25 @@ const Challenge = () => {
       winners: "58.8K",
       reward: "0.00350000 BTC",
       description: "Pump before it bursts."
-    }
+    },
+    {
+      id: 12,
+      title: "Pump",
+      image: "/images/mines.png",
+      winners: "58.8K",
+      reward: "0.00350000 BTC",
+      description: "Pump before it bursts."
+    },
+    {
+      id: 13,
+      title: "Pump",
+      image: "/images/dice.svg",
+      winners: "58.8K",
+      reward: "0.00350000 BTC",
+      description: "Pump before it bursts."
+    },
+   
+    
 
   ];
 
@@ -116,10 +134,10 @@ const activeGame = games[activeIndex];
 
   return (
     <div className="mt-2">
-      <div className="w-full p-6 text-gray-300 ">
+      <div className="w-full px-6 py-20 text-gray-300 ">
         <div className="flex items-center justify-between mb-6">
           <div className="flex relative items-center space-x-4  left-[110px]">
-          <div className="absolute top-[45px] left-[366px] blureddimage flex items-center justify-center gap-6">
+          <div className="absolute top-[45px] left-[450px] blureddimage flex items-center justify-center gap-6">
         {games.map((game, index) => (
           <img
             key={game.id}
@@ -223,7 +241,7 @@ const activeGame = games[activeIndex];
               <p className="text-sm leading-snug tracking-widest text-gray-400 mb-6 max-w-3xl">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                enim ad  exercitation ullamco laboris
                 nisi ut aliquip ex ea commodo conseq...
                 <span className="text-orange-500 cursor-pointer border-b border-orange-500/30 hover:border-orange-500">
                   see more
