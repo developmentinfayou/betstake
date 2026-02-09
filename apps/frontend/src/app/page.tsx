@@ -291,7 +291,7 @@ export default function HomePage() {
               role="navigation"
               aria-label="Main navigation"
             >
-              {navItems.map((item) => {
+              {navItems?.map((item) => {
                 const isActive = activeTab === item.id;
                 return (
                   <button
@@ -540,9 +540,10 @@ export default function HomePage() {
 
               {/* Bottom Row */}
               <div className="mt-3 flex items-center gap-3 ">
-                <div className="flex items-center gap-2 rounded bg-[#FFFFFF0F] px-3 py-1.5 w-[243px] h-[29px]">
-                  <img src="/images/inr.svg" alt="inr" />
-                  <span className="text-sm text-[#C1C1C1]">5412.81 INR</span>
+                <div className="flex items-center justify-between gap-2 rounded bg-[#FFFFFF0F] px-3 py-1.5 w-[243px] h-[29px]">
+            <div className="flex items-center gap-2"><img src="/images/inr.svg" alt="inr" />
+                  <span className="text-sm text-[#C1C1C1]">5412.81 INR</span></div>    
+
                   <img
                     src="/images/refresh.svg"
                     alt="refresh"
