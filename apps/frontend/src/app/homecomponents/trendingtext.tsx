@@ -254,14 +254,14 @@ export default function TrendingText() {
 
         return 0;
       });
-    }, 100);
+    }, 160);
 
     return () => clearInterval(interval);
   }, [letterIndex]);
 
-  useEffect(() => {
-    console.log({ letterIndex, filledCount, beamIndex });
-  }, [letterIndex, filledCount, beamIndex]);
+  // useEffect(() => {
+  //   console.log({ letterIndex, filledCount, beamIndex });
+  // }, [letterIndex, filledCount, beamIndex]);
 
   return (
 

@@ -1,5 +1,5 @@
 import React from "react";
-import ViewIcon from "../../../public/icons/ViewIcon";
+import ViewIcon from "../../icons/ViewIcon";
 
 const HomeFooter = () => {
   const [depositShow, setDepositShow] = React.useState<any>(false);
@@ -249,6 +249,8 @@ const HomeFooter = () => {
             </svg>
           </div>
 
+          <div className="flex items-center gap-[12px] w-[233px] h-[41px]">
+
           <div className="flex w-[146px] h-[41px] items-center gap-1.5 px-3 py-1.5 bg-[#1a1c2e] border border-gray-800 rounded cursor-pointer hover:bg-[#252841] text-nowrap">
             <img src="/images/bitcoin.svg" />
             <span className="text-sm tracking-widest  text-white">
@@ -272,10 +274,18 @@ const HomeFooter = () => {
 
           <button
             onClick={() => depositCoin()}
-            className=" w-[75px] h-[41px] flex items-center px-3 gap-1.5 py-[3px] bg-[#a2ffda] text-[#0a0b14] font-medium rounded text-sm hover:bg-[#85eec5] transition shadow-lg shadow-emerald-500/10"
+            className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#a2ffda] text-[#0a0b14] font-medium rounded text-sm hover:bg-[#85eec5] transition shadow-lg shadow-emerald-500/10"
           >
-            <span className="  leading-none">+</span> Deposit
+          <svg className="h-2 w-2" width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 0.5V7.5M0.5 4H7.5" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+ Deposit
           </button>
+
+          </div>
+
+
 
           <div className="w-10 h-10 flex items-center justify-center">
             <img src="/images/profile-badge.svg" />
@@ -298,6 +308,7 @@ const HomeFooter = () => {
   group-hover:scale-100
   group-hover:pointer-events-auto
   z-50
+  h-[200px] overflow-y-auto scrollbar-hidden
 "
           >
             {[...Array(10)].map((_, i) => (
@@ -312,7 +323,25 @@ const HomeFooter = () => {
                   </span>
 
                   <div className="flex items-center space-x-1">
-                    <img src="/images/verified.svg" />
+                    <svg
+                      width="10"
+                      height="10"
+                      viewBox="0 0 10 10"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M5.65655 0.294453C5.89863 0.565449 6.2807 0.660199 6.62026 0.53341C7.11216 0.349743 7.65378 0.635725 7.78298 1.14733C7.87215 1.50047 8.16671 1.76298 8.52591 1.80949C9.04631 1.87684 9.39378 2.38328 9.27186 2.8967C9.1877 3.25108 9.32723 3.62123 9.62382 3.83034C10.0535 4.13328 10.1272 4.74416 9.78211 5.14176C9.54387 5.4162 9.49645 5.80919 9.66248 6.13301C9.903 6.60214 9.68609 7.17752 9.19683 7.36821C8.85912 7.49983 8.63558 7.82564 8.633 8.18999C8.62926 8.71784 8.17141 9.1259 7.65011 9.066C7.29027 9.02467 6.94185 9.20864 6.77126 9.53004C6.52412 9.99569 5.93021 10.1429 5.49628 9.84619C5.19676 9.64135 4.80325 9.64135 4.50374 9.84619C4.06981 10.1429 3.47591 9.99567 3.22877 9.53004C3.05817 9.20864 2.70974 9.02465 2.34992 9.066C1.82861 9.1259 1.37077 8.71784 1.36703 8.18999C1.36445 7.82564 1.14091 7.49983 0.803199 7.36821C0.313934 7.17752 0.0970414 6.60214 0.337551 6.13301C0.503577 5.80919 0.456139 5.4162 0.217904 5.14176C-0.127229 4.74416 -0.0535043 4.13328 0.37619 3.83034C0.672779 3.62123 0.812314 3.25108 0.728147 2.8967C0.60621 2.38329 0.953681 1.87685 1.47408 1.80949C1.83329 1.76298 2.12784 1.50047 2.21702 1.14733C2.3462 0.635725 2.88782 0.349743 3.37974 0.53341C3.71928 0.660184 4.10135 0.565449 4.34343 0.294453C4.69414 -0.098151 5.30582 -0.098151 5.65655 0.294453Z"
+                        fill="#01C1FF"
+                      />
+                      <path
+                        d="M2.66675 5.85173L4.10265 7.33321L7.33341 3.99988"
+                        stroke="black"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+
                     <img src="/images/color-star.svg" />
                     <span className="px-1 text-[8px] font-black bg-yellow-400 rounded text-black">
                       VIP
@@ -337,11 +366,13 @@ const HomeFooter = () => {
                   </div>
                 </div>
 
-                <span className="text-xs group-hover/row:hidden block  text-gray-500">6:26 PM</span>
-                <span className="text-xs  items-center group-hover/row:flex gap-[7px] hidden text-gray-500">View Bet 
-             <ViewIcon />
-</span>
-
+                <span className="text-xs group-hover/row:hidden block  text-gray-500">
+                  6:26 PM
+                </span>
+                <span className="text-xs  items-center group-hover/row:flex gap-[7px] hidden text-gray-500">
+                  View Bet
+                  <ViewIcon />
+                </span>
               </div>
             ))}
           </div>
@@ -378,10 +409,11 @@ const HomeFooter = () => {
 
             <img src="/images/profile-headphone.svg" />
             <img src="/images/profile-chip.svg" />
-
           </div>
 
-          <span className="text-xs text-nowrap group-hover:block hidden  text-gray-500">6:26 PM</span>
+          <span className="text-xs text-nowrap group-hover:block hidden  text-gray-500">
+            6:26 PM
+          </span>
 
           <div className="absolute top-[48px]">
             <div className="inline-flex items-center gap-2">
