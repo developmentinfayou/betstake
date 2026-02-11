@@ -7,6 +7,15 @@ const HomeFooter = () => {
     console.log("depositCoin");
     setDepositShow(!depositShow);
   };
+
+  const [vaultShow, setvaultShow] = React.useState(false);
+
+const valshow = () => {
+  setvaultShow((prev: boolean) => !prev);
+};
+
+
+
   return (
     <div className="relative">
       {" "}
@@ -184,8 +193,30 @@ const HomeFooter = () => {
 
           <div className="flex items-center justify-between pt-4 border-t border-gray-800">
             <div className="flex items-center space-x-6">
-              <div className="flex items-center gap.2 cursor-pointer">
-                <img src="/images/deposit-switch.svg" />
+              <div className="flex items-center gap-[6px] cursor-pointer">
+              <label className="inline-flex items-center cursor-pointer">
+  <input
+    type="checkbox"
+    checked={vaultShow}
+    onChange={valshow}
+    className="sr-only peer"
+  />
+
+  <div
+    className={`
+      relative w-9 h-5 rounded-full transition-all duration-300
+      ${vaultShow ? "bg-[#FFFFFF1F]" : "bg-[#FFFFFF1F]"}
+    `}
+  >
+    <div
+      className={`
+        absolute top-[2px] left-[2px] h-4 w-4 rounded-full transition-all duration-300
+        ${vaultShow ? "translate-x-4 bg-[#73FFD7]" : "translate-x-0 bg-white"}
+      `}
+    />
+  </div>
+</label>
+
                 <span
                   style={{
                     borderBottom: "1px",
@@ -197,10 +228,10 @@ const HomeFooter = () => {
                   Vault
                 </span>
               </div>
-              <div className="flex items-center space-x-2 cursor-pointer text-gray-400 hover:text-white transition">
+           {vaultShow && <div className="flex items-center space-x-2 cursor-pointer text-gray-400 hover:text-white transition">
                 <img src="/images/refresh-balance.svg" />
                 <span className="text-sm ">Play Balance</span>
-              </div>
+              </div>}
             </div>
 
             <div className="flex items-center space-x-2 text-gray-500 cursor-pointer hover:text-gray-300">
@@ -249,9 +280,9 @@ const HomeFooter = () => {
             </svg>
           </div>
 
-          <div className="flex items-center gap-[12px] w-[233px] h-[41px]">
+          <div className="flex items-center gap-[12px] min-w-[233px] h-[41px]">
 
-          <div className="flex w-[146px] h-[41px] items-center gap-1.5 px-3 py-1.5 bg-[#1a1c2e] border border-gray-800 rounded cursor-pointer hover:bg-[#252841] text-nowrap">
+          <div onClick={() => depositCoin()} className="flex w-[146px] h-[41px] items-center gap-1.5 px-3 py-1.5 bg-[#1a1c2e] border border-gray-800 rounded cursor-pointer hover:bg-[#252841] text-nowrap">
             <img src="/images/bitcoin.svg" />
             <span className="text-sm tracking-widest  text-white">
               0.0021780 BTC
@@ -272,8 +303,26 @@ const HomeFooter = () => {
             </svg>
           </div>
 
+         {depositShow && !vaultShow && <button
+            // onClick={() => depositCoin()}
+            className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#31313F] font-medium rounded text-sm hover:bg-[#494c4b] transition shadow-lg shadow-emerald-500/10"
+          >
+       
+
+ Withdraw
+          </button>}
+
+          {vaultShow &&  <button
+            // onClick={() => depositCoin()}
+            className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#31313F] font-medium rounded text-sm hover:bg-[#494c4b] transition shadow-lg shadow-emerald-500/10"
+          >
+       
+
+ Transfer
+          </button>}
+
           <button
-            onClick={() => depositCoin()}
+            // onClick={() => depositCoin()}
             className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#a2ffda] text-[#0a0b14] font-medium rounded text-sm hover:bg-[#85eec5] transition shadow-lg shadow-emerald-500/10"
           >
           <svg className="h-2 w-2" width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
