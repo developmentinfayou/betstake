@@ -22,7 +22,7 @@ export interface ICrashRound extends Document {
 }
 
 const crashRoundSchema = new Schema<ICrashRound>({
-  roundNumber: { type: Number, required: true, unique: true, index: true },
+  roundNumber: { type: Number, required: true },
   mode: { type: String, enum: ['classic', 'trenball'], default: 'classic', required: true },
   crashPoint: { type: Number, required: true },
   hash: { type: String, required: true },
@@ -34,8 +34,8 @@ const crashRoundSchema = new Schema<ICrashRound>({
   }
 });
 
-// Index for mode-based queries
-crashRoundSchema.index({ mode: 1, roundNumber: -1 });
+// Compound unique index: each mode has its own roundNumber sequence
+crashRoundSchema.index({ mode: 1, roundNumber: 1 }, { unique: true });
 
 export const CrashRound = model<ICrashRound>('CrashRound', crashRoundSchema);
 

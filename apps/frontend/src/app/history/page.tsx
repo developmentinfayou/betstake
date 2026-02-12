@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { betAPI } from '@/lib/api';
-import { useAuthStore } from '@/store/auth';
+import { useAuthStore } from '@/store/useAuthStore';
 import toast from 'react-hot-toast';
 
 export default function HistoryPage() {
@@ -44,14 +44,14 @@ export default function HistoryPage() {
       toast.error('Rotate your seed pair first to reveal the server seed');
       return;
     }
-    
+
     const params = new URLSearchParams({
       serverSeed: seedPair.serverSeed,
       clientSeed: seedPair.clientSeed,
       nonce: (bet.nonce + 1).toString(),
       gameType: bet.gameType,
     });
-    
+
     window.open(`/verifier?${params.toString()}`, '_blank');
   };
 
@@ -128,11 +128,10 @@ export default function HistoryPage() {
                         </span>
                       </td>
                       <td className="p-3">
-                        <span className={`px-2 py-1 rounded text-xs font-bold ${
-                          bet.status === 'WON' 
-                            ? 'bg-green-500/20 text-green-500' 
+                        <span className={`px-2 py-1 rounded text-xs font-bold ${bet.status === 'WON'
+                            ? 'bg-green-500/20 text-green-500'
                             : 'bg-red-500/20 text-red-500'
-                        }`}>
+                          }`}>
                           {bet.status}
                         </span>
                       </td>
@@ -186,19 +185,17 @@ export default function HistoryPage() {
               ) : (
                 <div className="space-y-4">
                   {/* Match Status */}
-                  <div className={`border rounded-lg p-4 ${
-                    verifyModal.matches 
-                      ? 'bg-green-900/20 border-green-500' 
+                  <div className={`border rounded-lg p-4 ${verifyModal.matches
+                      ? 'bg-green-900/20 border-green-500'
                       : 'bg-red-900/20 border-red-500'
-                  }`}>
-                    <div className={`font-bold text-xl mb-2 ${
-                      verifyModal.matches ? 'text-green-500' : 'text-red-500'
                     }`}>
+                    <div className={`font-bold text-xl mb-2 ${verifyModal.matches ? 'text-green-500' : 'text-red-500'
+                      }`}>
                       {verifyModal.matches ? '✅ Verification Passed' : '❌ Verification Failed'}
                     </div>
                     <p className="text-sm text-gray-400">
-                      {verifyModal.matches 
-                        ? 'The bet result matches the provably fair calculation' 
+                      {verifyModal.matches
+                        ? 'The bet result matches the provably fair calculation'
                         : 'Warning: Result mismatch detected'}
                     </p>
                   </div>

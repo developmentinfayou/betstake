@@ -79,17 +79,24 @@ router.put('/', authenticate, requireAdmin, async (req: AuthRequest, res) => {
         );
 
         // Log to audit
-        await AdminActivityLog.create({
-            adminId: req.user._id,
-            action: 'UPDATE_PLATFORM_SETTINGS',
-            targetType: 'SETTINGS',
-            targetId: settings._id.toString(),
-            details: {
-                maintenanceMode: updates.maintenanceMode,
-                defaultHouseEdge: updates.defaultHouseEdge
-            },
-            ipAddress: req.ip || 'unknown'
-        });
+        try {
+            if (req.user?._id) {
+                await AdminActivityLog.create({
+                    adminId: req.user._id,
+                    adminUsername: req.user.username || req.user.email || 'admin',
+                    action: 'UPDATE_PLATFORM_SETTINGS',
+                    targetType: 'SETTINGS',
+                    targetId: settings._id.toString(),
+                    newValue: {
+                        maintenanceMode: updates.maintenanceMode,
+                        defaultHouseEdge: updates.defaultHouseEdge
+                    },
+                    ipAddress: req.ip || 'unknown'
+                });
+            }
+        } catch (logError) {
+            console.error('Failed to log admin activity:', logError);
+        }
 
         // Convert Map to object for response
         const response = {
@@ -129,14 +136,21 @@ router.post('/reset', authenticate, requireSuperAdmin, async (req: AuthRequest, 
         });
 
         // Log to audit
-        await AdminActivityLog.create({
-            adminId: req.user._id,
-            action: 'RESET_PLATFORM_SETTINGS',
-            targetType: 'SETTINGS',
-            targetId: settings._id.toString(),
-            details: { resetToDefaults: true },
-            ipAddress: req.ip || 'unknown'
-        });
+        try {
+            if (req.user?._id) {
+                await AdminActivityLog.create({
+                    adminId: req.user._id,
+                    adminUsername: req.user.username || req.user.email || 'admin',
+                    action: 'RESET_PLATFORM_SETTINGS',
+                    targetType: 'SETTINGS',
+                    targetId: settings._id.toString(),
+                    newValue: { resetToDefaults: true },
+                    ipAddress: req.ip || 'unknown'
+                });
+            }
+        } catch (logError) {
+            console.error('Failed to log admin activity:', logError);
+        }
 
         res.json({ success: true, message: 'Settings reset to defaults', settings: DEFAULT_PLATFORM_SETTINGS });
     } catch (error) {
@@ -164,14 +178,21 @@ router.post('/maintenance', authenticate, requireSuperAdmin, async (req: AuthReq
         );
 
         // Log to audit
-        await AdminActivityLog.create({
-            adminId: req.user._id,
-            action: enabled ? 'ENABLE_MAINTENANCE' : 'DISABLE_MAINTENANCE',
-            targetType: 'SETTINGS',
-            targetId: settings._id.toString(),
-            details: { enabled, message },
-            ipAddress: req.ip || 'unknown'
-        });
+        try {
+            if (req.user?._id) {
+                await AdminActivityLog.create({
+                    adminId: req.user._id,
+                    adminUsername: req.user.username || req.user.email || 'admin',
+                    action: enabled ? 'ENABLE_MAINTENANCE' : 'DISABLE_MAINTENANCE',
+                    targetType: 'SETTINGS',
+                    targetId: settings._id.toString(),
+                    newValue: { enabled, message },
+                    ipAddress: req.ip || 'unknown'
+                });
+            }
+        } catch (logError) {
+            console.error('Failed to log admin activity:', logError);
+        }
 
         res.json({ success: true, maintenanceMode: enabled });
     } catch (error) {

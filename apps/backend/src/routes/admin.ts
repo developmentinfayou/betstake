@@ -174,36 +174,46 @@ router.put('/users/:id/balance', authenticate, requireAdmin, async (req: AuthReq
       return res.status(400).json({ error: 'Reason is required (min 5 chars)' });
     }
 
-    const wallet = await Wallet.findOne({ userId: id });
-    if (!wallet) {
-      return res.status(404).json({ error: 'Wallet not found' });
+    if (!currency) {
+      return res.status(400).json({ error: 'Currency is required' });
     }
 
-    const oldBalance = wallet.balances.get(currency) || 0;
+    // Find wallet by userId AND currency (per the Wallet schema)
+    let wallet = await Wallet.findOne({ userId: id, currency });
+
+    // If no wallet exists for this currency, create one
+    if (!wallet) {
+      wallet = await Wallet.create({ userId: id, currency, balance: 0 });
+    }
+
+    const oldBalance = wallet.balance || 0;
     const newBalance = oldBalance + amount;
 
     if (newBalance < 0) {
       return res.status(400).json({ error: 'Balance cannot go negative' });
     }
 
-    wallet.balances.set(currency, newBalance);
+    wallet.balance = newBalance;
     await wallet.save();
 
     // Log to audit trail
-    await AdminActivityLog.create({
-      adminId: req.user._id,
-      action: 'BALANCE_ADJUST',
-      targetType: 'USER',
-      targetId: id,
-      details: {
-        currency,
-        oldBalance,
-        newBalance,
-        adjustment: amount
-      },
-      reason,
-      ipAddress: req.ip || 'unknown'
-    });
+    try {
+      if (req.user?._id) {
+        await AdminActivityLog.create({
+          adminId: req.user._id,
+          adminUsername: req.user.username || req.user.email || 'admin',
+          action: 'BALANCE_ADJUST',
+          targetType: 'USER',
+          targetId: id,
+          previousValue: { balance: oldBalance, currency },
+          newValue: { balance: newBalance, adjustment: amount, currency },
+          reason,
+          ipAddress: req.ip || 'unknown'
+        });
+      }
+    } catch (logError) {
+      console.error('Failed to log admin activity:', logError);
+    }
 
     res.json({
       success: true,
@@ -247,19 +257,23 @@ router.put('/users/:id/ban', authenticate, requireAdmin, async (req: AuthRequest
     }
 
     // Log to audit trail
-    await AdminActivityLog.create({
-      adminId: req.user._id,
-      action: banned ? 'BAN_USER' : 'UNBAN_USER',
-      targetType: 'USER',
-      targetId: id,
-      details: {
-        username: user.username,
-        email: user.email,
-        banned
-      },
-      reason,
-      ipAddress: req.ip || 'unknown'
-    });
+    try {
+      if (req.user?._id) {
+        await AdminActivityLog.create({
+          adminId: req.user._id,
+          adminUsername: req.user.username || req.user.email || 'admin',
+          action: banned ? 'BAN_USER' : 'UNBAN_USER',
+          targetType: 'USER',
+          targetId: id,
+          previousValue: { banned: !banned },
+          newValue: { banned, username: user.username, email: user.email },
+          reason,
+          ipAddress: req.ip || 'unknown'
+        });
+      }
+    } catch (logError) {
+      console.error('Failed to log admin activity:', logError);
+    }
 
     res.json({
       success: true,

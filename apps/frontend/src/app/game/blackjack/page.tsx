@@ -144,7 +144,7 @@ export default function BlackjackPage() {
         toast.success(`You win! +$${response.data.profit.toFixed(2)}`);
         setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + response.data.profit, wagered: s.wagered + amount }));
       } else if (response.data.multiplier === 1) {
-        toast.info('Push! Bet returned');
+        toast('Push! Bet returned');
         setStats(s => ({ ...s, wagered: s.wagered + amount }));
       } else {
         toast.error('Dealer wins');

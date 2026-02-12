@@ -207,14 +207,21 @@ router.get('/export', authenticate, requireAdmin, async (req: AuthRequest, res: 
         }
 
         // Log export action
-        await AdminActivityLog.create({
-            adminId: req.user._id,
-            action: 'EXPORT_REPORT',
-            targetType: 'REPORT',
-            targetId: type,
-            details: { type, startDate: start, endDate: end },
-            ipAddress: req.ip || 'unknown'
-        });
+        try {
+            if (req.user?._id) {
+                await AdminActivityLog.create({
+                    adminId: req.user._id,
+                    adminUsername: req.user.username || req.user.email || 'admin',
+                    action: 'EXPORT_REPORT',
+                    targetType: 'REPORT',
+                    targetId: type as string,
+                    newValue: { type, startDate: start, endDate: end },
+                    ipAddress: req.ip || 'unknown'
+                });
+            }
+        } catch (logError) {
+            console.error('Failed to log admin activity:', logError);
+        }
 
         res.setHeader('Content-Type', 'text/csv');
         res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
