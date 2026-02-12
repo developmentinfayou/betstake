@@ -29,13 +29,13 @@ export class BalloonGame extends BaseGame {
 
   play(input: BetInput): BetResult {
     this.validateBet(input.amount, input.currency);
-    
+
     const params = input.gameParams as BalloonParams;
     const { difficulty, pumpMode, targetMultiplier = 1.5, targetPumps = 1 } = params;
 
     const settings = this.difficultySettings[difficulty];
     const float = generateFloat(input.seedData);
-    
+
     const burstAt = Math.floor(float * settings.maxPumps) + 1;
 
     let pumps: number;
@@ -55,7 +55,7 @@ export class BalloonGame extends BaseGame {
     const won = pumps < burstAt;
     const multiplier = won ? 1 + (pumps * settings.baseMultiplier) : 0;
 
-    const payout = this.calculatePayout(input.amount, multiplier * 0.99); // 1% house edge
+    const payout = this.calculatePayout(input.amount, multiplier * (1 - this.config.houseEdge / 100));
     const profit = this.calculateProfit(input.amount, payout);
 
     const result: BalloonResult = {
@@ -66,7 +66,7 @@ export class BalloonGame extends BaseGame {
     };
 
     return {
-      multiplier: won ? multiplier * 0.99 : 0,
+      multiplier: won ? multiplier * (1 - this.config.houseEdge / 100) : 0,
       payout,
       profit,
       won,

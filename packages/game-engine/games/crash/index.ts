@@ -13,8 +13,10 @@ export interface CrashRoundData {
 export class CrashGame {
   /**
    * Generate crash point for round
+   * @param roundData - seed data for provably fair generation
+   * @param houseEdgePercent - house edge as percentage (default 1 = 1%)
    */
-  static generateCrashPoint(roundData: CrashRoundData): number {
+  static generateCrashPoint(roundData: CrashRoundData, houseEdgePercent: number = 1): number {
     const float = generateFloat({
       serverSeed: roundData.serverSeed,
       clientSeed: roundData.clientSeed,
@@ -22,7 +24,7 @@ export class CrashGame {
     });
 
     // Crash uses: 99 / (100 * float) with house edge
-    const houseEdge = 0.01; // 1%
+    const houseEdge = houseEdgePercent / 100;
     const crashPoint = (99 * (1 - houseEdge)) / (100 * float);
 
     // Cap at 10,000x

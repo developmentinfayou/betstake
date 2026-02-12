@@ -41,12 +41,17 @@ import { setupLudoSocket } from './websocket/ludo';
 import { AutoBetService } from './services/autobet-service';
 import { socketManager } from './services/socket-manager';
 
+import { gameRegistry } from '@casino/game-engine';
+
 const PORT = process.env.PORT || 3001;
 
 async function start() {
   // Connect to MongoDB
   await connectDB();
   console.log('✅ MongoDB connected');
+
+  // Sync game configs with platform settings from DB
+  await gameRegistry.syncWithPlatformSettings();
 
   // Create Express app
   const app = express();

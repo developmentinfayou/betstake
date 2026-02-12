@@ -19,8 +19,11 @@ import { BlackjackGame } from './games/blackjack';
 /**
  * Game Registry - manages all available games
  */
+// Constructor type for game classes (concrete subclasses of BaseGame)
+type GameConstructor = new (config: GameConfig) => BaseGame;
+
 export class GameRegistry {
-  private games: Map<string, typeof BaseGame> = new Map();
+  private games: Map<string, GameConstructor> = new Map();
   private configs: Map<string, GameConfig> = new Map();
 
   constructor() {
@@ -59,7 +62,7 @@ export class GameRegistry {
   /**
    * Register a game
    */
-  register(gameType: string, gameClass: typeof BaseGame, config: GameConfig) {
+  register(gameType: string, gameClass: GameConstructor, config: GameConfig) {
     this.games.set(gameType, gameClass);
     this.configs.set(gameType, config);
   }
@@ -102,6 +105,64 @@ export class GameRegistry {
    */
   hasGame(gameType: string): boolean {
     return this.games.has(gameType);
+  }
+
+  /**
+   * Update house edge for ALL registered games at once
+   */
+  updateAllHouseEdge(houseEdge: number) {
+    for (const gameType of this.games.keys()) {
+      const config = this.configs.get(gameType);
+      if (config) {
+        this.configs.set(gameType, { ...config, houseEdge });
+      }
+    }
+  }
+
+  /**
+   * Sync game configs with PlatformSettings from DB
+   * Called on server startup and when admin updates settings
+   */
+  async syncWithPlatformSettings(): Promise<void> {
+    try {
+      const { PlatformSettings } = await import('@casino/database');
+
+      let settings = await PlatformSettings.findOne();
+      if (!settings) {
+        console.log('⚠️ No PlatformSettings found, using defaults');
+        return;
+      }
+
+      // Apply defaultHouseEdge to all games
+      if (settings.defaultHouseEdge !== undefined) {
+        this.updateAllHouseEdge(settings.defaultHouseEdge);
+        console.log(`✅ Applied house edge ${settings.defaultHouseEdge}% to all games`);
+      }
+
+      // Apply min/max bet amounts if available
+      const minBet = settings.minBetAmount instanceof Map
+        ? Object.fromEntries(settings.minBetAmount)
+        : settings.minBetAmount;
+      const maxBet = settings.maxBetAmount instanceof Map
+        ? Object.fromEntries(settings.maxBetAmount)
+        : settings.maxBetAmount;
+
+      if (minBet || maxBet) {
+        for (const gameType of this.games.keys()) {
+          const config = this.configs.get(gameType);
+          if (config) {
+            this.configs.set(gameType, {
+              ...config,
+              ...(minBet && { minBet: { ...config.minBet, ...minBet } }),
+              ...(maxBet && { maxBet: { ...config.maxBet, ...maxBet } }),
+            });
+          }
+        }
+        console.log('✅ Applied platform bet limits to all games');
+      }
+    } catch (error) {
+      console.error('❌ Failed to sync with PlatformSettings:', error);
+    }
   }
 }
 

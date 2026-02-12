@@ -19,6 +19,8 @@ interface LudoRoom {
 
 const rooms = new Map<string, LudoRoom>();
 const playerToRoom = new Map<string, string>(); // userId -> gameId
+const lastActionTime = new Map<string, number>(); // userId -> timestamp (rate limiting)
+const RATE_LIMIT_MS = 500; // Min 500ms between actions
 
 export function setupLudoSocket(io: Server) {
   const ludoNamespace = io.of('/ludo');
@@ -84,7 +86,7 @@ export function setupLudoSocket(io: Server) {
           shareableLink,
           room: sanitizeRoom(room)
         });
-        
+
         // Also send initial room state for immediate display
         socket.emit('game-joined', {
           room: sanitizeRoom(room),
@@ -104,10 +106,10 @@ export function setupLudoSocket(io: Server) {
       username: string;
     }) => {
       console.log(`[Ludo] Player ${data.userId} trying to join game ${data.gameId}`);
-      
+
       try {
         // First check database for persistent game state
-        const dbGame = await PVPGame.findOne({ 
+        const dbGame = await PVPGame.findOne({
           $or: [
             { shareableLink: `ludo/join/${data.gameId}` },
             { shareableLink: `ludo/${data.gameId}` }
@@ -135,8 +137,8 @@ export function setupLudoSocket(io: Server) {
               socketId: ''
             })),
             gameState: dbGame.gameState as LudoGameState || null,
-            status: dbGame.status === PVPGameStatus.WAITING ? 'waiting' : 
-                   dbGame.status === PVPGameStatus.ACTIVE ? 'playing' : 'finished',
+            status: dbGame.status === PVPGameStatus.WAITING ? 'waiting' :
+              dbGame.status === PVPGameStatus.ACTIVE ? 'playing' : 'finished',
             turnTimeout: null,
             createdAt: dbGame.createdAt?.getTime() || Date.now()
           };
@@ -144,7 +146,7 @@ export function setupLudoSocket(io: Server) {
         }
 
         const existingPlayer = room.players.find(p => p.userId === data.userId);
-        
+
         if (existingPlayer) {
           // Player reconnecting
           console.log(`[Ludo] Player ${data.userId} reconnecting to game ${data.gameId}`);
@@ -152,7 +154,7 @@ export function setupLudoSocket(io: Server) {
           existingPlayer.username = data.username; // Update username
           playerToRoom.set(data.userId, data.gameId);
           socket.join(data.gameId);
-          
+
           socket.emit('game-joined', {
             room: sanitizeRoom(room),
             gameState: room.gameState ? sanitizeGameState(room.gameState) : null
@@ -350,6 +352,15 @@ export function setupLudoSocket(io: Server) {
 
     // Roll dice
     socket.on('roll-dice', (data: { gameId: string; userId: string }) => {
+      // Rate limiting
+      const now = Date.now();
+      const lastAction = lastActionTime.get(data.userId) || 0;
+      if (now - lastAction < RATE_LIMIT_MS) {
+        socket.emit('error', { message: 'Too fast, slow down' });
+        return;
+      }
+      lastActionTime.set(data.userId, now);
+
       const room = rooms.get(data.gameId);
 
       if (!room || !room.gameState) {
@@ -392,6 +403,15 @@ export function setupLudoSocket(io: Server) {
 
     // Make move
     socket.on('make-move', (data: { gameId: string; userId: string; tokenId: number }) => {
+      // Rate limiting
+      const now = Date.now();
+      const lastAction = lastActionTime.get(data.userId) || 0;
+      if (now - lastAction < RATE_LIMIT_MS) {
+        socket.emit('error', { message: 'Too fast, slow down' });
+        return;
+      }
+      lastActionTime.set(data.userId, now);
+
       const room = rooms.get(data.gameId);
 
       if (!room || !room.gameState) {
@@ -473,7 +493,7 @@ export function setupLudoSocket(io: Server) {
   setInterval(() => {
     const now = Date.now();
     const ABANDON_TIMEOUT = 5 * 60 * 1000; // 5 minutes
-    
+
     for (const [gameId, room] of rooms.entries()) {
       // Only clean up waiting rooms that are old
       if (room.status === 'waiting' && now - room.createdAt > ABANDON_TIMEOUT) {
@@ -555,7 +575,7 @@ export function setupLudoSocket(io: Server) {
     try {
       // Determine winner(s)
       let winners: string[] = [];
-      
+
       if (room.gameState.winner) {
         winners = [room.gameState.winner];
       } else if (room.gameState.winningTeam !== undefined) {
@@ -567,7 +587,7 @@ export function setupLudoSocket(io: Server) {
       // Credit winners
       const payoutPerWinner = payout.winnerPayout / winners.length;
       for (const winnerId of winners) {
-        await WalletService.creditBalance(winnerId, '', room.currency, payoutPerWinner);
+        await WalletService.addBalance(winnerId, room.currency, payoutPerWinner);
       }
 
       // Update database
@@ -600,7 +620,7 @@ export function setupLudoSocket(io: Server) {
     }, 300000);
   }
 
-  function handlePlayerLeave(userId: string, namespace: any) {
+  async function handlePlayerLeave(userId: string, namespace: any) {
     const gameId = playerToRoom.get(userId);
     if (!gameId) return;
 
@@ -608,11 +628,64 @@ export function setupLudoSocket(io: Server) {
     if (!room) return;
 
     if (room.status === 'playing') {
-      // Forfeit game
+      // Forfeit: notify all players, award remaining players the pot
       namespace.to(gameId).emit('player-forfeited', { userId });
-      // TODO: Handle forfeit logic
+
+      const remainingPlayers = room.players.filter(p => p.userId !== userId);
+
+      if (remainingPlayers.length > 0 && room.gameState) {
+        // Calculate payout for remaining players
+        const payout = LudoGame.calculatePayout(room.mode, room.betAmount, room.players.length);
+        const payoutPerWinner = payout.winnerPayout / remainingPlayers.length;
+
+        // Credit remaining players
+        for (const winner of remainingPlayers) {
+          try {
+            await WalletService.addBalance(winner.userId, room.currency, payoutPerWinner);
+          } catch (err) {
+            console.error(`[Ludo] Failed to credit forfeit payout to ${winner.userId}:`, err);
+          }
+        }
+
+        // Mark game as finished
+        room.status = 'finished';
+        clearTurnTimeout(room);
+
+        namespace.to(gameId).emit('game-ended', {
+          winner: remainingPlayers.length === 1 ? remainingPlayers[0].userId : null,
+          winners: remainingPlayers.map(p => p.userId),
+          payout: payoutPerWinner,
+          forfeitedBy: userId,
+          serverSeed: room.gameState.serverSeed,
+          gameState: sanitizeGameState(room.gameState)
+        });
+
+        // Update database
+        PVPGame.findOneAndUpdate(
+          { shareableLink: `ludo/join/${room.gameId}` },
+          {
+            status: PVPGameStatus.FINISHED,
+            winner: remainingPlayers.length === 1 ? remainingPlayers[0].userId : undefined,
+            finishedAt: new Date(),
+            gameState: room.gameState
+          }
+        ).catch(console.error);
+
+        // Cleanup after delay
+        setTimeout(() => {
+          rooms.delete(room.gameId);
+          room.players.forEach(p => playerToRoom.delete(p.userId));
+          lastActionTime.delete(userId);
+        }, 300000);
+      }
     } else {
-      // Remove from waiting room
+      // Remove from waiting room + refund bet
+      try {
+        await WalletService.addBalance(userId, room.currency, room.betAmount);
+      } catch (err) {
+        console.error(`[Ludo] Failed to refund bet to ${userId}:`, err);
+      }
+
       room.players = room.players.filter(p => p.userId !== userId);
       namespace.to(gameId).emit('player-left', { userId });
 
@@ -622,6 +695,7 @@ export function setupLudoSocket(io: Server) {
     }
 
     playerToRoom.delete(userId);
+    lastActionTime.delete(userId);
   }
 
   function sanitizeRoom(room: LudoRoom) {

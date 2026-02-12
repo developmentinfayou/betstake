@@ -23,16 +23,16 @@ const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
 export class HiLoGame extends BaseGame {
   play(input: BetInput): BetResult {
     this.validateBet(input.amount, input.currency);
-    
+
     const params = input.gameParams as HiLoParams;
     const { choice, currentCard, cardHistory = [] } = params;
 
     // Use proper cursor for HiLo (13 increments as per Stake)
     const hiloSeedData = { ...input.seedData, cursor: 13 };
-    
+
     const nextCard = generateInt(hiloSeedData, 1, 13);
     const current = currentCard || generateInt({ ...hiloSeedData, nonce: hiloSeedData.nonce + 1 }, 1, 13);
-    
+
     // Generate suit for visual purposes
     const suitIndex = generateInt({ ...hiloSeedData, nonce: hiloSeedData.nonce + 2 }, 0, 3);
     const suit = suits[suitIndex];
@@ -84,6 +84,6 @@ export class HiLoGame extends BaseGame {
       multiplier *= 0.8;
     }
 
-    return parseFloat((multiplier * 0.99).toFixed(4));
+    return parseFloat((multiplier * (1 - this.config.houseEdge / 100)).toFixed(4));
   }
 }
