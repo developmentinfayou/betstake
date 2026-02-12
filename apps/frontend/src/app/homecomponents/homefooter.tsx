@@ -9,11 +9,67 @@ const HomeFooter = () => {
   };
 
   const [vaultShow, setvaultShow] = React.useState(false);
+  const [transferShow, setTransferShow] = React.useState(false);
 
-const valshow = () => {
-  setvaultShow((prev: boolean) => !prev);
+  const transfer = () => {
+    setTransferShow((prev: boolean) => !prev);
+    setDepositShow(false);
+
+  }
+
+  const valshow = () => {
+    setvaultShow((prev: boolean) => !prev);
+  };
+
+  const [isSwapped, setIsSwapped] = React.useState(false);
+
+const handleSwap = () => {
+  setIsSwapped((prev) => !prev);
 };
 
+const WalletCard = () => (
+  <div>
+    <p className="text-xs text-[#7c8799] mb-1">Wallet Balance</p>
+
+    <div className="flex items-center justify-between gap-2 bg-[#04040A] border border-[#1e293b] py-1.5 px-3 rounded w-[187px] h-[29px]">
+    
+
+
+      <span className="text-white flex items-center gap-1 font-medium text-xs text-nowrap">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12.8043 8.07255C11.9361 11.5547 8.40902 13.6737 4.92643 12.8056C1.44546 11.9374 -0.673753 8.41034 0.19461 4.92836C1.06236 1.44577 4.58924 -0.673647 8.07081 0.194512C11.5532 1.06267 13.6724 4.59016 12.8043 8.07255Z" fill="#F7931A"/>
+<path d="M9.36529 5.57426C9.49448 4.70935 8.83594 4.2444 7.93549 3.93422L8.22758 2.76259L7.5142 2.58486L7.22983 3.72561C7.04255 3.67889 6.84998 3.63481 6.65864 3.59114L6.94505 2.44287L6.23228 2.26514L5.93998 3.43636C5.78479 3.40102 5.63245 3.36608 5.48457 3.32931L5.48538 3.32566L4.50185 3.08008L4.31213 3.8418C4.31213 3.8418 4.84127 3.96307 4.8301 3.97058C5.11894 4.04269 5.17135 4.23383 5.16241 4.38536L4.82969 5.7201C4.8496 5.72518 4.8754 5.73249 4.90383 5.74387L4.82868 5.72518L4.3621 7.59496C4.32675 7.68271 4.23717 7.81433 4.03527 7.76436C4.04238 7.77472 3.51689 7.63497 3.51689 7.63497L3.16284 8.45154L4.09113 8.6829C4.26378 8.72616 4.43299 8.77146 4.59935 8.81412L4.30421 9.99936L5.01657 10.1771L5.30907 9.00465C5.50346 9.05746 5.69237 9.10621 5.87721 9.15212L5.58593 10.3191L6.29911 10.4968L6.59425 9.31401C7.81036 9.54415 8.72504 9.45132 9.10955 8.3516C9.41973 7.46597 9.09432 6.95511 8.45447 6.62178C8.92044 6.51392 9.27165 6.2074 9.36529 5.57426ZM7.73561 7.85922C7.51502 8.74485 6.02407 8.26629 5.54043 8.14604L5.93206 6.57608C6.4155 6.69673 7.96535 6.93561 7.73561 7.85922ZM7.956 5.56146C7.75491 6.36706 6.51381 5.95776 6.11101 5.85742L6.46607 4.43351C6.86887 4.53385 8.16563 4.72113 7.956 5.56146Z" fill="white"/>
+</svg>  0.0066012 BTC
+      </span>
+
+      <span className="text-[10px] bg-emerald-400 text-black px-[5px] rounded text-right font-semibold">
+        MAX
+      </span>
+    </div>
+  </div>
+);
+
+const PlayCard = () => (
+  <div>
+    <p className="text-xs text-[#7c8799] mb-1 text-left">Play Balance</p>
+
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center gap-2">
+      <span className="text-white flex items-center gap-1 font-medium text-xs text-nowrap">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12.8043 8.07255C11.9361 11.5547 8.40902 13.6737 4.92643 12.8056C1.44546 11.9374 -0.673753 8.41034 0.19461 4.92836C1.06236 1.44577 4.58924 -0.673647 8.07081 0.194512C11.5532 1.06267 13.6724 4.59016 12.8043 8.07255Z" fill="#F7931A"/>
+<path d="M9.36529 5.57426C9.49448 4.70935 8.83594 4.2444 7.93549 3.93422L8.22758 2.76259L7.5142 2.58486L7.22983 3.72561C7.04255 3.67889 6.84998 3.63481 6.65864 3.59114L6.94505 2.44287L6.23228 2.26514L5.93998 3.43636C5.78479 3.40102 5.63245 3.36608 5.48457 3.32931L5.48538 3.32566L4.50185 3.08008L4.31213 3.8418C4.31213 3.8418 4.84127 3.96307 4.8301 3.97058C5.11894 4.04269 5.17135 4.23383 5.16241 4.38536L4.82969 5.7201C4.8496 5.72518 4.8754 5.73249 4.90383 5.74387L4.82868 5.72518L4.3621 7.59496C4.32675 7.68271 4.23717 7.81433 4.03527 7.76436C4.04238 7.77472 3.51689 7.63497 3.51689 7.63497L3.16284 8.45154L4.09113 8.6829C4.26378 8.72616 4.43299 8.77146 4.59935 8.81412L4.30421 9.99936L5.01657 10.1771L5.30907 9.00465C5.50346 9.05746 5.69237 9.10621 5.87721 9.15212L5.58593 10.3191L6.29911 10.4968L6.59425 9.31401C7.81036 9.54415 8.72504 9.45132 9.10955 8.3516C9.41973 7.46597 9.09432 6.95511 8.45447 6.62178C8.92044 6.51392 9.27165 6.2074 9.36529 5.57426ZM7.73561 7.85922C7.51502 8.74485 6.02407 8.26629 5.54043 8.14604L5.93206 6.57608C6.4155 6.69673 7.96535 6.93561 7.73561 7.85922ZM7.956 5.56146C7.75491 6.36706 6.51381 5.95776 6.11101 5.85742L6.46607 4.43351C6.86887 4.53385 8.16563 4.72113 7.956 5.56146Z" fill="white"/>
+</svg>  0.0066012 BTC
+      </span>
+
+      </div>
+
+      <button className="bg-[#73FFD7] text-black px-[6px] text-[12px] w-[55px] h-[29px] rounded font-medium hover:opacity-90 transition">
+        Transfer
+      </button>
+    </div>
+  </div>
+);
 
 
   return (
@@ -194,28 +250,28 @@ const valshow = () => {
           <div className="flex items-center justify-between pt-4 border-t border-gray-800">
             <div className="flex items-center space-x-6">
               <div className="flex items-center gap-[6px] cursor-pointer">
-              <label className="inline-flex items-center cursor-pointer">
-  <input
-    type="checkbox"
-    checked={vaultShow}
-    onChange={valshow}
-    className="sr-only peer"
-  />
+                <label className="inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={vaultShow}
+                    onChange={valshow}
+                    className="sr-only peer"
+                  />
 
-  <div
-    className={`
+                  <div
+                    className={`
       relative w-9 h-5 rounded-full transition-all duration-300
       ${vaultShow ? "bg-[#FFFFFF1F]" : "bg-[#FFFFFF1F]"}
     `}
-  >
-    <div
-      className={`
+                  >
+                    <div
+                      className={`
         absolute top-[2px] left-[2px] h-4 w-4 rounded-full transition-all duration-300
         ${vaultShow ? "translate-x-4 bg-[#73FFD7]" : "translate-x-0 bg-white"}
       `}
-    />
-  </div>
-</label>
+                    />
+                  </div>
+                </label>
 
                 <span
                   style={{
@@ -228,10 +284,283 @@ const valshow = () => {
                   Vault
                 </span>
               </div>
-           {vaultShow && <div className="flex items-center space-x-2 cursor-pointer text-gray-400 hover:text-white transition">
-                <img src="/images/refresh-balance.svg" />
-                <span className="text-sm ">Play Balance</span>
-              </div>}
+              {vaultShow && (
+                <div className="flex items-center space-x-2 cursor-pointer text-gray-400 hover:text-white transition">
+                  <img src="/images/refresh-balance.svg" />
+                  <span className="text-sm ">Play Balance</span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center space-x-2 text-gray-500 cursor-pointer hover:text-gray-300">
+              <img src="/images/close-eye.svg" />
+              <span className="text-xs">Less Amount</span>
+            </div>
+          </div>
+        </div>
+      )}
+      {transferShow && (
+        <div className="w-full absolute bottom-14 z-50 max-w-md p-3 rounded bg-[#0d121d]/95 border border-gray-800 shadow-2xl backdrop-blur-md text-gray-400 ">
+          <div className="flex items-center justify-between mb-6 space-x-3">
+            <div className="flex w-[155px] h-[31px] p-1 bg-[#73FFD70F] rounded ">
+              <button className="flex gap-1.5 items-center px-3 py-1.5 text-sm text-white bg-[#FFFFFF0F] rounded shadow-sm">
+                <img src="/images/crypto.svg" /> Crypto
+              </button>
+              <button className="flex gap-1.5 items-center px-3 py-1.5 text-sm tracking-wider hover:text-gray-200 transition">
+                <img src="/images/fiat.svg" /> Fiat
+              </button>
+            </div>
+
+            <div className="relative flex-grow w-[187px] h-[31px]">
+              <span className="absolute inset-y-0 left-3 flex items-center text-gray-500">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 13 13"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M9.16657 5.83217C9.16657 3.99122 7.67419 2.49884 5.83324 2.49884"
+                    stroke="#34d399"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M12.5 12.5L9.6 9.6M11.1667 5.83333C11.1667 8.77885 8.77885 11.1667 5.83333 11.1667C2.88781 11.1667 0.5 8.77885 0.5 5.83333C0.5 2.88781 2.88781 0.5 5.83333 0.5C8.77885 0.5 11.1667 2.88781 11.1667 5.83333Z"
+                    stroke="white"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <input
+                type="text"
+                placeholder="Search here..."
+                className="w-full bg-[#04040A] border border-gray-800 rounded py-1.5 pl-9 pr-3 text-xs focus:outline-none focus:border-emerald-500/50 transition"
+              />
+            </div>
+
+            <div className="flex items-center space-x-2 text-gray-600">
+              <svg
+                className=" cursor-pointer hover:text-emerald-400"
+                width="13"
+                height="13"
+                viewBox="0 0 13 13"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M8.53367 4.49984H2.16667C1.24619 4.49984 0.5 3.75364 0.5 2.83317C0.5 1.9127 1.24619 1.1665 2.16667 1.1665H8.53367M4.46633 11.8332H10.8333C11.7538 11.8332 12.5 11.087 12.5 10.1665C12.5 9.24603 11.7538 8.49984 10.8333 8.49984H4.46633"
+                  stroke="#13222A"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M2.83333 12.5C1.54467 12.5 0.5 11.4553 0.5 10.1667C0.5 8.878 1.54467 7.83333 2.83333 7.83333C4.122 7.83333 5.16667 8.878 5.16667 10.1667C5.16667 11.4553 4.122 12.5 2.83333 12.5Z"
+                  stroke="#73FFD7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M10.1667 5.16667C11.4553 5.16667 12.5 4.122 12.5 2.83333C12.5 1.54467 11.4553 0.5 10.1667 0.5C8.878 0.5 7.83333 1.54467 7.83333 2.83333C7.83333 4.122 8.878 5.16667 10.1667 5.16667Z"
+                  stroke="#73FFD7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+
+              <svg
+                className="cursor-pointer hover:text-red-400"
+                width="15"
+                height="13"
+                viewBox="0 0 15 13"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M10.3778 0.5C12.8433 0.5 14.5 2.735 14.5 4.82C14.5 9.0425 7.62444 12.5 7.5 12.5C7.37556 12.5 0.5 9.0425 0.5 4.82C0.5 2.735 2.15667 0.5 4.62222 0.5C6.03778 0.5 6.96333 1.1825 7.5 1.7825C8.03667 1.1825 8.96222 0.5 10.3778 0.5Z"
+                  stroke="#13222A"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <div className="rounded">
+
+  <div className="flex items-center justify-between gap-4 mb-4">
+
+    {/* LEFT SIDE */}
+    <div className="flex-1 transition-all duration-300">
+      {!isSwapped ? <WalletCard /> : <PlayCard />}
+    </div>
+
+    {/* SWAP BUTTON */}
+    {/* <button
+      onClick={handleSwap}
+      className="flex items-center justify-center w-10 h-10 rounded-full bg-[#0f1b2e] hover:bg-[#13233b] transition-all duration-300 group"
+    > */}
+      {/* <svg
+        className={`w-5 h-5 text-emerald-400 transition-transform duration-300 ${
+          isSwapped ? "rotate-180" : ""
+        }`}
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <path
+          d="M7 7h10M7 7l3-3M7 7l3 3M17 17H7m10 0l-3-3m3 3l-3 3"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg> */}
+
+      <svg  onClick={handleSwap} className={` text-emerald-400 transition-transform duration-300 ${
+          isSwapped ? "rotate-180" : ""
+        }`} width="14" height="9" viewBox="0 0 14 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0.0452539 3.47833C-0.0465664 3.25924 0.00418359 3.00708 0.173797 2.8394L2.8726 0.171795C3.10434 -0.0572648 3.47985 -0.0572648 3.71156 0.171795C3.94321 0.400719 3.94321 0.772025 3.71156 1.00095L2.02541 2.66761H13.4068C13.7344 2.66761 14 2.9301 14 3.25397C14 3.57785 13.7344 3.84034 13.4068 3.84034H0.593277C0.353336 3.84034 0.137074 3.69742 0.0452539 3.47833ZM13.4067 5.15967H0.593223C0.265617 5.15967 0 5.42216 0 5.74603C0 6.0699 0.265617 6.3324 0.593223 6.3324H11.9746L10.2884 7.99906C10.0568 8.22798 10.0567 8.59929 10.2884 8.82821C10.4042 8.94273 10.556 9 10.7079 9C10.8597 9 11.0115 8.94273 11.1273 8.82821L13.8262 6.16061C13.9958 5.99296 14.0466 5.74076 13.9547 5.52168C13.8629 5.30259 13.6467 5.15967 13.4067 5.15967Z" fill="#73FFD7"/>
+</svg>
+
+    {/* </button> */}
+
+    {/* RIGHT SIDE */}
+    <div className="flex-1 transition-all duration-300 text-right">
+      {!isSwapped ? <PlayCard /> : <WalletCard />}
+    </div>
+
+  </div>
+
+</div>
+
+
+          <div className="space-y-1 mb-6">
+            <div className="flex items-center justify-between px-2 py-1 rounded hover:bg-gray-800/30 cursor-pointer group">
+              <div className="flex items-center space-x-2">
+                <img src="/images/dogecoin.svg" />
+                <span className="text-sm font-normal group-hover:text-white">
+                  Dogecoin
+                </span>
+              </div>
+              <div className="text-right flex items-center gap-2">
+                <div className="text-[12px] text-gray-500">3819.75 INR ~</div>
+                <div className="text-sm  text-gray-300">266.00000 DOGE</div>
+              </div>
+            </div>
+
+            <div className="relative flex items-center justify-between px-2 py-1 bg-[#1a1c2e]/50 border-l-2 border-emerald-500 rounded-r cursor-pointer">
+              <div className="flex items-center space-x-2">
+                <img src="/images/fiat.svg" />
+                <span className="text-sm font-normal text-white">Bitcoin</span>
+              </div>
+              <div className="text-right flex items-center gap-2">
+                <div className="text-[12px] text-gray-500">17319.47 INR ~</div>
+                <div className="text-sm  font-medium text-white">
+                  0.0021780 BTC
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between px-2 py-1 rounded hover:bg-gray-800/30 cursor-pointer group">
+              <div className="flex items-center space-x-2">
+                <img src="/images/tether.svg" />
+                <span className="text-sm font-normal group-hover:text-white">
+                  Tether
+                </span>
+              </div>
+              <div className="text-right flex items-center gap-2">
+                <div className="text-[12px] text-gray-500">3819.75 INR ~</div>
+                <div className="text-sm  text-gray-300">266.00000 DOGE</div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between px-2 py-1 rounded hover:bg-gray-800/30 cursor-pointer group">
+              <div className="flex items-center space-x-2">
+                <img src="/images/binance.svg" />
+                <span className="text-sm font-normal group-hover:text-white">
+                  Binance Coin
+                </span>
+                <svg
+                  className="cursor-pointer text-emerald-400"
+                  width="15"
+                  height="13"
+                  viewBox="0 0 15 13"
+                  fill="currentColor"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M10.3778 0.5C12.8433 0.5 14.5 2.735 14.5 4.82C14.5 9.0425 7.62444 12.5 7.5 12.5C7.37556 12.5 0.5 9.0425 0.5 4.82C0.5 2.735 2.15667 0.5 4.62222 0.5C6.03778 0.5 6.96333 1.1825 7.5 1.7825C8.03667 1.1825 8.96222 0.5 10.3778 0.5Z"
+                    stroke="#13222A"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <div className="text-right flex items-center gap-2">
+                <div className="text-[12px] text-gray-500">27288.61 INR ~</div>
+                <div className="text-sm  text-gray-300">0.5 BNB</div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between px-2 py-1 rounded hover:bg-gray-800/30 cursor-pointer group">
+              <div className="flex items-center space-x-2">
+                <img src="/images/litecoin.svg" />
+                <span className="text-sm font-normal group-hover:text-white">
+                  Litecoin
+                </span>
+              </div>
+              <div className="text-right flex items-center gap-2">
+                <div className="text-[10px] text-gray-500">3819.75 INR ~</div>
+                <div className="text-sm  text-gray-300">266.00000 DOGE</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flexxx hidden items-center justify-between pt-4 border-t border-gray-800">
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center gap-[6px] cursor-pointer">
+                <label className="inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={vaultShow}
+                    onChange={valshow}
+                    className="sr-only peer"
+                  />
+
+                  <div
+                    className={`
+      relative w-9 h-5 rounded-full transition-all duration-300
+      ${vaultShow ? "bg-[#FFFFFF1F]" : "bg-[#FFFFFF1F]"}
+    `}
+                  >
+                    <div
+                      className={`
+        absolute top-[2px] left-[2px] h-4 w-4 rounded-full transition-all duration-300
+        ${vaultShow ? "translate-x-4 bg-[#73FFD7]" : "translate-x-0 bg-white"}
+      `}
+                    />
+                  </div>
+                </label>
+
+                <span
+                  style={{
+                    borderBottom: "1px",
+                    borderStyle: "dashed",
+                    strokeDasharray: "1 1",
+                  }}
+                  className="text-sm  text-white   tracking-widest"
+                >
+                  Vault
+                </span>
+              </div>
+              {vaultShow && (
+                <div className="flex items-center space-x-2 cursor-pointer text-gray-400 hover:text-white transition">
+                  <img src="/images/refresh-balance.svg" />
+                  <span className="text-sm ">Play Balance</span>
+                </div>
+              )}
             </div>
 
             <div className="flex items-center space-x-2 text-gray-500 cursor-pointer hover:text-gray-300">
@@ -281,60 +610,70 @@ const valshow = () => {
           </div>
 
           <div className="flex items-center gap-[12px] min-w-[233px] h-[41px]">
-
-          <div onClick={() => depositCoin()} className="flex w-[146px] h-[41px] items-center gap-1.5 px-3 py-1.5 bg-[#1a1c2e] border border-gray-800 rounded cursor-pointer hover:bg-[#252841] text-nowrap">
-            <img src="/images/bitcoin.svg" />
-            <span className="text-sm tracking-widest  text-white">
-              0.0021780 BTC
-            </span>
-            <svg
-              width="5"
-              height="3"
-              viewBox="0 0 5 3"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+            <div
+              onClick={() => depositCoin()}
+              className="flex w-[146px] h-[41px] items-center gap-1.5 px-3 py-1.5 bg-[#1a1c2e] border border-gray-800 rounded cursor-pointer hover:bg-[#252841] text-nowrap"
             >
-              <path
-                d="M0.5 2.5L2.5 0.5L4.5 2.5"
-                stroke="#73FFD7"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+              <img src="/images/bitcoin.svg" />
+              <span className="text-sm tracking-widest  text-white">
+                0.0021780 BTC
+              </span>
+              <svg
+                width="5"
+                height="3"
+                viewBox="0 0 5 3"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M0.5 2.5L2.5 0.5L4.5 2.5"
+                  stroke="#73FFD7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+
+            {depositShow && !vaultShow && (
+              <button
+                // onClick={() => depositCoin()}
+                className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#31313F] font-medium rounded text-sm hover:bg-[#494c4b] transition shadow-lg shadow-emerald-500/10"
+              >
+                Withdraw
+              </button>
+            )}
+
+            {vaultShow && (
+              <button
+                onClick={() => transfer()}
+                className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#31313F] font-medium rounded text-sm hover:bg-[#494c4b] transition shadow-lg shadow-emerald-500/10"
+              >
+                Transfer
+              </button>
+            )}
+
+            <button
+              // onClick={() => depositCoin()}
+              className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#a2ffda] text-[#0a0b14] font-medium rounded text-sm hover:bg-[#85eec5] transition shadow-lg shadow-emerald-500/10"
+            >
+              <svg
+                className="h-2 w-2"
+                width="8"
+                height="8"
+                viewBox="0 0 8 8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4 0.5V7.5M0.5 4H7.5"
+                  stroke="black"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              Deposit
+            </button>
           </div>
-
-         {depositShow && !vaultShow && <button
-            // onClick={() => depositCoin()}
-            className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#31313F] font-medium rounded text-sm hover:bg-[#494c4b] transition shadow-lg shadow-emerald-500/10"
-          >
-       
-
- Withdraw
-          </button>}
-
-          {vaultShow &&  <button
-            // onClick={() => depositCoin()}
-            className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#31313F] font-medium rounded text-sm hover:bg-[#494c4b] transition shadow-lg shadow-emerald-500/10"
-          >
-       
-
- Transfer
-          </button>}
-
-          <button
-            // onClick={() => depositCoin()}
-            className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#a2ffda] text-[#0a0b14] font-medium rounded text-sm hover:bg-[#85eec5] transition shadow-lg shadow-emerald-500/10"
-          >
-          <svg className="h-2 w-2" width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M4 0.5V7.5M0.5 4H7.5" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-
- Deposit
-          </button>
-
-          </div>
-
-
 
           <div className="w-10 h-10 flex items-center justify-center">
             <img src="/images/profile-badge.svg" />
