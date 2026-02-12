@@ -680,11 +680,11 @@ const PlayCard = () => (
           </div>
         </div>
 
-        <div className="hidden relative group xl:flex items-center justify-between p-3 border-[#31313F] border hover:rounded-t-none hover:bg-[#000000f6] bg-[#FFFFFF08] rounded w-[764.79px] h-[41px] ">
+        <div className="hidden relative group xl:flex items-center justify-between p-3 border-[#31313F] border hover:rounded-t-none hover:bg-[#000000f6] bg-[#FFFFFF08] rounded min-w-[706.79px] h-[41px] ">
           {/* 🔥 Hover List */}
           <div
             className="
-  absolute top- bottom-full -left-[1.2px] mt-1 w-[764.7px]
+  absolute top- bottom-full -left-[1.2px] mt-1 min-w-[706.79px]
   bg-[#000000f6]
   border border-[#31313F] border-b-0
   rounded
