@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { LudoGame, LudoMode, LudoGameState } from '@casino/game-engine';
-import { PVPGame, PVPGameStatus, PVPGameType, User } from '@casino/database';
+import { PVPGame, PVPGameStatus, PVPGameType, User, UserStats, Currency } from '@casino/database';
 import { nanoid } from 'nanoid';
 import { LudoMatchmakingService } from '../services/ludo-matchmaking';
 import { WalletService } from '../services/wallet-service';
@@ -9,7 +9,7 @@ interface LudoRoom {
   gameId: string;
   mode: LudoMode;
   betAmount: number;
-  currency: string;
+  currency: Currency;
   players: Array<{ userId: string; username: string; socketId: string }>;
   gameState: LudoGameState | null;
   status: 'waiting' | 'playing' | 'finished';
@@ -39,14 +39,14 @@ export function setupLudoSocket(io: Server) {
       console.log(`[Ludo] Creating game for user ${data.userId}, mode: ${data.mode}`);
       try {
         // Check balance
-        const balance = await WalletService.getAvailableBalance(data.userId, data.currency as any);
+        const balance = await WalletService.getAvailableBalance(data.userId, data.currency as Currency);
         if (balance < data.betAmount) {
           socket.emit('error', { message: 'Insufficient balance' });
           return;
         }
 
         // Debit wallet
-        await WalletService.debitBalance(data.userId, data.currency, data.betAmount);
+        await WalletService.debitBalance(data.userId, data.currency as Currency, data.betAmount);
 
         const gameId = nanoid(10);
         const shareableLink = `ludo/join/${gameId}`;
@@ -56,7 +56,7 @@ export function setupLudoSocket(io: Server) {
           gameId,
           mode: data.mode,
           betAmount: data.betAmount,
-          currency: data.currency,
+          currency: data.currency as Currency,
           players: [{ userId: data.userId, username: data.username, socketId: socket.id }],
           gameState: null,
           status: 'waiting',
@@ -130,9 +130,9 @@ export function setupLudoSocket(io: Server) {
             gameId: data.gameId,
             mode: dbGame.mode as LudoMode,
             betAmount: dbGame.betAmount,
-            currency: dbGame.currency,
-            players: dbGame.players.map((playerId: string, index: number) => ({
-              userId: playerId,
+            currency: dbGame.currency as Currency,
+            players: dbGame.players.map((playerId: any, index: number) => ({
+              userId: playerId.toString(),
               username: `Player${index + 1}`, // Will be updated when they connect
               socketId: ''
             })),
@@ -175,13 +175,13 @@ export function setupLudoSocket(io: Server) {
         }
 
         // Check balance and debit
-        const balance = await WalletService.getAvailableBalance(data.userId, room.currency as any);
+        const balance = await WalletService.getAvailableBalance(data.userId, room.currency);
         if (balance < room.betAmount) {
           socket.emit('error', { message: 'Insufficient balance' });
           return;
         }
 
-        await WalletService.debitBalance(data.userId, room.currency, room.betAmount);
+        await WalletService.debitBalance(data.userId, room.currency as Currency, room.betAmount);
 
         // Add new player
         room.players.push({
@@ -263,7 +263,7 @@ export function setupLudoSocket(io: Server) {
         try {
           // Debit all players
           for (const player of match) {
-            await WalletService.debitBalance(player.userId, data.currency, data.betAmount);
+            await WalletService.debitBalance(player.userId, data.currency as Currency, data.betAmount);
           }
 
           // Create game room
@@ -274,7 +274,7 @@ export function setupLudoSocket(io: Server) {
             gameId,
             mode: data.mode,
             betAmount: data.betAmount,
-            currency: data.currency,
+            currency: data.currency as Currency,
             players: match.map(m => ({ userId: m.userId, username: m.username, socketId: m.socketId })),
             gameState: null,
             status: 'waiting',
@@ -609,6 +609,29 @@ export function setupLudoSocket(io: Server) {
         serverSeed: room.gameState.serverSeed,
         gameState: sanitizeGameState(room.gameState)
       });
+
+      // Update UserStats for all players (rakeback tracking)
+      for (const player of room.players) {
+        const isWinner = winners.includes(player.userId);
+        const profit = isWinner ? payoutPerWinner - room.betAmount : -room.betAmount;
+        try {
+          await UserStats.findOneAndUpdate(
+            { userId: player.userId },
+            {
+              $inc: {
+                totalWagered: room.betAmount,
+                totalProfit: profit,
+                totalWins: isWinner ? 1 : 0,
+                totalLosses: isWinner ? 0 : 1,
+              },
+              $setOnInsert: { userId: player.userId }
+            },
+            { upsert: true }
+          );
+        } catch (statsErr) {
+          console.error('Ludo UserStats error:', statsErr);
+        }
+      }
     } catch (error) {
       console.error('Error ending game:', error);
     }

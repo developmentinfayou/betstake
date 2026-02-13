@@ -40,6 +40,7 @@ import { setupLudoSocket } from './websocket/ludo';
 // Services
 import { AutoBetService } from './services/autobet-service';
 import { socketManager } from './services/socket-manager';
+import { RakebackService } from './services/rakeback-service';
 
 import { gameRegistry } from '@casino/game-engine';
 
@@ -136,6 +137,25 @@ async function start() {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     console.log(`🔌 Socket.IO ready on ws://localhost:${PORT}`);
   });
+
+  // Schedule daily rakeback generation
+  const now = new Date();
+  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+  const msUntilMidnight = midnight.getTime() - now.getTime();
+
+  // Run first rakeback generation at next midnight, then every 24 hours
+  setTimeout(() => {
+    RakebackService.generateRakeback('daily')
+      .then(() => console.log('✅ Daily rakeback generated'))
+      .catch(err => console.error('❌ Rakeback generation error:', err));
+
+    setInterval(() => {
+      RakebackService.generateRakeback('daily')
+        .then(() => console.log('✅ Daily rakeback generated'))
+        .catch(err => console.error('❌ Rakeback generation error:', err));
+    }, 24 * 60 * 60 * 1000);
+  }, msUntilMidnight);
+  console.log(`⏰ Rakeback scheduler set — first run at midnight (${Math.round(msUntilMidnight / 60000)} min)`);
 
   // Graceful shutdown
   process.on('SIGTERM', async () => {

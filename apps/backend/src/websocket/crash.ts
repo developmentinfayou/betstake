@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { CrashGame } from '@casino/game-engine';
-import { CrashRound, CrashBet, CrashGameMode, TrenballBetType, TrenballResult } from '@casino/database';
+import { CrashRound, CrashBet, CrashGameMode, TrenballBetType, TrenballResult, UserStats } from '@casino/database';
 import { generateServerSeed, generateClientSeed } from '@casino/fairness';
 import { UnifiedJackpotService } from '../services/unified-jackpot-service';
 
@@ -418,6 +418,9 @@ export function setupCrashSocket(io: Server) {
     // Save bets to database
     saveBets(mode);
 
+    // Update UserStats for rakeback calculation
+    updateUserStats(mode);
+
     // Process jackpots for all bets
     processRoundJackpots(mode);
 
@@ -453,6 +456,29 @@ export function setupCrashSocket(io: Server) {
       await CrashBet.insertMany(crashBets);
     } catch (error) {
       console.error('Error saving crash bets:', error);
+    }
+  }
+
+  async function updateUserStats(mode: CrashGameMode) {
+    try {
+      const bets = mode === 'classic' ? classic.bets : trenball.bets;
+      for (const bet of bets) {
+        await UserStats.findOneAndUpdate(
+          { userId: bet.userId },
+          {
+            $inc: {
+              totalWagered: bet.amount,
+              totalProfit: bet.payout - bet.amount,
+              totalWins: bet.won ? 1 : 0,
+              totalLosses: bet.won ? 0 : 1,
+            },
+            $setOnInsert: { userId: bet.userId }
+          },
+          { upsert: true }
+        );
+      }
+    } catch (error) {
+      console.error('Error updating crash user stats:', error);
     }
   }
 

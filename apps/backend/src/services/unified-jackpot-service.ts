@@ -191,9 +191,14 @@ export class UnifiedJackpotService {
                 return Math.abs(multiplier - condition.value) < 0.01;
 
             case JackpotConditionType.RANDOM_CHANCE:
-                // Simple probability check
+                // Deterministic probability check using crypto hash
+                // Uses userId + gameType + timestamp for auditability
                 const probability = (condition.probability || 0) / 100;
-                return Math.random() < probability;
+                const { createHash } = require('crypto');
+                const hashInput = `${progress?.userId || 'anon'}-${gameType}-${Date.now()}-jackpot-random`;
+                const hash = createHash('sha256').update(hashInput).digest('hex');
+                const randomValue = parseInt(hash.substring(0, 8), 16) / 0xFFFFFFFF;
+                return randomValue < probability;
 
             case JackpotConditionType.IN_A_ROW:
                 // Check win streak

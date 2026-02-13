@@ -58,7 +58,7 @@ export class BlackjackGame extends BaseGame {
 
   play(input: BetInput): BetResult {
     this.validateBet(input.amount, input.currency);
-    
+
     const deck = this.createDeck(input.seedData);
     const playerHand = [deck[0], deck[2]];
     const dealerHand = [deck[1], deck[3]];
@@ -68,21 +68,22 @@ export class BlackjackGame extends BaseGame {
 
     let multiplier = 0;
     let won = false;
+    const houseEdgeMultiplier = 1 - this.config.houseEdge / 100;
 
     if (this.isBlackjack(playerHand) && !this.isBlackjack(dealerHand)) {
-      multiplier = 2.5;
+      multiplier = 2.5 * houseEdgeMultiplier; // BJ 3:2 with house edge
       won = true;
     } else if (this.isBlackjack(dealerHand) && !this.isBlackjack(playerHand)) {
       multiplier = 0;
       won = false;
     } else if (playerTotal === dealerTotal) {
-      multiplier = 1;
+      multiplier = 1; // Push — no house edge
       won = false;
     } else if (playerTotal > 21) {
       multiplier = 0;
       won = false;
     } else if (dealerTotal > 21 || playerTotal > dealerTotal) {
-      multiplier = 2;
+      multiplier = 2 * houseEdgeMultiplier; // Win with house edge
       won = true;
     }
 

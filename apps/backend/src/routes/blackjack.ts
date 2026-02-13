@@ -1,16 +1,70 @@
 import { Router } from 'express';
 import { authenticate, AuthRequest } from '../middleware/auth';
-import { BlackjackSession, Bet, Wallet } from '@casino/database';
+import { BlackjackSession, Bet, Wallet, UserStats } from '@casino/database';
 import { BlackjackGame, Card } from '@casino/game-engine';
 import { SeedManager, shuffle } from '@casino/fairness';
+import { gameRegistry } from '@casino/game-engine';
+import { UnifiedJackpotService } from '../services/unified-jackpot-service';
 
 const router = Router();
 
-const gameConfig = {
-  houseEdge: 1,
-  minBet: { USD: 0.1, BTC: 0.00001 },
-  maxBet: { USD: 10000, BTC: 1 },
-  maxWin: { USD: 100000, BTC: 10 },
+/**
+ * Helper: process jackpot + UserStats after a Blackjack bet is resolved
+ */
+async function processBlackjackPostBet(
+  userId: string,
+  currency: string,
+  amount: number,
+  payout: number,
+  won: boolean,
+  resultData: any,
+  betId: string
+) {
+  try {
+    // Update UserStats for rakeback
+    await UserStats.findOneAndUpdate(
+      { userId },
+      {
+        $inc: {
+          totalWagered: amount,
+          totalProfit: payout - amount,
+          totalWins: won ? 1 : 0,
+          totalLosses: won ? 0 : 1,
+        },
+        $setOnInsert: { userId }
+      },
+      { upsert: true }
+    );
+
+    // Process jackpot conditions
+    await UnifiedJackpotService.processBet(
+      userId,
+      'BLACKJACK',
+      currency,
+      amount,
+      { ...resultData, won },
+      betId
+    );
+  } catch (err) {
+    console.error('Blackjack post-bet processing error:', err);
+  }
+}
+
+// Get house edge from game registry (synced with PlatformSettings)
+const getHouseEdge = (): number => {
+  try {
+    const game = gameRegistry.getGame('BLACKJACK');
+    return (game as any).config?.houseEdge ?? 1;
+  } catch {
+    return 1; // Default 1%
+  }
+};
+
+// Apply house edge to win multipliers (push stays 1x)
+const applyHouseEdge = (multiplier: number): number => {
+  if (multiplier <= 1) return multiplier; // Push (1x) or loss (0x) — no adjustment
+  const he = getHouseEdge();
+  return parseFloat((multiplier * (1 - he / 100)).toFixed(4));
 };
 
 const createDeck = (seedData: any): Card[] => {
@@ -107,9 +161,9 @@ router.post('/start', authenticate, async (req: AuthRequest, res) => {
       let won = false;
 
       if (playerBJ && dealerBJ) {
-        multiplier = 1; // Push
+        multiplier = 1; // Push — no house edge on pushes
       } else if (playerBJ) {
-        multiplier = 2.5; // Blackjack pays 3:2
+        multiplier = applyHouseEdge(2.5); // Blackjack pays 3:2 minus house edge
         won = true;
       } else {
         multiplier = 0; // Dealer Blackjack
@@ -143,6 +197,13 @@ router.post('/start', authenticate, async (req: AuthRequest, res) => {
       session.betId = bet._id;
       await session.save();
       await SeedManager.unlockSeedAfterGame(session._id.toString());
+
+      // Process jackpot + UserStats
+      await processBlackjackPostBet(
+        req.userId!, currency, betAmount, payout, won,
+        { playerTotal, dealerTotal, blackjack: true },
+        bet._id.toString()
+      );
 
       return res.json({
         sessionId: session._id,
@@ -339,13 +400,13 @@ router.post('/stand', authenticate, async (req: AuthRequest, res) => {
         handMultiplier = 0; // Busted
       } else if (hand.length === 2 && playerTotal === 21) {
         // Blackjack on a split hand pays 1:1 (not 3:2) per standard rules
-        handMultiplier = 2;
+        handMultiplier = applyHouseEdge(2);
         handWon = true;
       } else if (dealerTotal > 21 || playerTotal > dealerTotal) {
-        handMultiplier = 2;
+        handMultiplier = applyHouseEdge(2);
         handWon = true;
       } else if (playerTotal === dealerTotal) {
-        handMultiplier = 1; // Push
+        handMultiplier = 1; // Push — no house edge
       }
 
       const handPayout = betPerHand * handMultiplier;
@@ -388,6 +449,13 @@ router.post('/stand', authenticate, async (req: AuthRequest, res) => {
 
     // Unlock seed when game ends
     await SeedManager.unlockSeedAfterGame(session._id.toString());
+
+    // Process jackpot + UserStats
+    await processBlackjackPostBet(
+      req.userId!, session.currency, session.betAmount, totalPayout, anyWon,
+      { playerTotals: session.playerHands.map(calculateTotal), dealerTotal, handResults },
+      bet._id.toString()
+    );
 
     res.json({
       bet,
@@ -450,10 +518,10 @@ router.post('/double', authenticate, async (req: AuthRequest, res) => {
     if (playerTotal > 21) {
       multiplier = 0;
     } else if (dealerTotal > 21 || playerTotal > dealerTotal) {
-      multiplier = 2;
+      multiplier = applyHouseEdge(2);
       won = true;
     } else if (playerTotal === dealerTotal) {
-      multiplier = 1;
+      multiplier = 1; // Push — no house edge
     }
 
     const payout = session.betAmount * multiplier;
@@ -485,6 +553,13 @@ router.post('/double', authenticate, async (req: AuthRequest, res) => {
 
     // Unlock seed when game ends
     await SeedManager.unlockSeedAfterGame(session._id.toString());
+
+    // Process jackpot + UserStats
+    await processBlackjackPostBet(
+      req.userId!, session.currency, session.betAmount, payout, won,
+      { playerTotal, dealerTotal, doubled: true },
+      bet._id.toString()
+    );
 
     res.json({
       bet,

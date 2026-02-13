@@ -17,24 +17,25 @@ export interface SoloCrashResult {
 export class SoloCrashGame extends BaseGame {
   play(input: BetInput): BetResult {
     this.validateBet(input.amount, input.currency);
-    
+
     const params = input.gameParams as SoloCrashParams;
     const { mode, targetMultiplier = 2.0 } = params;
 
     const float = generateFloat(input.seedData);
-    const houseEdge = 0.01;
-    const crashPoint = Math.max(1.01, (99 * (1 - houseEdge)) / (100 * float));
+    const houseEdgeFraction = this.config.houseEdge / 100; // e.g. 1% → 0.01
+    const crashPoint = Math.max(1.01, (99 * (1 - houseEdgeFraction)) / (100 * float));
     const finalCrashPoint = Math.min(parseFloat(crashPoint.toFixed(2)), 10000);
 
     let won = false;
     let multiplier = 0;
+    const houseEdgeMultiplier = 1 - houseEdgeFraction; // e.g. 0.99
 
     if (mode === 'quick') {
       won = finalCrashPoint >= 2.0;
-      multiplier = won ? 2.0 * 0.99 : 0;
+      multiplier = won ? 2.0 * houseEdgeMultiplier : 0;
     } else {
       won = finalCrashPoint >= targetMultiplier;
-      multiplier = won ? targetMultiplier * 0.99 : 0;
+      multiplier = won ? targetMultiplier * houseEdgeMultiplier : 0;
     }
 
     const payout = this.calculatePayout(input.amount, multiplier);
