@@ -300,7 +300,7 @@ const PlayCard = () => (
         </div>
       )}
       {transferShow && (
-        <div className="w-full absolute bottom-14 z-50 max-w-md p-3 rounded bg-[#0d121d]/95 border border-gray-800 shadow-2xl backdrop-blur-md text-gray-400 ">
+        <div className="w-[428px] h-[307px] overflow-hidden absolute bottom-14 z-50 max-w-md p-3 rounded bg-[#0d121d]/95 border border-gray-800 shadow-2xl backdrop-blur-md text-gray-400 ">
           <div className="flex items-center justify-between mb-6 space-x-3">
             <div className="flex w-[155px] h-[31px] p-1 bg-[#73FFD70F] rounded ">
               <button className="flex gap-1.5 items-center px-3 py-1.5 text-sm text-white bg-[#FFFFFF0F] rounded shadow-sm">
@@ -436,7 +436,7 @@ const PlayCard = () => (
 </div>
 
 
-          <div className="space-y-1 mb-6">
+          <div className="space-y-1 w-[404px] h-[178px] overflow-y-auto scrollbar-hidden bg-[#73FFD70F]">
             <div className="flex items-center justify-between px-2 py-1 rounded hover:bg-gray-800/30 cursor-pointer group">
               <div className="flex items-center space-x-2">
                 <img src="/images/dogecoin.svg" />
