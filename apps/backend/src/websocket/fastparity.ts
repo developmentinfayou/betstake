@@ -1,7 +1,8 @@
 import { Server } from 'socket.io';
-import { FastParityRound } from '@casino/database';
+import { FastParityRound, UserStats } from '@casino/database';
 import { generateInt, generateServerSeed, hashServerSeed } from '@casino/fairness';
 import { v4 as uuidv4 } from 'uuid';
+import { UnifiedJackpotService } from '../services/unified-jackpot-service';
 
 interface RoundState {
   roundId: string;
@@ -172,6 +173,46 @@ class FastParityServer {
     });
 
     this.currentRound.status = 'completed';
+
+    // Process jackpot + UserStats for each bet
+    for (const bet of processedBets) {
+      try {
+        // Update UserStats for rakeback calculation
+        await UserStats.findOneAndUpdate(
+          { userId: bet.userId },
+          {
+            $inc: {
+              totalWagered: bet.amount,
+              totalProfit: bet.payout - bet.amount,
+              totalWins: bet.won ? 1 : 0,
+              totalLosses: bet.won ? 0 : 1,
+            },
+            $setOnInsert: { userId: bet.userId }
+          },
+          { upsert: true }
+        );
+
+        // Evaluate jackpot conditions
+        const jackpotResult = await UnifiedJackpotService.processBet(
+          bet.userId,
+          'FAST_PARITY',
+          'USD', // Default currency for FastParity WS
+          bet.amount,
+          { number, color, won: bet.won, betType: bet.betType, value: bet.value }
+        );
+
+        if (jackpotResult.won) {
+          this.io.to('fastparity').emit('jackpot-triggered', {
+            userId: bet.userId,
+            username: bet.username,
+            amount: jackpotResult.amount,
+            conditionName: jackpotResult.conditionName,
+          });
+        }
+      } catch (err) {
+        console.error('FastParity jackpot/stats error:', err);
+      }
+    }
 
     // Start next round after delay
     setTimeout(() => {

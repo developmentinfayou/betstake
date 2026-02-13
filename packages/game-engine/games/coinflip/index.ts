@@ -20,7 +20,7 @@ export interface CoinFlipResult {
 export class CoinFlipGame extends BaseGame {
   play(input: BetInput): BetResult {
     this.validateBet(input.amount, input.currency);
-    
+
     const params = input.gameParams as CoinFlipParams;
     const { choice, mode, seriesCount = 1 } = params;
 
@@ -32,7 +32,7 @@ export class CoinFlipGame extends BaseGame {
     const result: CoinSide = float < 0.5 ? 'heads' : 'tails';
     const won = result === choice;
 
-    const multiplier = won ? 1.98 : 0; // 2x with 1% house edge
+    const multiplier = won ? 2 * (1 - this.config.houseEdge / 100) : 0;
     const payout = this.calculatePayout(input.amount, multiplier);
     const profit = this.calculateProfit(input.amount, payout);
 
@@ -52,19 +52,27 @@ export class CoinFlipGame extends BaseGame {
   }
 
   private playSeries(input: BetInput, choice: CoinSide, count: number): BetResult {
+    // Validate series count (3, 5, 7, or 9)
+    const validCounts = [3, 5, 7, 9];
+    const seriesCount = validCounts.includes(count) ? count : 3;
+
     const results: CoinSide[] = [];
     let wins = 0;
 
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < seriesCount; i++) {
       const float = generateFloat({ ...input.seedData, nonce: input.seedData.nonce + i });
       const result: CoinSide = float < 0.5 ? 'heads' : 'tails';
       results.push(result);
       if (result === choice) wins++;
     }
 
-    const winRate = wins / count;
-    const multiplier = winRate * 1.98 * count;
-    const won = wins > count / 2;
+    const majority = Math.ceil(seriesCount / 2);
+    const won = wins >= majority;
+
+    // Payout: bet × (seriesCount × 0.98) if won majority, 0 otherwise
+    // House edge applied once to the series multiplier
+    const houseEdgeMultiplier = 1 - (this.config.houseEdge || 1) / 100;
+    const multiplier = won ? seriesCount * houseEdgeMultiplier : 0;
 
     const payout = this.calculatePayout(input.amount, multiplier);
     const profit = this.calculateProfit(input.amount, payout);

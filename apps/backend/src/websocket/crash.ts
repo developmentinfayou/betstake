@@ -1,8 +1,8 @@
 import { Server, Socket } from 'socket.io';
 import { CrashGame } from '@casino/game-engine';
-import { CrashRound, CrashBet, CrashGameMode, TrenballBetType, TrenballResult } from '@casino/database';
+import { CrashRound, CrashBet, CrashGameMode, TrenballBetType, TrenballResult, UserStats } from '@casino/database';
 import { generateServerSeed, generateClientSeed } from '@casino/fairness';
-import { CrashJackpotService } from '../services/crash-jackpot-service';
+import { UnifiedJackpotService } from '../services/unified-jackpot-service';
 
 // Bet interfaces
 interface ClassicBet {
@@ -218,16 +218,15 @@ export function setupCrashSocket(io: Server) {
         payout: bet.payout,
       });
 
-      // Process jackpot for this bet
-      CrashJackpotService.processPlayerBet({
-        userId: bet.userId,
-        gameType: 'crash_classic',
-        betAmount: bet.amount,
-        crashPoint: classic.crashPoint,
-        cashoutMultiplier: bet.cashoutAt,
-        won: true
-      }).then(result => {
-        if (result.triggered) {
+      // Process jackpot for this bet via unified service
+      UnifiedJackpotService.processBet(
+        bet.userId,
+        'CRASH',
+        bet.currency,
+        bet.amount,
+        { crashPoint: classic.crashPoint, cashoutMultiplier: bet.cashoutAt, won: true }
+      ).then(result => {
+        if (result.won) {
           socket.emit('jackpot-triggered', result);
         }
       }).catch(console.error);
@@ -419,6 +418,9 @@ export function setupCrashSocket(io: Server) {
     // Save bets to database
     saveBets(mode);
 
+    // Update UserStats for rakeback calculation
+    updateUserStats(mode);
+
     // Process jackpots for all bets
     processRoundJackpots(mode);
 
@@ -457,29 +459,54 @@ export function setupCrashSocket(io: Server) {
     }
   }
 
+  async function updateUserStats(mode: CrashGameMode) {
+    try {
+      const bets = mode === 'classic' ? classic.bets : trenball.bets;
+      for (const bet of bets) {
+        await UserStats.findOneAndUpdate(
+          { userId: bet.userId },
+          {
+            $inc: {
+              totalWagered: bet.amount,
+              totalProfit: bet.payout - bet.amount,
+              totalWins: bet.won ? 1 : 0,
+              totalLosses: bet.won ? 0 : 1,
+            },
+            $setOnInsert: { userId: bet.userId }
+          },
+          { upsert: true }
+        );
+      }
+    } catch (error) {
+      console.error('Error updating crash user stats:', error);
+    }
+  }
+
   async function processRoundJackpots(mode: CrashGameMode) {
     try {
-      const gameType = mode === 'classic' ? 'crash_classic' : 'crash_trenball';
       const state = mode === 'classic' ? classic : trenball;
       const bets = mode === 'classic' ? classic.bets : trenball.bets;
 
       for (const bet of bets) {
-        const result = await CrashJackpotService.processPlayerBet({
-          userId: bet.userId,
-          gameType: gameType as any,
-          betAmount: bet.amount,
-          crashPoint: state.crashPoint,
-          cashoutMultiplier: mode === 'classic' ? (bet as ClassicBet).cashoutAt : undefined,
-          betType: mode === 'trenball' ? (bet as TrenballBet).betType : undefined,
-          won: bet.won
-        });
+        const result = await UnifiedJackpotService.processBet(
+          bet.userId,
+          'CRASH',
+          bet.currency,
+          bet.amount,
+          {
+            crashPoint: state.crashPoint,
+            cashoutMultiplier: mode === 'classic' ? (bet as ClassicBet).cashoutAt : undefined,
+            trenballOutcome: mode === 'trenball' ? (state as TrenballModeState).trenballResult?.type : undefined,
+            won: bet.won,
+          }
+        );
 
-        if (result.triggered) {
+        if (result.won) {
           crashNamespace.to(`mode:${mode}`).emit('jackpot-triggered', {
             mode,
             userId: bet.userId,
             conditionName: result.conditionName,
-            prizeAmount: result.prizeAmount
+            prizeAmount: result.amount,
           });
         }
       }

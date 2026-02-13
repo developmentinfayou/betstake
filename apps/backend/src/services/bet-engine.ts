@@ -4,7 +4,7 @@ import { gameRegistry } from '@casino/game-engine';
 import { SeedManager } from '@casino/fairness';
 import { verifyGame } from '@casino/fairness/verifier';
 import { WalletService } from './wallet-service';
-import { JackpotService } from './jackpot-service';
+import { UnifiedJackpotService } from './unified-jackpot-service';
 import { EventEmitter } from 'events';
 
 export const betEvents = new EventEmitter();
@@ -79,21 +79,19 @@ export class BetEngine {
       });
 
       if (!isDemo) {
-        // Add to jackpot pool
-        await JackpotService.addToPool(gameType, currency, amount);
-        
         // Credit winnings if won
         if (result.won && result.payout > 0) {
           await WalletService.addBalance(userId, currency, result.payout);
         }
 
-        // Check jackpot conditions
-        await JackpotService.checkJackpotConditions(
-          bet._id.toString(),
+        // Unified jackpot: add to pool + evaluate conditions
+        await UnifiedJackpotService.processBet(
+          userId,
           gameType,
           currency,
           amount,
-          result.result
+          result.result,
+          bet._id.toString()
         );
 
         // Update user stats

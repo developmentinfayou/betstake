@@ -108,6 +108,14 @@ router.put('/', authenticate, requireAdmin, async (req: AuthRequest, res) => {
             newUserBonusAmount: Object.fromEntries(settings.newUserBonusAmount || new Map())
         };
 
+        // Re-sync game configs with updated settings (house edge, bet limits)
+        try {
+            const { gameRegistry } = await import('@casino/game-engine');
+            await gameRegistry.syncWithPlatformSettings();
+        } catch (syncError) {
+            console.error('Failed to sync game registry after settings update:', syncError);
+        }
+
         res.json(response);
     } catch (error) {
         console.error('Failed to update settings:', error);

@@ -2,7 +2,7 @@ import { BaseGame, BetInput, BetResult } from '../../base-game';
 import { generateInt } from '@casino/fairness';
 
 export type ParityColor = 'green' | 'red' | 'violet';
-export type ParityBetType = 'number' | 'color';
+export type ParityBetType = 'number' | 'color' | 'even' | 'odd';
 
 export interface FastParityParams {
   betType: ParityBetType;
@@ -25,15 +25,18 @@ export class FastParityGame extends BaseGame {
 
   private getMultiplier(betType: ParityBetType, color: ParityColor): number {
     const houseEdge = this.config.houseEdge / 100;
-    
+
     switch (betType) {
       case 'number':
-        return 9 * (1 - houseEdge); // 9x for number bets
+        return 9 * (1 - houseEdge); // 9x for number bets (1/10 chance)
       case 'color':
         if (color === 'violet') {
-          return 4.5 * (1 - houseEdge); // 4.5x for violet
+          return 4.5 * (1 - houseEdge); // 4.5x for violet (2/10 chance)
         }
-        return 1.96 * (1 - houseEdge); // 1.96x for green/red
+        return 1.96 * (1 - houseEdge); // ~2x for green/red (4/10 chance)
+      case 'even':
+      case 'odd':
+        return 2 * (1 - houseEdge); // 2x for even/odd (5/10 chance)
       default:
         return 0;
     }
@@ -41,7 +44,7 @@ export class FastParityGame extends BaseGame {
 
   play(input: BetInput): BetResult {
     this.validateBet(input.amount, input.currency);
-    
+
     const params = input.gameParams as FastParityParams;
     const { betType, value } = params;
 
@@ -55,6 +58,12 @@ export class FastParityGame extends BaseGame {
         break;
       case 'color':
         won = color === value;
+        break;
+      case 'even':
+        won = number % 2 === 0;
+        break;
+      case 'odd':
+        won = number % 2 === 1;
         break;
     }
 

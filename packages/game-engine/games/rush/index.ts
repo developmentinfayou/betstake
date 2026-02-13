@@ -24,12 +24,12 @@ export class RushGame extends BaseGame {
 
   play(input: BetInput): BetResult {
     this.validateBet(input.amount, input.currency);
-    
+
     const params = input.gameParams as RushParams;
     const { difficulty, targetMultiplier } = params;
 
     const range = this.difficultyRanges[difficulty];
-    
+
     if (targetMultiplier < range.min || targetMultiplier > range.max) {
       throw new Error(`Target multiplier must be between ${range.min}x and ${range.max}x for ${difficulty} difficulty`);
     }
@@ -38,7 +38,7 @@ export class RushGame extends BaseGame {
     const crashPoint = this.calculateCrashPoint(float, difficulty);
 
     const won = crashPoint >= targetMultiplier;
-    const multiplier = won ? targetMultiplier * 0.99 : 0; // 1% house edge
+    const multiplier = won ? targetMultiplier * (1 - this.config.houseEdge / 100) : 0;
 
     const payout = this.calculatePayout(input.amount, multiplier);
     const profit = this.calculateProfit(input.amount, payout);
@@ -61,15 +61,15 @@ export class RushGame extends BaseGame {
 
   private calculateCrashPoint(float: number, difficulty: RushDifficulty): number {
     const range = this.difficultyRanges[difficulty];
-    
+
     const e = Math.pow(2, 32);
     const h = Math.floor((1 - float) * e);
-    
+
     let crashPoint = Math.max(1, (0.99 * e) / h);
-    
+
     crashPoint = Math.min(crashPoint, range.max);
     crashPoint = Math.max(crashPoint, range.min);
-    
+
     return parseFloat(crashPoint.toFixed(2));
   }
 }

@@ -22,10 +22,10 @@ export interface MinesResult {
 export class MinesGame extends BaseGame {
   play(input: BetInput): BetResult {
     this.validateBet(input.amount, input.currency);
-    
+
     const params = input.gameParams as MinesParams;
     const { gridSize = 25, minesCount, revealedTiles = [], selectedTiles = [] } = params;
-    
+
     // Determine mode: autobet uses selectedTiles, manual uses revealedTiles
     const isAutoBet = selectedTiles.length > 0;
     const tilesToReveal = isAutoBet ? selectedTiles : revealedTiles;
@@ -44,13 +44,13 @@ export class MinesGame extends BaseGame {
     // Check results
     const hitMine = tilesToReveal.some(tile => grid[tile]);
     const safeTilesRevealed = tilesToReveal.filter(tile => !grid[tile]).length;
-    
+
     // AutoBet: win only if ALL selected tiles are safe
     // Manual: win if any safe tiles revealed
-    const won = isAutoBet 
+    const won = isAutoBet
       ? !hitMine && safeTilesRevealed === tilesToReveal.length
       : !hitMine && safeTilesRevealed > 0;
-    
+
     const multiplier = won ? this.calculateMultiplier(gridSize, minesCount, safeTilesRevealed) : 0;
     const finalMultiplier = won ? multiplier * (1 - this.config.houseEdge / 100) : 0;
 
@@ -77,7 +77,7 @@ export class MinesGame extends BaseGame {
   private generateGrid(gridSize: number, minesCount: number, seedData: any): boolean[] {
     // Use proper cursor for Mines (3 increments as per Stake)
     const minesSeedData = { ...seedData, cursor: 3 };
-    
+
     // Create array with mines (true) and safe tiles (false)
     const tiles = Array(gridSize).fill(false);
     for (let i = 0; i < minesCount; i++) {
@@ -98,10 +98,9 @@ export class MinesGame extends BaseGame {
       const remainingSafe = safeTiles - i;
       const remainingTotal = gridSize - i;
       const probability = remainingSafe / remainingTotal;
-      
-      // Apply house edge
-      const adjustedProbability = probability * (1 - this.config.houseEdge / 100);
-      multiplier *= (1 / adjustedProbability);
+
+      // Pure probability multiplier — house edge applied once in play() via finalMultiplier
+      multiplier *= (1 / probability);
     }
 
     return parseFloat(multiplier.toFixed(4));
@@ -113,7 +112,7 @@ export class MinesGame extends BaseGame {
   checkJackpot(result: MinesResult): boolean {
     // Random chance on each tile reveal
     const randomChance = Math.random() < 0.0001; // 0.01%
-    
+
     if (randomChance) return true;
 
     // Hit mine on first tile (bad luck jackpot)

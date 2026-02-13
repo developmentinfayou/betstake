@@ -16,7 +16,7 @@ export interface TowerResult {
 export class TowerGame extends BaseGame {
   play(input: BetInput): BetResult {
     this.validateBet(input.amount, input.currency);
-    
+
     const params = input.gameParams as TowerParams;
     const { floors, revealedTiles = [] } = params;
 
@@ -53,13 +53,13 @@ export class TowerGame extends BaseGame {
     const towerSeedData = { ...seedData, cursor: 3 };
     const totalTiles = floors * 3;
     const tiles = Array(totalTiles).fill(false);
-    
+
     for (let floor = 0; floor < floors; floor++) {
       const dangerPositions = shuffle([0, 1, 2], { ...towerSeedData, nonce: towerSeedData.nonce + floor });
       tiles[floor * 3 + dangerPositions[0]] = true;
       tiles[floor * 3 + dangerPositions[1]] = true;
     }
-    
+
     return tiles;
   }
 
@@ -71,6 +71,6 @@ export class TowerGame extends BaseGame {
       multiplier *= 1.5;
     }
 
-    return parseFloat((multiplier * 0.99).toFixed(4));
+    return parseFloat((multiplier * (1 - this.config.houseEdge / 100)).toFixed(4));
   }
 }
