@@ -23,6 +23,7 @@ import LogoToggle from "@/icons/LogoToggle";
 import Recentgames from "./homecomponents/recentgames";
 import Maingames from "./homecomponents/maingames";
 import TopCards from "./homecomponents/topcards";
+import Logo from "@/icons/Logo";
 
 const games = [
   {
@@ -129,8 +130,8 @@ export default function HomePage() {
     { id: "poker", name: "Poker" },
     { id: "baccarat", name: "Baccarat" },
     { id: "roulette", name: "Roulette" },
-    { id: "rack", name: "Racks" },
-    { id: "goal", name: "Goals" },
+    { id: "racks", name: "Racks" },
+    { id: "goals", name: "Goals" },
   ];
 
   const totalItems = gameTabs.length;
@@ -168,15 +169,20 @@ export default function HomePage() {
   const getUnderlinePosition = () => {
     switch (activeGameTab) {
       case "blackjack":
-        return 0;
+        return 10;
       case "slots":
-        return 105;
+        return 101;
       case "poker":
-        return 189;
+        return 182;
       case "baccarat":
-        return 271;
+        return 275;
       case "roulette":
-        return 372;
+        return 373;
+        case "racks":
+        return 462;
+        case "goals":
+          return 540;
+        
       default:
         return 0;
     }
@@ -199,9 +205,9 @@ export default function HomePage() {
         return <Baccart color={color} />;
       case "roulette":
         return <Roulette color={color} />;
-      case "rack":
+      case "racks":
         return <Roulette color={color} />;
-      case "goal":
+      case "goals":
         return <Roulette color={color} />;
 
       default:
@@ -285,10 +291,7 @@ export default function HomePage() {
           {/* Logo */}
           <div className=" relative flex items-center gap-8 w-[163px]">
             <div className="flex relative items-baseline gap-1">
-              <img
-                src="/images/logo.svg"
-                className=" text-[19px] tracking-[0.08em]"
-              />
+              <Logo color={"#73FFD7"} />
               <span className=" text-[#73FFD7] text-[14px] tracking-[0.08em] absolute left-[80px] top-[22px]">
                 ~Play
               </span>
@@ -305,44 +308,35 @@ export default function HomePage() {
               <div className="absolute grid gap-4 backdrop-blur-xl rounded w-[381px] h-[188px] top-0 left-[160px] bg-[#73FFD70F] p-[16px] z-50">
                 <div className="relative flex items-center justify-between ">
                   <div className="flex relative items-baseline gap-1">
-                    <img
-                      src="/images/logo.svg"
-                      className=" text-[19px] tracking-[0.08em]"
-                    />
-                    <span className=" text-[#73FFD7] text-[14px] tracking-[0.08em] absolute left-[80px] top-[22px]">
-                      ~Play
+                    <Logo color={"#FFC100"} />
+                    <span className=" text-[#FFC100] text-[14px] tracking-[0.08em] absolute left-[80px] top-[22px]">
+                      ~Wallet
                     </span>
                   </div>
 
-                  <LogoToggle />
+                  <span>Select</span>
                 </div>
 
                 <div className="relative flex items-center justify-between ">
                   <div className="flex relative items-baseline gap-1">
-                    <img
-                      src="/images/logo.svg"
-                      className=" text-[19px] tracking-[0.08em]"
-                    />
+                  <Logo color={"#73FFD7"} />
                     <span className=" text-[#73FFD7] text-[14px] tracking-[0.08em] absolute left-[80px] top-[22px]">
                       ~Play
                     </span>
                   </div>
 
-                  <LogoToggle />
+                  <span>Current</span>
                 </div>
 
                 <div className="relative flex items-center justify-between ">
                   <div className="flex relative items-baseline gap-1">
-                    <img
-                      src="/images/logo.svg"
-                      className=" text-[19px] tracking-[0.08em]"
-                    />
-                    <span className=" text-[#73FFD7] text-[14px] tracking-[0.08em] absolute left-[80px] top-[22px]">
-                      ~Play
+                  <Logo color={"#73B7FF"} />
+                    <span className=" text-[#73B7FF] text-[14px] tracking-[0.08em] absolute left-[80px] top-[22px]">
+                      ~Connect
                     </span>
                   </div>
 
-                  <LogoToggle />
+                  <span>Select</span>
                 </div>
               </div>
             )}
