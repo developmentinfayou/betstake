@@ -56,7 +56,7 @@ export default function LudoLobbyPage() {
 
     newSocket.on('queue-left', () => {
       setInQueue(false);
-      toast.info('Left queue');
+      toast('Left queue');
     });
 
     newSocket.on('error', (data) => {
@@ -264,7 +264,7 @@ export default function LudoLobbyPage() {
             </div>
             <div className="flex gap-3">
               <span className="text-primary font-bold">💰</span>
-              <span>Winner takes {selectedMode === '1v1v1v1' ? '97%' : '98%'} of total pot</span>
+              <span>Winner takes the pot (minus small house edge)</span>
             </div>
           </div>
         </div>
