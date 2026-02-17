@@ -227,7 +227,7 @@ export default function PlinkoPage() {
     <div className="min-h-screen bg-gray-900">
       <header className="border-b border-gray-800">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold gradient-text">← Plinko</Link>
+          <Link href="/" className="text-2xl font-bold gradient-text">  Plinko</Link>
           <div className="flex items-center gap-4">
             <button onClick={() => setFairnessModalOpen(true)} className="btn-secondary px-4 py-2">🎲 Fairness</button>
             <div className="text-right">

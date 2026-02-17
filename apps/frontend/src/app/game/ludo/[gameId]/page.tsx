@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { walletAPI } from '@/lib/api';
-import Link from 'next/link';
-import toast from 'react-hot-toast';
-import { io, Socket } from 'socket.io-client';
-import { useParams, useRouter } from 'next/navigation';
+import { useState, useEffect, useRef } from "react";
+import { walletAPI } from "@/lib/api";
+import Link from "next/link";
+import toast from "react-hot-toast";
+import { io, Socket } from "socket.io-client";
+import { useParams, useRouter } from "next/navigation";
 
-const COLORS = ['RED', 'BLUE', 'GREEN', 'YELLOW'];
+const COLORS = ["RED", "BLUE", "GREEN", "YELLOW"];
 const COLOR_MAP: Record<string, string> = {
-  RED: '#ef4444',
-  BLUE: '#3b82f6',
-  GREEN: '#10b981',
-  YELLOW: '#eab308',
+  RED: "#ef4444",
+  BLUE: "#3b82f6",
+  GREEN: "#10b981",
+  YELLOW: "#eab308",
 };
 
 export default function LudoGamePage() {
@@ -23,9 +23,9 @@ export default function LudoGamePage() {
 
   const [socket, setSocket] = useState<Socket | null>(null);
   const [balance, setBalance] = useState(0);
-  const [userId, setUserId] = useState('');
-  const [username, setUsername] = useState('');
-  
+  const [userId, setUserId] = useState("");
+  const [username, setUsername] = useState("");
+
   const [room, setRoom] = useState<any>(null);
   const [gameState, setGameState] = useState<any>(null);
   const [diceResult, setDiceResult] = useState<number | null>(null);
@@ -33,119 +33,121 @@ export default function LudoGamePage() {
   const [selectedToken, setSelectedToken] = useState<number | null>(null);
   const [isMyTurn, setIsMyTurn] = useState(false);
   const [hasRolled, setHasRolled] = useState(false);
-  const [shareableLink, setShareableLink] = useState('');
+  const [shareableLink, setShareableLink] = useState("");
 
   useEffect(() => {
     loadBalance();
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      router.push('/login');
+      router.push("/login");
       return;
     }
 
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const payload = JSON.parse(atob(token.split(".")[1]));
     setUserId(payload.id);
-    setUsername(payload.username || 'Player');
+    setUsername(payload.username || "Player");
 
-    const newSocket = io('http://localhost:3001/ludo', {
-      transports: ['websocket', 'polling'],
+    const newSocket = io("http://localhost:3001/ludo", {
+      transports: ["websocket", "polling"],
     });
 
     // Join existing game
-    newSocket.emit('join-game', {
+    newSocket.emit("join-game", {
       gameId,
       userId: payload.id,
-      username: payload.username || 'Player',
+      username: payload.username || "Player",
     });
 
-    newSocket.on('game-created', (data) => {
-      console.log('[Ludo Frontend] Game created:', data);
+    newSocket.on("game-created", (data) => {
+      console.log("[Ludo Frontend] Game created:", data);
       setRoom(data.room);
-      setShareableLink(`${window.location.origin}/game/ludo/join/${data.gameId}`);
+      setShareableLink(
+        `${window.location.origin}/game/ludo/join/${data.gameId}`
+      );
     });
 
-    newSocket.on('game-joined', (data) => {
-      console.log('[Ludo Frontend] Game joined:', data);
+    newSocket.on("game-joined", (data) => {
+      console.log("[Ludo Frontend] Game joined:", data);
       setRoom(data.room);
       if (data.gameState) {
         setGameState(data.gameState);
       }
     });
 
-    newSocket.on('player-joined', (data) => {
+    newSocket.on("player-joined", (data) => {
       setRoom(data.room);
       toast.success(`${data.player.username} joined!`);
     });
 
-    newSocket.on('player-reconnected', (data) => {
+    newSocket.on("player-reconnected", (data) => {
       toast.info(`${data.player.username} reconnected`);
     });
 
-    newSocket.on('game-started', (data) => {
+    newSocket.on("game-started", (data) => {
       setGameState(data.gameState);
-      toast.success('Game started!');
+      toast.success("Game started!");
     });
 
-    newSocket.on('dice-rolled', (data) => {
+    newSocket.on("dice-rolled", (data) => {
       setDiceResult(data.result);
       setValidMoves(data.validMoves);
       setHasRolled(true);
-      
+
       if (data.playerId === payload.id) {
         if (data.validMoves.length === 0) {
-          toast.info('No valid moves!');
+          toast.info("No valid moves!");
         }
       }
     });
 
-    newSocket.on('move-made', (data) => {
+    newSocket.on("move-made", (data) => {
       setGameState(data.gameState);
       setDiceResult(null);
       setValidMoves([]);
       setSelectedToken(null);
       setHasRolled(false);
-      
+
       if (data.captured) {
-        toast.success('Token captured!');
+        toast.success("Token captured!");
       }
     });
 
-    newSocket.on('turn-changed', (data) => {
+    newSocket.on("turn-changed", (data) => {
       setIsMyTurn(data.currentPlayerId === payload.id);
       setDiceResult(null);
       setHasRolled(false);
     });
 
-    newSocket.on('extra-turn', (data) => {
+    newSocket.on("extra-turn", (data) => {
       if (data.playerId === payload.id) {
-        toast.success('Rolled 6! Extra turn!');
+        toast.success("Rolled 6! Extra turn!");
         setHasRolled(false);
       }
     });
 
-    newSocket.on('auto-move', (data) => {
-      toast.info('Auto-move (timeout)');
+    newSocket.on("auto-move", (data) => {
+      toast.info("Auto-move (timeout)");
     });
 
-    newSocket.on('game-ended', (data) => {
+    newSocket.on("game-ended", (data) => {
       const isWinner = data.winners?.includes(payload.id);
       if (isWinner) {
         toast.success(`You won $${data.payout.toFixed(2)}!`);
       } else {
-        toast.error('Game over!');
+        toast.error("Game over!");
       }
       loadBalance();
-      
+
       setTimeout(() => {
-        router.push('/game/ludo');
+        router.push("/game/ludo");
       }, 5000);
     });
 
-    newSocket.on('player-forfeited', (data) => {
-      toast.warning('Player forfeited');
+    newSocket.on("player-forfeited", (data) => {
+      toast.warning("Player forfeited");
     });
 
-    newSocket.on('error', (data) => {
+    newSocket.on("error", (data) => {
       toast.error(data.message);
     });
 
@@ -158,7 +160,9 @@ export default function LudoGamePage() {
 
   useEffect(() => {
     if (gameState) {
-      setIsMyTurn(gameState.players[gameState.currentTurnIndex]?.userId === userId);
+      setIsMyTurn(
+        gameState.players[gameState.currentTurnIndex]?.userId === userId
+      );
       drawBoard();
     }
   }, [gameState, selectedToken]);
@@ -166,40 +170,40 @@ export default function LudoGamePage() {
   const loadBalance = async () => {
     try {
       const response = await walletAPI.getAll();
-      const usdWallet = response.data.find((w: any) => w.currency === 'USD');
+      const usdWallet = response.data.find((w: any) => w.currency === "USD");
       setBalance(usdWallet?.balance || 0);
     } catch (error) {
-      console.error('Failed to load balance');
+      console.error("Failed to load balance");
     }
   };
 
   const rollDice = () => {
     if (!socket || !isMyTurn || hasRolled) return;
-    socket.emit('roll-dice', { gameId, userId });
+    socket.emit("roll-dice", { gameId, userId });
   };
 
   const makeMove = (tokenId: number) => {
     if (!socket || !isMyTurn || !hasRolled) return;
-    
-    const isValid = validMoves.some(m => m.tokenId === tokenId);
+
+    const isValid = validMoves.some((m) => m.tokenId === tokenId);
     if (!isValid) {
-      toast.error('Invalid move');
+      toast.error("Invalid move");
       return;
     }
 
-    socket.emit('make-move', { gameId, userId, tokenId });
+    socket.emit("make-move", { gameId, userId, tokenId });
   };
 
   const copyShareLink = () => {
     navigator.clipboard.writeText(shareableLink);
-    toast.success('Link copied!');
+    toast.success("Link copied!");
   };
 
   const drawBoard = () => {
     const canvas = canvasRef.current;
     if (!canvas || !gameState) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     const size = 600;
@@ -207,14 +211,14 @@ export default function LudoGamePage() {
     canvas.height = size;
 
     // Clear
-    ctx.fillStyle = '#1a1a2e';
+    ctx.fillStyle = "#1a1a2e";
     ctx.fillRect(0, 0, size, size);
 
     // Draw board (simplified)
     const cellSize = size / 15;
 
     // Draw grid
-    ctx.strokeStyle = '#2a2a3e';
+    ctx.strokeStyle = "#2a2a3e";
     for (let i = 0; i <= 15; i++) {
       ctx.beginPath();
       ctx.moveTo(i * cellSize, 0);
@@ -228,19 +232,24 @@ export default function LudoGamePage() {
 
     // Draw home areas (corners)
     const homes = [
-      { x: 0, y: 0, color: 'RED' },
-      { x: 9, y: 0, color: 'BLUE' },
-      { x: 0, y: 9, color: 'GREEN' },
-      { x: 9, y: 9, color: 'YELLOW' },
+      { x: 0, y: 0, color: "RED" },
+      { x: 9, y: 0, color: "BLUE" },
+      { x: 0, y: 9, color: "GREEN" },
+      { x: 9, y: 9, color: "YELLOW" },
     ];
 
-    homes.forEach(home => {
-      ctx.fillStyle = COLOR_MAP[home.color] + '40';
-      ctx.fillRect(home.x * cellSize, home.y * cellSize, 6 * cellSize, 6 * cellSize);
+    homes.forEach((home) => {
+      ctx.fillStyle = COLOR_MAP[home.color] + "40";
+      ctx.fillRect(
+        home.x * cellSize,
+        home.y * cellSize,
+        6 * cellSize,
+        6 * cellSize
+      );
     });
 
     // Draw center
-    ctx.fillStyle = '#ffffff20';
+    ctx.fillStyle = "#ffffff20";
     ctx.fillRect(6 * cellSize, 6 * cellSize, 3 * cellSize, 3 * cellSize);
 
     // Draw tokens
@@ -254,7 +263,8 @@ export default function LudoGamePage() {
           const homeIdx = COLORS.indexOf(player.color);
           const homePos = homes[homeIdx];
           x = (homePos.x + 1 + (idx % 2) * 2) * cellSize + cellSize / 2;
-          y = (homePos.y + 1 + Math.floor(idx / 2) * 2) * cellSize + cellSize / 2;
+          y =
+            (homePos.y + 1 + Math.floor(idx / 2) * 2) * cellSize + cellSize / 2;
         } else {
           // On board (simplified positioning)
           const pos = token.position % 52;
@@ -272,16 +282,16 @@ export default function LudoGamePage() {
 
         // Highlight if selectable
         if (selectedToken === idx && player.userId === userId) {
-          ctx.strokeStyle = '#ffffff';
+          ctx.strokeStyle = "#ffffff";
           ctx.lineWidth = 3;
           ctx.stroke();
         }
 
         // Draw token number
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 12px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 12px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
         ctx.fillText((idx + 1).toString(), x, y);
       });
     });
@@ -305,10 +315,15 @@ export default function LudoGamePage() {
     <div className="min-h-screen bg-gray-900">
       <header className="border-b border-gray-800">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/game/ludo" className="text-2xl font-bold gradient-text">← Ludo</Link>
+          <Link href="/game/ludo" className="text-2xl font-bold gradient-text">
+            {" "}
+            Ludo
+          </Link>
           <div className="text-right">
             <div className="text-sm text-gray-400">Balance</div>
-            <div className="text-xl font-bold text-primary">${balance.toFixed(2)}</div>
+            <div className="text-xl font-bold text-primary">
+              ${balance.toFixed(2)}
+            </div>
           </div>
         </div>
       </header>
@@ -321,18 +336,24 @@ export default function LudoGamePage() {
                 <h2 className="text-2xl font-bold">
                   {room.mode} - ${room.betAmount} {room.currency}
                 </h2>
-                {room.status === 'waiting' && shareableLink && (
-                  <button onClick={copyShareLink} className="btn-secondary text-sm">
+                {room.status === "waiting" && shareableLink && (
+                  <button
+                    onClick={copyShareLink}
+                    className="btn-secondary text-sm"
+                  >
                     📋 Copy Link
                   </button>
                 )}
               </div>
 
-              {room.status === 'waiting' ? (
+              {room.status === "waiting" ? (
                 <div className="text-center py-12">
-                  <div className="text-xl font-bold mb-4">Waiting for players...</div>
+                  <div className="text-xl font-bold mb-4">
+                    Waiting for players...
+                  </div>
                   <div className="text-gray-400 mb-4">
-                    {room.players.length} / {room.mode === '1v1' ? 2 : 4} players
+                    {room.players.length} / {room.mode === "1v1" ? 2 : 4}{" "}
+                    players
                   </div>
                   <div className="space-y-2 mb-6">
                     {room.players.map((p: any, i: number) => (
@@ -341,14 +362,17 @@ export default function LudoGamePage() {
                       </div>
                     ))}
                   </div>
-                  {room.players.length >= (room.mode === '1v1' ? 2 : 4) && room.players[0].userId === userId && (
-                    <button 
-                      onClick={() => socket?.emit('start-game', { gameId, userId })}
-                      className="btn-primary px-8 py-3"
-                    >
-                      🚀 Start Game
-                    </button>
-                  )}
+                  {room.players.length >= (room.mode === "1v1" ? 2 : 4) &&
+                    room.players[0].userId === userId && (
+                      <button
+                        onClick={() =>
+                          socket?.emit("start-game", { gameId, userId })
+                        }
+                        className="btn-primary px-8 py-3"
+                      >
+                        🚀 Start Game
+                      </button>
+                    )}
                 </div>
               ) : (
                 <>
@@ -363,18 +387,27 @@ export default function LudoGamePage() {
 
                   <div className="mt-4 grid grid-cols-2 gap-4">
                     {isMyTurn && !hasRolled && (
-                      <button onClick={rollDice} className="btn-primary py-3 col-span-2">
+                      <button
+                        onClick={rollDice}
+                        className="btn-primary py-3 col-span-2"
+                      >
                         🎲 Roll Dice
                       </button>
                     )}
                     {diceResult && (
                       <div className="col-span-2 text-center">
-                        <div className="text-4xl font-bold mb-2">🎲 {diceResult}</div>
+                        <div className="text-4xl font-bold mb-2">
+                          🎲 {diceResult}
+                        </div>
                         {validMoves.length > 0 && isMyTurn && (
-                          <div className="text-sm text-gray-400">Select a token to move</div>
+                          <div className="text-sm text-gray-400">
+                            Select a token to move
+                          </div>
                         )}
                         {validMoves.length === 0 && isMyTurn && (
-                          <div className="text-sm text-red-400">No valid moves - turn will skip automatically</div>
+                          <div className="text-sm text-red-400">
+                            No valid moves - turn will skip automatically
+                          </div>
                         )}
                       </div>
                     )}
@@ -393,8 +426,8 @@ export default function LudoGamePage() {
                     key={i}
                     className={`p-3 rounded-lg ${
                       currentPlayer?.userId === player.userId
-                        ? 'bg-primary/20 border-2 border-primary'
-                        : 'bg-gray-800'
+                        ? "bg-primary/20 border-2 border-primary"
+                        : "bg-gray-800"
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -405,7 +438,11 @@ export default function LudoGamePage() {
                       <div className="flex-1">
                         <div className="font-bold">{player.username}</div>
                         <div className="text-xs text-gray-400">
-                          {player.tokens.filter((t: any) => t.isFinished).length}/4 finished
+                          {
+                            player.tokens.filter((t: any) => t.isFinished)
+                              .length
+                          }
+                          /4 finished
                         </div>
                       </div>
                       {currentPlayer?.userId === player.userId && (
@@ -425,17 +462,27 @@ export default function LudoGamePage() {
                     <button
                       key={i}
                       onClick={() => makeMove(i)}
-                      disabled={!isMyTurn || !hasRolled || !validMoves.some(m => m.tokenId === i)}
+                      disabled={
+                        !isMyTurn ||
+                        !hasRolled ||
+                        !validMoves.some((m) => m.tokenId === i)
+                      }
                       className={`p-3 rounded-lg border-2 transition ${
-                        validMoves.some(m => m.tokenId === i) && isMyTurn && hasRolled
-                          ? 'border-primary bg-primary/10 hover:bg-primary/20 cursor-pointer'
-                          : 'border-gray-700 opacity-50 cursor-not-allowed'
+                        validMoves.some((m) => m.tokenId === i) &&
+                        isMyTurn &&
+                        hasRolled
+                          ? "border-primary bg-primary/10 hover:bg-primary/20 cursor-pointer"
+                          : "border-gray-700 opacity-50 cursor-not-allowed"
                       }`}
                     >
                       <div className="text-2xl mb-1">🎯</div>
                       <div className="text-xs">Token {i + 1}</div>
                       <div className="text-xs text-gray-400">
-                        {token.isFinished ? '✓ Home' : token.position === -1 ? 'Start' : `Pos ${token.position}`}
+                        {token.isFinished
+                          ? "✓ Home"
+                          : token.position === -1
+                          ? "Start"
+                          : `Pos ${token.position}`}
                       </div>
                     </button>
                   ))}
@@ -463,7 +510,12 @@ export default function LudoGamePage() {
                 <div className="flex justify-between">
                   <span className="text-gray-400">Winner Gets:</span>
                   <span className="font-bold text-green-500">
-                    ${(room.betAmount * room.players.length * (room.mode === '1v1v1v1' ? 0.97 : 0.98)).toFixed(2)}
+                    $
+                    {(
+                      room.betAmount *
+                      room.players.length *
+                      (room.mode === "1v1v1v1" ? 0.97 : 0.98)
+                    ).toFixed(2)}
                   </span>
                 </div>
               </div>

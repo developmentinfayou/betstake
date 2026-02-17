@@ -1,20 +1,24 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { betAPI, walletAPI, minesAPI } from '@/lib/api';
-import Link from 'next/link';
-import toast from 'react-hot-toast';
-import { useAutoBetSocket } from '@/hooks/useAutoBetSocket';
-import BetModeSelector from '@/components/betting/BetModeSelector';
-import ManualBetControls from '@/components/betting/ManualBetControls';
-import AutoBetControls, { AutoBetConfig } from '@/components/betting/AutoBetControls';
-import MinesGameControls, { MinesGameParams } from '@/components/games/mines/MinesGameControls';
-import FairnessModal from '@/components/games/FairnessModal';
+import { useState, useEffect } from "react";
+import { betAPI, walletAPI, minesAPI } from "@/lib/api";
+import Link from "next/link";
+import toast from "react-hot-toast";
+import { useAutoBetSocket } from "@/hooks/useAutoBetSocket";
+import BetModeSelector from "@/components/betting/BetModeSelector";
+import ManualBetControls from "@/components/betting/ManualBetControls";
+import AutoBetControls, {
+  AutoBetConfig,
+} from "@/components/betting/AutoBetControls";
+import MinesGameControls, {
+  MinesGameParams,
+} from "@/components/games/mines/MinesGameControls";
+import FairnessModal from "@/components/games/FairnessModal";
 
-type BetMode = 'manual' | 'auto';
+type BetMode = "manual" | "auto";
 
 export default function MinesPage() {
-  const [betMode, setBetMode] = useState<BetMode>('manual');
+  const [betMode, setBetMode] = useState<BetMode>("manual");
   const [amount, setAmount] = useState(10);
   const [gameParams, setGameParams] = useState<MinesGameParams>({
     minesCount: 3,
@@ -22,7 +26,12 @@ export default function MinesPage() {
   });
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState(0);
-  const [stats, setStats] = useState({ profit: 0, wins: 0, losses: 0, wagered: 0 });
+  const [stats, setStats] = useState({
+    profit: 0,
+    wins: 0,
+    losses: 0,
+    wagered: 0,
+  });
   const [autoBetActive, setAutoBetActive] = useState(false);
   const [fairnessModalOpen, setFairnessModalOpen] = useState(false);
   const [userId, setUserId] = useState<string>();
@@ -37,12 +46,12 @@ export default function MinesPage() {
 
   useEffect(() => {
     loadBalance();
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      const payload = JSON.parse(atob(token.split(".")[1]));
       setUserId(payload.id);
     }
-    
+
     // Clean up any active session on page load
     return () => {
       if (sessionId && gameActive) {
@@ -54,32 +63,34 @@ export default function MinesPage() {
 
   useAutoBetSocket(userId, (data) => {
     // Enhanced feedback for Mines autobet
-    if (data.bet.gameType === 'MINES') {
+    if (data.bet.gameType === "MINES") {
       const result = data.bet.result;
-      const roundNum = data.stats?.currentBet || 'Unknown';
-      
+      const roundNum = data.stats?.currentBet || "Unknown";
+
       if (result.hitMine) {
         toast.error(`Round ${roundNum}: Mine hit! -$${data.bet.amount}`);
       } else {
-        toast.success(`Round ${roundNum}: All safe! +$${data.bet.profit.toFixed(2)}`);
+        toast.success(
+          `Round ${roundNum}: All safe! +$${data.bet.profit.toFixed(2)}`
+        );
       }
     }
-    
+
     if (data.wallet) setBalance(data.wallet.balance);
-    
+
     if (data.bet.won) {
-      setStats(s => ({ 
-        ...s, 
-        wins: s.wins + 1, 
-        profit: s.profit + data.bet.profit, 
-        wagered: s.wagered + data.bet.amount 
+      setStats((s) => ({
+        ...s,
+        wins: s.wins + 1,
+        profit: s.profit + data.bet.profit,
+        wagered: s.wagered + data.bet.amount,
       }));
     } else {
-      setStats(s => ({ 
-        ...s, 
-        losses: s.losses + 1, 
-        profit: s.profit + data.bet.profit, 
-        wagered: s.wagered + data.bet.amount 
+      setStats((s) => ({
+        ...s,
+        losses: s.losses + 1,
+        profit: s.profit + data.bet.profit,
+        wagered: s.wagered + data.bet.amount,
       }));
     }
   });
@@ -87,16 +98,16 @@ export default function MinesPage() {
   const loadBalance = async () => {
     try {
       const response = await walletAPI.getAll();
-      const usdWallet = response.data.find((w: any) => w.currency === 'USD');
+      const usdWallet = response.data.find((w: any) => w.currency === "USD");
       setBalance(usdWallet?.balance || 0);
     } catch (error) {
-      console.error('Failed to load balance');
+      console.error("Failed to load balance");
     }
   };
 
   const startManualGame = async () => {
     if (amount > balance) {
-      toast.error('Insufficient balance');
+      toast.error("Insufficient balance");
       return;
     }
 
@@ -105,7 +116,7 @@ export default function MinesPage() {
       const response = await minesAPI.start({
         minesCount: gameParams.minesCount,
         betAmount: amount,
-        currency: 'USD',
+        currency: "USD",
         gridSize: 25,
       });
 
@@ -115,35 +126,40 @@ export default function MinesPage() {
       setRevealedTiles([]);
       setMineTiles([]);
       setGameOver(false);
-      toast.success('Game started!');
+      toast.success("Game started!");
       await loadBalance();
     } catch (error: any) {
-      if (error.response?.data?.error === 'Active game exists. Cash out first.') {
+      if (
+        error.response?.data?.error === "Active game exists. Cash out first."
+      ) {
         // Try to cleanup and restart
         try {
           await minesAPI.cleanup();
-          toast.info('Cleaned up previous session, starting new game...');
+          toast.info("Cleaned up previous session, starting new game...");
           // Retry starting the game
           const response = await minesAPI.start({
             minesCount: gameParams.minesCount,
             betAmount: amount,
-            currency: 'USD',
+            currency: "USD",
             gridSize: 25,
           });
-          
+
           setSessionId(response.data.sessionId);
           setCurrentMultiplier(response.data.currentMultiplier);
           setGameActive(true);
           setRevealedTiles([]);
           setMineTiles([]);
           setGameOver(false);
-          toast.success('Game started!');
+          toast.success("Game started!");
           await loadBalance();
         } catch (retryError: any) {
-          toast.error(retryError.response?.data?.error || 'Failed to start game after cleanup');
+          toast.error(
+            retryError.response?.data?.error ||
+              "Failed to start game after cleanup"
+          );
         }
       } else {
-        toast.error(error.response?.data?.error || 'Failed to start game');
+        toast.error(error.response?.data?.error || "Failed to start game");
       }
     } finally {
       setLoading(false);
@@ -168,12 +184,17 @@ export default function MinesPage() {
         setGameOver(true);
         setGameActive(false);
         setMineTiles([tileIndex]);
-        toast.error('Hit a mine! Game over');
-        setStats(s => ({ ...s, losses: s.losses + 1, profit: s.profit - amount, wagered: s.wagered + amount }));
+        toast.error("Hit a mine! Game over");
+        setStats((s) => ({
+          ...s,
+          losses: s.losses + 1,
+          profit: s.profit - amount,
+          wagered: s.wagered + amount,
+        }));
         await loadBalance();
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Failed to reveal tile');
+      toast.error(error.response?.data?.error || "Failed to reveal tile");
     } finally {
       setLoading(false);
     }
@@ -189,17 +210,26 @@ export default function MinesPage() {
       if (response.data.safe) {
         setRevealedTiles(response.data.revealedTiles);
         setCurrentMultiplier(response.data.currentMultiplier);
-        toast.success(`Random pick safe! ${response.data.currentMultiplier.toFixed(2)}x`);
+        toast.success(
+          `Random pick safe! ${response.data.currentMultiplier.toFixed(2)}x`
+        );
       } else {
         setGameOver(true);
         setGameActive(false);
         setMineTiles([response.data.tileIndex]);
-        toast.error('Random pick hit a mine! Game over');
-        setStats(s => ({ ...s, losses: s.losses + 1, profit: s.profit - amount, wagered: s.wagered + amount }));
+        toast.error("Random pick hit a mine! Game over");
+        setStats((s) => ({
+          ...s,
+          losses: s.losses + 1,
+          profit: s.profit - amount,
+          wagered: s.wagered + amount,
+        }));
         await loadBalance();
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Failed to reveal random tile');
+      toast.error(
+        error.response?.data?.error || "Failed to reveal random tile"
+      );
     } finally {
       setLoading(false);
     }
@@ -211,19 +241,26 @@ export default function MinesPage() {
     setLoading(true);
     try {
       const response = await minesAPI.cashout({ sessionId });
-      
+
       toast.success(`Cashed out! Won $${response.data.profit.toFixed(2)}`);
       setGameActive(false);
       setGameOver(true);
-      
+
       const grid = response.data.grid;
-      const mines = grid.map((isMine: boolean, idx: number) => isMine ? idx : -1).filter((idx: number) => idx !== -1);
+      const mines = grid
+        .map((isMine: boolean, idx: number) => (isMine ? idx : -1))
+        .filter((idx: number) => idx !== -1);
       setMineTiles(mines);
-      
-      setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + response.data.profit, wagered: s.wagered + amount }));
+
+      setStats((s) => ({
+        ...s,
+        wins: s.wins + 1,
+        profit: s.profit + response.data.profit,
+        wagered: s.wagered + amount,
+      }));
       await loadBalance();
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Failed to cash out');
+      toast.error(error.response?.data?.error || "Failed to cash out");
     } finally {
       setLoading(false);
     }
@@ -231,37 +268,45 @@ export default function MinesPage() {
 
   const handleStartAutoBet = async (config: AutoBetConfig) => {
     if (gameParams.selectedTiles.length === 0) {
-      toast.error('Select tiles for autobet by clicking on the grid in Auto mode');
+      toast.error(
+        "Select tiles for autobet by clicking on the grid in Auto mode"
+      );
       return;
     }
 
     if (gameParams.selectedTiles.length > 20) {
-      toast.error('Maximum 20 tiles allowed for autobet');
+      toast.error("Maximum 20 tiles allowed for autobet");
       return;
     }
 
     const safeTiles = 25 - gameParams.minesCount;
     if (gameParams.selectedTiles.length > safeTiles) {
-      toast.error(`Cannot select more tiles than safe tiles available (${safeTiles})`);
+      toast.error(
+        `Cannot select more tiles than safe tiles available (${safeTiles})`
+      );
       return;
     }
 
     try {
       await betAPI.startAutobet({
-        gameType: 'MINES',
-        currency: 'USD',
+        gameType: "MINES",
+        currency: "USD",
         amount,
-        gameParams: { 
-          minesCount: gameParams.minesCount, 
+        gameParams: {
+          minesCount: gameParams.minesCount,
           selectedTiles: gameParams.selectedTiles,
-          gridSize: 25
+          gridSize: 25,
         },
         config,
       });
       setAutoBetActive(true);
-      toast.success(`AutoBet started: ${gameParams.selectedTiles.length} tiles, ${config.numberOfBets || '∞'} rounds`);
+      toast.success(
+        `AutoBet started: ${gameParams.selectedTiles.length} tiles, ${
+          config.numberOfBets || "∞"
+        } rounds`
+      );
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Failed to start autobet');
+      toast.error(error.response?.data?.error || "Failed to start autobet");
     }
   };
 
@@ -269,10 +314,10 @@ export default function MinesPage() {
     try {
       await betAPI.stopAutobet();
       setAutoBetActive(false);
-      toast.success('Auto-bet stopped');
+      toast.success("Auto-bet stopped");
       await loadBalance();
     } catch (error: any) {
-      toast.error('Failed to stop auto-bet');
+      toast.error("Failed to stop auto-bet");
     }
   };
 
@@ -289,7 +334,10 @@ export default function MinesPage() {
     <div className="min-h-screen bg-gray-900">
       <header className="border-b border-gray-800">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold gradient-text">← Mines</Link>
+          <Link href="/" className="text-2xl font-bold gradient-text">
+            {" "}
+            Mines
+          </Link>
           <div className="flex items-center gap-4">
             <button
               onClick={() => setFairnessModalOpen(true)}
@@ -299,7 +347,9 @@ export default function MinesPage() {
             </button>
             <div className="text-right">
               <div className="text-sm text-gray-400">Balance</div>
-              <div className="text-xl font-bold text-primary">${balance.toFixed(2)}</div>
+              <div className="text-xl font-bold text-primary">
+                ${balance.toFixed(2)}
+              </div>
             </div>
           </div>
         </div>
@@ -311,15 +361,23 @@ export default function MinesPage() {
             <div className="card">
               <h2 className="text-2xl font-bold mb-6">Mines</h2>
 
-              {gameActive && betMode === 'manual' && (
+              {gameActive && betMode === "manual" && (
                 <div className="mb-4 p-4 bg-blue-900/20 border border-blue-500 rounded-lg">
                   <div className="flex justify-between items-center mb-2">
-                    <div className="text-sm text-gray-400">Current Multiplier</div>
-                    <div className="text-2xl font-bold text-primary">{currentMultiplier.toFixed(2)}x</div>
+                    <div className="text-sm text-gray-400">
+                      Current Multiplier
+                    </div>
+                    <div className="text-2xl font-bold text-primary">
+                      {currentMultiplier.toFixed(2)}x
+                    </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <div className="text-sm text-gray-400">Total Profit ({currentMultiplier.toFixed(2)}x)</div>
-                    <div className="text-xl font-bold text-green-500">${(amount * currentMultiplier).toFixed(2)}</div>
+                    <div className="text-sm text-gray-400">
+                      Total Profit ({currentMultiplier.toFixed(2)}x)
+                    </div>
+                    <div className="text-xl font-bold text-green-500">
+                      ${(amount * currentMultiplier).toFixed(2)}
+                    </div>
                   </div>
                 </div>
               )}
@@ -327,16 +385,18 @@ export default function MinesPage() {
               <MinesGameControls
                 onChange={setGameParams}
                 disabled={loading}
-                isAutoMode={betMode === 'auto'}
+                isAutoMode={betMode === "auto"}
                 revealedTiles={revealedTiles}
                 mineTiles={mineTiles}
-                onTileClick={betMode === 'manual' ? revealTile : undefined}
+                onTileClick={betMode === "manual" ? revealTile : undefined}
                 gameActive={gameActive}
-                gemsFound={revealedTiles.filter(t => !mineTiles.includes(t)).length}
+                gemsFound={
+                  revealedTiles.filter((t) => !mineTiles.includes(t)).length
+                }
                 autoBetActive={autoBetActive}
               />
 
-              {gameActive && betMode === 'manual' && !gameOver && (
+              {gameActive && betMode === "manual" && !gameOver && (
                 <div className="flex gap-2 mt-4">
                   <button
                     onClick={cashOut}
@@ -355,7 +415,7 @@ export default function MinesPage() {
                 </div>
               )}
 
-              {gameOver && betMode === 'manual' && (
+              {gameOver && betMode === "manual" && (
                 <button
                   onClick={resetGame}
                   className="btn-primary w-full py-3 mt-4"
@@ -377,7 +437,7 @@ export default function MinesPage() {
                 showStrategy={false}
               />
 
-              {betMode === 'manual' && !gameActive && (
+              {betMode === "manual" && !gameActive && (
                 <ManualBetControls
                   amount={amount}
                   balance={balance}
@@ -389,7 +449,7 @@ export default function MinesPage() {
                 />
               )}
 
-              {betMode === 'auto' && (
+              {betMode === "auto" && (
                 <AutoBetControls
                   amount={amount}
                   balance={balance}
@@ -405,7 +465,9 @@ export default function MinesPage() {
             {autoBetActive && (
               <div className="card bg-blue-900/20 border border-blue-500">
                 <div className="text-center">
-                  <div className="text-sm text-gray-400 mb-1">Auto-Bet Active</div>
+                  <div className="text-sm text-gray-400 mb-1">
+                    Auto-Bet Active
+                  </div>
                   <div className="text-lg font-bold">Running...</div>
                 </div>
               </div>
@@ -416,7 +478,11 @@ export default function MinesPage() {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Profit/Loss</span>
-                  <span className={stats.profit >= 0 ? 'text-green-500' : 'text-red-500'}>
+                  <span
+                    className={
+                      stats.profit >= 0 ? "text-green-500" : "text-red-500"
+                    }
+                  >
                     ${stats.profit.toFixed(2)}
                   </span>
                 </div>
@@ -432,7 +498,12 @@ export default function MinesPage() {
                   <span className="text-gray-400">Wagered</span>
                   <span>${stats.wagered.toFixed(2)}</span>
                 </div>
-                <button onClick={() => setStats({ profit: 0, wins: 0, losses: 0, wagered: 0 })} className="btn-secondary w-full mt-4">
+                <button
+                  onClick={() =>
+                    setStats({ profit: 0, wins: 0, losses: 0, wagered: 0 })
+                  }
+                  className="btn-secondary w-full mt-4"
+                >
                   Reset Stats
                 </button>
               </div>

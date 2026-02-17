@@ -1,17 +1,19 @@
 // FIXED Blackjack page with proper shared component usage
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { walletAPI, blackjackAPI, betAPI } from '@/lib/api';
-import Link from 'next/link';
-import toast from 'react-hot-toast';
-import { useAutoBetSocket } from '@/hooks/useAutoBetSocket';
-import BetModeSelector from '@/components/betting/BetModeSelector';
-import ManualBetControls from '@/components/betting/ManualBetControls';
-import AutoBetControls, { AutoBetConfig } from '@/components/betting/AutoBetControls';
-import BlackjackGameControls from '@/components/games/blackjack/BlackjackGameControls';
-import FairnessModal from '@/components/games/FairnessModal';
+import { useState, useEffect } from "react";
+import { walletAPI, blackjackAPI, betAPI } from "@/lib/api";
+import Link from "next/link";
+import toast from "react-hot-toast";
+import { useAutoBetSocket } from "@/hooks/useAutoBetSocket";
+import BetModeSelector from "@/components/betting/BetModeSelector";
+import ManualBetControls from "@/components/betting/ManualBetControls";
+import AutoBetControls, {
+  AutoBetConfig,
+} from "@/components/betting/AutoBetControls";
+import BlackjackGameControls from "@/components/games/blackjack/BlackjackGameControls";
+import FairnessModal from "@/components/games/FairnessModal";
 
 interface Card {
   rank: string;
@@ -19,17 +21,22 @@ interface Card {
   value: number;
 }
 
-type BetMode = 'manual' | 'auto';
+type BetMode = "manual" | "auto";
 
 export default function BlackjackPage() {
   // ✅ ADDED: Bet mode state
-  const [betMode, setBetMode] = useState<BetMode>('manual');
+  const [betMode, setBetMode] = useState<BetMode>("manual");
   const [amount, setAmount] = useState(10);
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState(0);
-  const [stats, setStats] = useState({ profit: 0, wins: 0, losses: 0, wagered: 0 });
+  const [stats, setStats] = useState({
+    profit: 0,
+    wins: 0,
+    losses: 0,
+    wagered: 0,
+  });
   const [fairnessModalOpen, setFairnessModalOpen] = useState(false);
-  
+
   // ✅ ADDED: AutoBet state
   const [autoBetActive, setAutoBetActive] = useState(false);
   const [userId, setUserId] = useState<string>();
@@ -47,31 +54,31 @@ export default function BlackjackPage() {
   useEffect(() => {
     loadBalance();
     // ✅ ADDED: Get userId for AutoBet socket
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      const payload = JSON.parse(atob(token.split(".")[1]));
       setUserId(payload.id);
     }
   }, []);
 
   // ✅ ADDED: AutoBet socket support
   useAutoBetSocket(userId, (data) => {
-    console.log('Blackjack AutoBet result:', data);
+    console.log("Blackjack AutoBet result:", data);
     if (data.wallet) setBalance(data.wallet.balance);
-    
+
     if (data.bet.won) {
-      setStats(s => ({ 
-        ...s, 
-        wins: s.wins + 1, 
-        profit: s.profit + data.bet.profit, 
-        wagered: s.wagered + data.bet.amount 
+      setStats((s) => ({
+        ...s,
+        wins: s.wins + 1,
+        profit: s.profit + data.bet.profit,
+        wagered: s.wagered + data.bet.amount,
       }));
     } else {
-      setStats(s => ({ 
-        ...s, 
-        losses: s.losses + 1, 
-        profit: s.profit + data.bet.profit, 
-        wagered: s.wagered + data.bet.amount 
+      setStats((s) => ({
+        ...s,
+        losses: s.losses + 1,
+        profit: s.profit + data.bet.profit,
+        wagered: s.wagered + data.bet.amount,
       }));
     }
   });
@@ -79,16 +86,16 @@ export default function BlackjackPage() {
   const loadBalance = async () => {
     try {
       const response = await walletAPI.getAll();
-      const usdWallet = response.data.find((w: any) => w.currency === 'USD');
+      const usdWallet = response.data.find((w: any) => w.currency === "USD");
       setBalance(usdWallet?.balance || 0);
     } catch (error) {
-      console.error('Failed to load balance');
+      console.error("Failed to load balance");
     }
   };
 
   const startGame = async () => {
     if (amount > balance) {
-      toast.error('Insufficient balance');
+      toast.error("Insufficient balance");
       return;
     }
 
@@ -96,7 +103,7 @@ export default function BlackjackPage() {
     try {
       const response = await blackjackAPI.start({
         betAmount: amount,
-        currency: 'USD',
+        currency: "USD",
       });
 
       setSessionId(response.data.sessionId);
@@ -108,10 +115,10 @@ export default function BlackjackPage() {
       setCanDouble(response.data.canDouble);
       setGameActive(true);
       setGameOver(false);
-      toast.success('Game started!');
+      toast.success("Game started!");
       await loadBalance();
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Failed to start game');
+      toast.error(error.response?.data?.error || "Failed to start game");
     } finally {
       setLoading(false);
     }
@@ -121,16 +128,16 @@ export default function BlackjackPage() {
   const handleStartAutoBet = async (config: AutoBetConfig) => {
     try {
       await betAPI.startAutobet({
-        gameType: 'BLACKJACK',
-        currency: 'USD',
+        gameType: "BLACKJACK",
+        currency: "USD",
         amount,
         gameParams: {}, // Blackjack has no game params
         config,
       });
       setAutoBetActive(true);
-      toast.success('Auto-bet started - Real-time updates enabled');
+      toast.success("Auto-bet started - Real-time updates enabled");
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Failed to start auto-bet');
+      toast.error(error.response?.data?.error || "Failed to start auto-bet");
     }
   };
 
@@ -138,10 +145,10 @@ export default function BlackjackPage() {
     try {
       await betAPI.stopAutobet();
       setAutoBetActive(false);
-      toast.success('Auto-bet stopped');
+      toast.success("Auto-bet stopped");
       await loadBalance();
     } catch (error: any) {
-      toast.error('Failed to stop auto-bet');
+      toast.error("Failed to stop auto-bet");
     }
   };
 
@@ -160,14 +167,19 @@ export default function BlackjackPage() {
       setCanDouble(false);
 
       if (response.data.bust) {
-        toast.error('Bust! You lose');
+        toast.error("Bust! You lose");
         setGameOver(true);
         setGameActive(false);
-        setStats(s => ({ ...s, losses: s.losses + 1, profit: s.profit - amount, wagered: s.wagered + amount }));
+        setStats((s) => ({
+          ...s,
+          losses: s.losses + 1,
+          profit: s.profit - amount,
+          wagered: s.wagered + amount,
+        }));
         await loadBalance();
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Failed to hit');
+      toast.error(error.response?.data?.error || "Failed to hit");
     } finally {
       setLoading(false);
     }
@@ -189,18 +201,28 @@ export default function BlackjackPage() {
 
       if (response.data.won) {
         toast.success(`You win! +$${response.data.profit.toFixed(2)}`);
-        setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + response.data.profit, wagered: s.wagered + amount }));
+        setStats((s) => ({
+          ...s,
+          wins: s.wins + 1,
+          profit: s.profit + response.data.profit,
+          wagered: s.wagered + amount,
+        }));
       } else if (response.data.multiplier === 1) {
-        toast.info('Push! Bet returned');
-        setStats(s => ({ ...s, wagered: s.wagered + amount }));
+        toast.info("Push! Bet returned");
+        setStats((s) => ({ ...s, wagered: s.wagered + amount }));
       } else {
-        toast.error('Dealer wins');
-        setStats(s => ({ ...s, losses: s.losses + 1, profit: s.profit - amount, wagered: s.wagered + amount }));
+        toast.error("Dealer wins");
+        setStats((s) => ({
+          ...s,
+          losses: s.losses + 1,
+          profit: s.profit - amount,
+          wagered: s.wagered + amount,
+        }));
       }
 
       await loadBalance();
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Failed to stand');
+      toast.error(error.response?.data?.error || "Failed to stand");
     } finally {
       setLoading(false);
     }
@@ -222,15 +244,25 @@ export default function BlackjackPage() {
 
       if (response.data.won) {
         toast.success(`You win! +$${response.data.profit.toFixed(2)}`);
-        setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + response.data.profit, wagered: s.wagered + amount * 2 }));
+        setStats((s) => ({
+          ...s,
+          wins: s.wins + 1,
+          profit: s.profit + response.data.profit,
+          wagered: s.wagered + amount * 2,
+        }));
       } else {
-        toast.error('You lose');
-        setStats(s => ({ ...s, losses: s.losses + 1, profit: s.profit - amount * 2, wagered: s.wagered + amount * 2 }));
+        toast.error("You lose");
+        setStats((s) => ({
+          ...s,
+          losses: s.losses + 1,
+          profit: s.profit - amount * 2,
+          wagered: s.wagered + amount * 2,
+        }));
       }
 
       await loadBalance();
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Failed to double');
+      toast.error(error.response?.data?.error || "Failed to double");
     } finally {
       setLoading(false);
     }
@@ -250,7 +282,10 @@ export default function BlackjackPage() {
     <div className="min-h-screen bg-gray-900">
       <header className="border-b border-gray-800">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold gradient-text">← Blackjack</Link>
+          <Link href="/" className="text-2xl font-bold gradient-text">
+            {" "}
+            Blackjack
+          </Link>
           <div className="flex items-center gap-4">
             <button
               onClick={() => setFairnessModalOpen(true)}
@@ -260,7 +295,9 @@ export default function BlackjackPage() {
             </button>
             <div className="text-right">
               <div className="text-sm text-gray-400">Balance</div>
-              <div className="text-xl font-bold text-primary">${balance.toFixed(2)}</div>
+              <div className="text-xl font-bold text-primary">
+                ${balance.toFixed(2)}
+              </div>
             </div>
           </div>
         </div>
@@ -315,7 +352,7 @@ export default function BlackjackPage() {
               />
 
               {/* Manual Bet */}
-              {betMode === 'manual' && !gameActive && (
+              {betMode === "manual" && !gameActive && (
                 <ManualBetControls
                   amount={amount}
                   balance={balance}
@@ -327,7 +364,7 @@ export default function BlackjackPage() {
               )}
 
               {/* Auto Bet */}
-              {betMode === 'auto' && (
+              {betMode === "auto" && (
                 <AutoBetControls
                   amount={amount}
                   balance={balance}
@@ -344,7 +381,9 @@ export default function BlackjackPage() {
             {autoBetActive && (
               <div className="card bg-blue-900/20 border border-blue-500">
                 <div className="text-center">
-                  <div className="text-sm text-gray-400 mb-1">Auto-Bet Active</div>
+                  <div className="text-sm text-gray-400 mb-1">
+                    Auto-Bet Active
+                  </div>
                   <div className="text-lg font-bold">Running...</div>
                 </div>
               </div>
@@ -355,7 +394,11 @@ export default function BlackjackPage() {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Profit/Loss</span>
-                  <span className={stats.profit >= 0 ? 'text-green-500' : 'text-red-500'}>
+                  <span
+                    className={
+                      stats.profit >= 0 ? "text-green-500" : "text-red-500"
+                    }
+                  >
                     ${stats.profit.toFixed(2)}
                   </span>
                 </div>
@@ -371,7 +414,12 @@ export default function BlackjackPage() {
                   <span className="text-gray-400">Wagered</span>
                   <span>${stats.wagered.toFixed(2)}</span>
                 </div>
-                <button onClick={() => setStats({ profit: 0, wins: 0, losses: 0, wagered: 0 })} className="btn-secondary w-full mt-4">
+                <button
+                  onClick={() =>
+                    setStats({ profit: 0, wins: 0, losses: 0, wagered: 0 })
+                  }
+                  className="btn-secondary w-full mt-4"
+                >
                   Reset Stats
                 </button>
               </div>
@@ -390,7 +438,7 @@ export default function BlackjackPage() {
 
 // ✅ CHANGES MADE:
 // 1. Added BetModeSelector component
-// 2. Added AutoBetControls component  
+// 2. Added AutoBetControls component
 // 3. Added AutoBet state and handlers
 // 4. Added AutoBet socket support
 // 5. Added AutoBet status display

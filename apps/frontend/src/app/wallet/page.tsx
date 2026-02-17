@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { walletAPI } from '@/lib/api';
-import Link from 'next/link';
-import toast from 'react-hot-toast';
+import { useEffect, useState } from "react";
+import { walletAPI } from "@/lib/api";
+import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function WalletPage() {
   const [wallets, setWallets] = useState<any[]>([]);
@@ -18,7 +18,7 @@ export default function WalletPage() {
       const response = await walletAPI.getAll();
       setWallets(response.data);
     } catch (error) {
-      toast.error('Failed to load wallets');
+      toast.error("Failed to load wallets");
     } finally {
       setLoading(false);
     }
@@ -30,7 +30,7 @@ export default function WalletPage() {
       toast.success(`Added 10,000 ${currency} demo balance!`);
       loadWallets();
     } catch (error) {
-      toast.error('Failed to add balance');
+      toast.error("Failed to add balance");
     }
   };
 
@@ -46,7 +46,10 @@ export default function WalletPage() {
     <div className="min-h-screen bg-gray-900">
       <header className="border-b border-gray-800">
         <div className="container mx-auto px-4 py-4">
-          <Link href="/" className="text-2xl font-bold gradient-text">← Back to Home</Link>
+          <Link href="/" className="text-2xl font-bold gradient-text">
+            {" "}
+            Back to Home
+          </Link>
         </div>
       </header>
 
@@ -54,8 +57,18 @@ export default function WalletPage() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold gradient-text">My Wallet</h1>
           <div className="flex gap-2">
-            <button onClick={() => addDemoBalance('USD')} className="btn-secondary">+ $10K USD</button>
-            <button onClick={() => addDemoBalance('BTC')} className="btn-secondary">+ 1 BTC</button>
+            <button
+              onClick={() => addDemoBalance("USD")}
+              className="btn-secondary"
+            >
+              + $10K USD
+            </button>
+            <button
+              onClick={() => addDemoBalance("BTC")}
+              className="btn-secondary"
+            >
+              + 1 BTC
+            </button>
           </div>
         </div>
 
@@ -67,7 +80,7 @@ export default function WalletPage() {
                 <span className="text-sm text-gray-400">Balance</span>
               </div>
               <div className="text-3xl font-bold text-primary mb-2">
-                {wallet.balance.toFixed(wallet.currency === 'BTC' ? 8 : 2)}
+                {wallet.balance.toFixed(wallet.currency === "BTC" ? 8 : 2)}
               </div>
               {wallet.lockedBalance > 0 && (
                 <div className="text-sm text-gray-400">
@@ -80,7 +93,9 @@ export default function WalletPage() {
           {wallets.length === 0 && (
             <div className="card col-span-full text-center py-12">
               <p className="text-gray-400 mb-4">No wallets found</p>
-              <p className="text-sm text-gray-500">Wallets will be created automatically when you receive funds</p>
+              <p className="text-sm text-gray-500">
+                Wallets will be created automatically when you receive funds
+              </p>
             </div>
           )}
         </div>

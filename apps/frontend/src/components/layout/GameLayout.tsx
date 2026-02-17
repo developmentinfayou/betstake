@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { ReactNode } from 'react';
-import Link from 'next/link';
-import FairnessModal from '@/components/games/FairnessModal';
-import LiveStats from '@/components/games/LiveStats';
-import AutoBetStatus from '@/components/games/AutoBetStatus';
+import { ReactNode } from "react";
+import Link from "next/link";
+import FairnessModal from "@/components/games/FairnessModal";
+import LiveStats from "@/components/games/LiveStats";
+import AutoBetStatus from "@/components/games/AutoBetStatus";
 
 interface GameLayoutProps {
   gameTitle: string;
@@ -39,7 +39,7 @@ export default function GameLayout({
       <header className="border-b border-gray-800">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold gradient-text">
-            ← {gameTitle}
+            {gameTitle}
           </Link>
           <div className="flex items-center gap-4">
             <button
@@ -50,7 +50,9 @@ export default function GameLayout({
             </button>
             <div className="text-right">
               <div className="text-sm text-gray-400">Balance</div>
-              <div className="text-xl font-bold text-primary">${balance.toFixed(2)}</div>
+              <div className="text-xl font-bold text-primary">
+                ${balance.toFixed(2)}
+              </div>
             </div>
           </div>
         </div>
@@ -59,16 +61,13 @@ export default function GameLayout({
       <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">{children}</div>
-          
+
           <div className="space-y-6">
             {sidebarContent}
-            
+
             <AutoBetStatus active={autoBetActive} />
-            
-            <LiveStats
-              stats={stats}
-              onReset={onResetStats}
-            />
+
+            <LiveStats stats={stats} onReset={onResetStats} />
           </div>
         </div>
       </div>
