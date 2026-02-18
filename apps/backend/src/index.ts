@@ -41,6 +41,7 @@ import { setupLudoSocket } from './websocket/ludo';
 import { AutoBetService } from './services/autobet-service';
 import { socketManager } from './services/socket-manager';
 import { RakebackService } from './services/rakeback-service';
+import { StrategyEngine } from './services/strategy-engine';
 
 import { gameRegistry } from '@casino/game-engine';
 
@@ -53,6 +54,10 @@ async function start() {
 
   // Sync game configs with platform settings from DB
   await gameRegistry.syncWithPlatformSettings();
+
+  // Seed preset strategies
+  await StrategyEngine.seedPresets();
+  console.log('✅ Strategy presets ready');
 
   // Create Express app
   const app = express();

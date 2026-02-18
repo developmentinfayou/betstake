@@ -47,6 +47,9 @@ export default function TowerPage() {
     } else {
       setStats(s => ({ ...s, losses: s.losses + 1, profit: s.profit + data.bet.profit, wagered: s.wagered + data.bet.amount }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const loadBalance = async () => {
@@ -123,15 +126,15 @@ export default function TowerPage() {
     setLoading(true);
     try {
       const response = await towerAPI.cashout({ sessionId });
-      
+
       toast.success(`Cashed out! Won $${response.data.profit.toFixed(2)}`);
       setGameActive(false);
       setGameOver(true);
-      
+
       const grid = response.data.grid;
       const dangers = grid.map((isDanger: boolean, idx: number) => isDanger ? idx : -1).filter((idx: number) => idx !== -1);
       setDangerTiles(dangers);
-      
+
       setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + response.data.profit, wagered: s.wagered + amount }));
       await loadBalance();
     } catch (error: any) {

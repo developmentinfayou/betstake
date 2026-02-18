@@ -42,12 +42,12 @@ export default function MinesPage() {
       const payload = JSON.parse(atob(token.split('.')[1]));
       setUserId(payload.id);
     }
-    
+
     // Clean up any active session on page load
     return () => {
       if (sessionId && gameActive) {
         // Attempt to clean up session on unmount
-        minesAPI.cashout({ sessionId }).catch(() => {});
+        minesAPI.cashout({ sessionId }).catch(() => { });
       }
     };
   }, []);
@@ -57,31 +57,34 @@ export default function MinesPage() {
     if (data.bet.gameType === 'MINES') {
       const result = data.bet.result;
       const roundNum = data.stats?.currentBet || 'Unknown';
-      
+
       if (result.hitMine) {
         toast.error(`Round ${roundNum}: Mine hit! -$${data.bet.amount}`);
       } else {
         toast.success(`Round ${roundNum}: All safe! +$${data.bet.profit.toFixed(2)}`);
       }
     }
-    
+
     if (data.wallet) setBalance(data.wallet.balance);
-    
+
     if (data.bet.won) {
-      setStats(s => ({ 
-        ...s, 
-        wins: s.wins + 1, 
-        profit: s.profit + data.bet.profit, 
-        wagered: s.wagered + data.bet.amount 
+      setStats(s => ({
+        ...s,
+        wins: s.wins + 1,
+        profit: s.profit + data.bet.profit,
+        wagered: s.wagered + data.bet.amount
       }));
     } else {
-      setStats(s => ({ 
-        ...s, 
-        losses: s.losses + 1, 
-        profit: s.profit + data.bet.profit, 
-        wagered: s.wagered + data.bet.amount 
+      setStats(s => ({
+        ...s,
+        losses: s.losses + 1,
+        profit: s.profit + data.bet.profit,
+        wagered: s.wagered + data.bet.amount
       }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const loadBalance = async () => {
@@ -130,7 +133,7 @@ export default function MinesPage() {
             currency: 'USD',
             gridSize: 25,
           });
-          
+
           setSessionId(response.data.sessionId);
           setCurrentMultiplier(response.data.currentMultiplier);
           setGameActive(true);
@@ -211,15 +214,15 @@ export default function MinesPage() {
     setLoading(true);
     try {
       const response = await minesAPI.cashout({ sessionId });
-      
+
       toast.success(`Cashed out! Won $${response.data.profit.toFixed(2)}`);
       setGameActive(false);
       setGameOver(true);
-      
+
       const grid = response.data.grid;
       const mines = grid.map((isMine: boolean, idx: number) => isMine ? idx : -1).filter((idx: number) => idx !== -1);
       setMineTiles(mines);
-      
+
       setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + response.data.profit, wagered: s.wagered + amount }));
       await loadBalance();
     } catch (error: any) {
@@ -251,8 +254,8 @@ export default function MinesPage() {
         gameType: 'MINES',
         currency: 'USD',
         amount,
-        gameParams: { 
-          minesCount: gameParams.minesCount, 
+        gameParams: {
+          minesCount: gameParams.minesCount,
           selectedTiles: gameParams.selectedTiles,
           gridSize: 25
         },

@@ -47,6 +47,9 @@ export default function HiLoPage() {
     } else {
       setStats(s => ({ ...s, losses: s.losses + 1, profit: s.profit + data.bet.profit, wagered: s.wagered + data.bet.amount }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const clearActiveSessions = async () => {
@@ -77,7 +80,7 @@ export default function HiLoPage() {
     try {
       // Clear any existing sessions first
       await clearActiveSessions();
-      
+
       const response = await hiloAPI.start({
         betAmount: amount,
         currency: 'USD',
@@ -137,11 +140,11 @@ export default function HiLoPage() {
     setLoading(true);
     try {
       const response = await hiloAPI.cashout({ sessionId });
-      
+
       toast.success(`Cashed out! Won $${response.data.profit.toFixed(2)}`);
       setGameActive(false);
       setGameOver(true);
-      
+
       setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + response.data.profit, wagered: s.wagered + amount }));
       await loadBalance();
     } catch (error: any) {

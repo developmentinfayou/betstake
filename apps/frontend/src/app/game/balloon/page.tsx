@@ -43,6 +43,9 @@ export default function BalloonPage() {
     } else {
       setStats(s => ({ ...s, losses: s.losses + 1, profit: s.profit + data.bet.profit, wagered: s.wagered + data.bet.amount }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const loadBalance = async () => {
@@ -142,14 +145,14 @@ export default function BalloonPage() {
             <div className="card">
               <BetModeSelector mode={betMode} onChange={setBetMode} showStrategy={true} />
               {betMode === 'manual' && (
-                <ManualBetControls 
-                  amount={amount} 
-                  balance={balance} 
-                  onAmountChange={setAmount} 
-                  onBet={placeBet} 
-                  disabled={autoBetActive} 
-                  loading={loading} 
-                  multiplier={gameParams.pumpMode === 'custom' ? gameParams.targetMultiplier : gameParams.pumpMode === 'specific' ? 1 + (gameParams.targetPumps * 0.05) : 2.0} 
+                <ManualBetControls
+                  amount={amount}
+                  balance={balance}
+                  onAmountChange={setAmount}
+                  onBet={placeBet}
+                  disabled={autoBetActive}
+                  loading={loading}
+                  multiplier={gameParams.pumpMode === 'custom' ? gameParams.targetMultiplier : gameParams.pumpMode === 'specific' ? 1 + (gameParams.targetPumps * 0.05) : 2.0}
                 />
               )}
               {betMode === 'auto' && (

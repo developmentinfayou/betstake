@@ -44,6 +44,9 @@ export default function RoulettePage() {
     } else {
       setStats(s => ({ ...s, losses: s.losses + 1, profit: s.profit + data.bet.profit, wagered: s.wagered + data.bet.amount }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const loadBalance = async () => {
@@ -166,10 +169,9 @@ export default function RoulettePage() {
 
               {result && (
                 <div className={`mb-6 p-6 rounded-lg text-center ${result.totalPayout > 0 ? 'bg-green-900/20 border border-green-500' : 'bg-red-900/20 border border-red-500'}`}>
-                  <div className={`text-6xl font-bold mb-2 w-20 h-20 mx-auto rounded-full flex items-center justify-center ${
-                    getNumberColor(result.number) === 'green' ? 'bg-green-600' :
-                    getNumberColor(result.number) === 'red' ? 'bg-red-600' : 'bg-gray-900'
-                  } text-white`}>
+                  <div className={`text-6xl font-bold mb-2 w-20 h-20 mx-auto rounded-full flex items-center justify-center ${getNumberColor(result.number) === 'green' ? 'bg-green-600' :
+                      getNumberColor(result.number) === 'red' ? 'bg-red-600' : 'bg-gray-900'
+                    } text-white`}>
                     {result.number}
                   </div>
                   <div className="text-2xl mb-2 capitalize">{getNumberColor(result.number)}</div>
@@ -196,7 +198,7 @@ export default function RoulettePage() {
                 <ManualBetControls
                   amount={gameParams.bets.reduce((sum, b) => sum + b.amount, 0) || amount}
                   balance={balance}
-                  onAmountChange={() => {}}
+                  onAmountChange={() => { }}
                   onBet={placeBet}
                   disabled={autoBetActive || gameParams.bets.length === 0}
                   loading={loading}
@@ -208,7 +210,7 @@ export default function RoulettePage() {
                 <AutoBetControls
                   amount={gameParams.bets.reduce((sum, b) => sum + b.amount, 0) || amount}
                   balance={balance}
-                  onAmountChange={() => {}}
+                  onAmountChange={() => { }}
                   onStart={handleStartAutoBet}
                   onStop={handleStopAutoBet}
                   isActive={autoBetActive}

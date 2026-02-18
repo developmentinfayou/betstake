@@ -45,12 +45,15 @@ export default function CoinFlipPage() {
   useAutoBetSocket(userId, (data) => {
     setResult(data.bet.result);
     if (data.wallet) setBalance(data.wallet.balance);
-    
+
     if (data.bet.won) {
       setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + data.bet.profit, wagered: s.wagered + data.bet.amount }));
     } else {
       setStats(s => ({ ...s, losses: s.losses + 1, profit: s.profit + data.bet.profit, wagered: s.wagered + data.bet.amount }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const loadBalance = async () => {
@@ -72,10 +75,10 @@ export default function CoinFlipPage() {
     setLoading(true);
     setIsFlipping(true);
     setResult(null);
-    
+
     // Simulate flip duration
     setTimeout(() => setIsFlipping(false), 2000);
-    
+
     try {
       const response = await betAPI.place({
         gameType: 'COINFLIP',
@@ -154,12 +157,12 @@ export default function CoinFlipPage() {
               <h2 className="text-2xl font-bold mb-6">Coin Flip</h2>
 
               <div className="mb-6">
-                <CoinAnimation 
+                <CoinAnimation
                   result={result?.result}
                   isFlipping={isFlipping}
                   seriesResults={result?.seriesResults}
                 />
-                
+
                 {result && !isFlipping && (
                   <div className={`mt-4 p-4 rounded-lg text-center ${result.won ? 'bg-green-900/20 border border-green-500' : 'bg-red-900/20 border border-red-500'}`}>
                     <div className="text-2xl mb-2">{result.won ? '🎉 WIN!' : '😢 LOST'}</div>
@@ -215,7 +218,7 @@ export default function CoinFlipPage() {
             </div>
 
             {gameParams.mode === 'jackpot' && (
-              <JackpotTracker 
+              <JackpotTracker
                 condition={gameParams.jackpotCondition}
                 currentStreak={jackpotStats.currentStreak}
                 remainingBets={jackpotStats.remainingBets}
