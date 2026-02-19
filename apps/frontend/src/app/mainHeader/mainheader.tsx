@@ -197,41 +197,42 @@ const MainHeader = () => {
   return (
     <div className={`${pathname.includes("game") ? "bg-gray-900" : ""}`}>
         {/* ✅ HEADER */}
-        <header className="border-bk bordejjr-[#31313F]">
-        <nav className="mx-auto flex h-[81px] max-w-[1440px] items-center justify-between px-8">
+        <header className="mx-[32px] mt-[28px] flex h-[41px] min-w-[1376px] items-center gap-[64px]   ">
           {/* Logo */}
-          <div className=" relative flex items-center gap-8 w-[163px]">
-            <div className="flex relative items-baseline gap-1">
+          <div className=" relative group  flex items-center gap-8 w-[163px] h-[32px] after:absolute after:top-0 after:left-full after:w-[30px] after:h-full after:content-['']">
+            <div className="flex flex-col relative items-end">
               <Logo color={"#73FFD7"} />
-              <span className=" text-[#73FFD7] text-[14px] tracking-[0.08em] absolute left-[80px] top-[22px]">
+              <span className=" text-[#73FFD7] text-[14px] tracking-[0.08em] -top-[9px] relative ">
                 ~Play
               </span>
             </div>
             <button
-              onClick={() => {
-                showThemes(!themes);
-              }}
+              // onClick={() => {
+              //   showThemes(!themes);
+              // }}
+              // onMouseEnter={() => showThemes(true)}
+  // onMouseLeave={() => showThemes(false)}
             >
               <LogoToggle />
             </button>
 
-            {themes && (
-              <div className="absolute grid gap-4 backdrop-blur-xl rounded w-[381px] h-[188px] top-0 left-[160px] bg-[#73FFD70F] p-[16px] z-50">
-                <div className="relative flex items-center justify-between ">
-                  <div className="flex relative items-baseline gap-1">
+  
+              <div  className="hidden group-hover:block  absolute   backdrop-blur-xl rounded w-[321px] h-[178.5px] -top-[11.5px] left-full ml-[28px] bg-[#73FFD70F] px-[16px] pt-[16px] z-50 group/menu ">
+                <div className=" group/item relative flex w-[289px] h-[41.5] items-center justify-between opacity-[0.24] transition-opacity duration-200 hover:opacity-100 group-hover/menu:opacity-[0.24] hover:!opacity-100 ">
+                  <div className="flex flex-col relative items-end">
                     <Logo color={"#FFC100"} />
-                    <span className=" text-[#FFC100] text-[14px] tracking-[0.08em] absolute left-[80px] top-[22px]">
+                    <span className=" text-[#FFC100] text-[12px] tracking-[0.08em] -top-[9px] relative">
                       ~Wallet
                     </span>
                   </div>
 
-                  <span>Select</span>
+                  <span className="transition-all duration-200 group-hover/item:underline">Select</span>
                 </div>
 
-                <div className="relative flex items-center justify-between ">
-                  <div className="flex relative items-baseline gap-1">
+                <div className="relative flex w-[289px] h-[41.5] items-center justify-between opacity-100 transition-opacity duration-200 group-hover/menu:opacity-[0.24] hover:!opacity-100 ">
+                  <div className="flex flex-col relative items-end">
                   <Logo color={"#73FFD7"} />
-                    <span className=" text-[#73FFD7] text-[14px] tracking-[0.08em] absolute left-[80px] top-[22px]">
+                    <span className=" text-[#73FFD7] text-[12px] tracking-[0.08em] -top-[9px] relative">
                       ~Play
                     </span>
                   </div>
@@ -239,18 +240,18 @@ const MainHeader = () => {
                   <span>Current</span>
                 </div>
 
-                <div className="relative flex items-center justify-between ">
-                  <div className="flex relative items-baseline gap-1">
+                <div className=" group/item relative flex w-[289px] h-[41.5] items-center justify-between opacity-[0.24] transition-opacity duration-200 hover:opacity-100 group-hover/menu:opacity-[0.24] hover:!opacity-100 ">
+                  <div className="flex flex-col relative items-end">
                   <Logo color={"#73B7FF"} />
-                    <span className=" text-[#73B7FF] text-[14px] tracking-[0.08em] absolute left-[80px] top-[22px]">
+                    <span className=" text-[#73B7FF] text-[12px] tracking-[0.08em] -top-[9px] relative ">
                       ~Connect
                     </span>
                   </div>
 
-                  <span>Select</span>
+                  <span className='transition-all duration-200 group-hover/item:underline'>Select</span>
                 </div>
               </div>
-            )}
+       
           </div>
 
           {/* Center Navigation */}
@@ -403,8 +404,7 @@ const MainHeader = () => {
               <img src="/images/blub.svg" />
             </button>
           </div>
-        </nav>
-      </header>
+        </header>
     </div>
   )
 }

@@ -285,7 +285,7 @@ export default function HomePage() {
    
 
       {/* ✅ PAGE CONTAINER */}
-      <main className="mx-auto max-w-[1440px] px-8 pb-10 pt-10">
+      <main className=" pb-10 pt-10">
         {/* ✅ TOP CARDS ROW */}
 
         <TopCards />
