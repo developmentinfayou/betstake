@@ -20,6 +20,7 @@ const autoBetSchema = z.object({
   config: z.object({
     enabled: z.boolean(),
     numberOfBets: z.number().min(0),
+    strategyId: z.string().optional(),
     onWin: z.object({
       reset: z.boolean(),
       increaseBy: z.number().optional(),
@@ -98,7 +99,7 @@ router.get('/autobet/status', authenticate, async (req: AuthRequest, res) => {
 router.get('/history', authenticate, async (req: AuthRequest, res) => {
   const userId = req.user.id;
   const { limit = '50', offset = '0' } = req.query;
-  
+
   const bets = await BetEngine.getBetHistory(userId, parseInt(limit as string) || 50, parseInt(offset as string) || 0);
   return res.json({ bets });
 });

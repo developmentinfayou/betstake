@@ -63,12 +63,18 @@ export default function StrategySelector({
   const handleStart = () => {
     if (!selectedStrategyId || !selectedStrategy) return;
 
+    // Guard: prevent starting with no conditions
+    if (selectedStrategy.conditions.length === 0) {
+      alert('This strategy has no conditions. Please add at least one condition before starting.');
+      return;
+    }
+
+    // Strategy mode sends a clean config — no onWin/onLoss (those are Auto mode only).
+    // The backend branches on strategyId: if present, uses StrategyEngine; otherwise uses onWin/onLoss.
     const config = {
       enabled: true,
       numberOfBets,
       strategyId: selectedStrategyId,
-      onWin: { reset: true },
-      onLoss: { reset: true },
     };
 
     onStart(config);
@@ -211,8 +217,8 @@ export default function StrategySelector({
                   key={cond.id || i}
                   onClick={() => setActiveConditionTab(i)}
                   className={`w-8 h-8 rounded-lg text-sm font-bold transition-all relative ${activeConditionTab === i
-                      ? 'bg-primary text-white border-2 border-primary'
-                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                    ? 'bg-primary text-white border-2 border-primary'
+                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                     }`}
                 >
                   {i + 1}
@@ -264,10 +270,10 @@ export default function StrategySelector({
         ) : (
           <button
             onClick={handleStart}
-            disabled={isDisabled || !selectedStrategyId}
+            disabled={isDisabled || !selectedStrategyId || loading}
             className="w-full py-3 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-black font-bold text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Start Auto Bet
+            {loading ? 'Starting...' : 'Start Auto Bet'}
           </button>
         )}
       </div>

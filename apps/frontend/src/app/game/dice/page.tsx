@@ -31,6 +31,7 @@ export default function DicePage() {
   const [stats, setStats] = useState({ profit: 0, wins: 0, losses: 0, wagered: 0 });
   const [autoBetActive, setAutoBetActive] = useState(false);
   const [fairnessModalOpen, setFairnessModalOpen] = useState(false);
+  const [lastBetInfo, setLastBetInfo] = useState<{ amount: number; profit: number; payout: number; multiplier: number } | null>(null);
   const [userId, setUserId] = useState<string>();
 
   useEffect(() => {
@@ -47,6 +48,16 @@ export default function DicePage() {
     console.log('AutoBet result:', data);
     setResult(data.bet.result);
     if (data.wallet) setBalance(data.wallet.balance);
+
+    // Track the actual bet amount from this round (strategy may have adjusted it)
+    setLastBetInfo({
+      amount: data.bet.amount,
+      profit: data.bet.profit,
+      payout: data.bet.payout,
+      multiplier: data.bet.multiplier,
+    });
+    // Update the displayed amount to match what the strategy is using
+    setAmount(data.bet.amount);
 
     if (data.bet.won) {
       setStats(s => ({
@@ -86,6 +97,7 @@ export default function DicePage() {
     }
 
     setLoading(true);
+    setLastBetInfo(null); // Clear autobet info for manual bets
     try {
       const betParams = gameParams.mode === 'classic'
         ? { mode: 'classic', target: gameParams.target, isOver: gameParams.isOver }
@@ -182,7 +194,9 @@ export default function DicePage() {
                     <div className="text-6xl font-bold mb-2">{result.roll?.toFixed(2)}</div>
                     <div className="text-2xl mb-2">{result.won ? '🎉 WIN!' : '😢 LOST'}</div>
                     <div className="text-xl">
-                      {result.won ? `+$${(amount * gameParams.multiplier - amount).toFixed(2)}` : `-$${amount.toFixed(2)}`}
+                      {result.won
+                        ? `+$${(lastBetInfo ? lastBetInfo.payout - lastBetInfo.amount : amount * gameParams.multiplier - amount).toFixed(2)}`
+                        : `-$${(lastBetInfo ? lastBetInfo.amount : amount).toFixed(2)}`}
                     </div>
                   </div>
 

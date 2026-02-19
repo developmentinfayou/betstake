@@ -38,12 +38,13 @@ export enum BetStatus {
 export interface AutoBetConfig {
   enabled: boolean;
   numberOfBets: number; // 0 = infinite
-  onWin: {
+  strategyId?: string;
+  onWin?: {
     reset: boolean;
     increaseBy?: number; // percentage
     decreaseBy?: number;
   };
-  onLoss: {
+  onLoss?: {
     reset: boolean;
     increaseBy?: number;
     decreaseBy?: number;

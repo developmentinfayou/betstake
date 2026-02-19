@@ -67,6 +67,7 @@ export default function MinesPage() {
     }
 
     if (data.wallet) setBalance(data.wallet.balance);
+    setAmount(data.bet.amount); // Sync amount with strategy-adjusted bet
 
     if (data.bet.won) {
       setStats(s => ({

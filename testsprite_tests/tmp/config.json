@@ -1,0 +1,20 @@
+{
+  "status": "commited",
+  "type": "backend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3001",
+  "backendAuthType": "basic token",
+  "backendUsername": "samarpit@gmail.com",
+  "backendPassword": "87654321",
+  "executionArgs": {
+    "projectName": "betstake",
+    "projectPath": "d:\\work\\betstake\\betstake",
+    "testIds": [],
+    "additionalInstruction": "The backend runs on port 3001 at http://localhost:3001. CRITICAL instructions for test generation:\n\n1. ALL game types must be UPPERCASE: \"DICE\", \"LIMBO\", \"COINFLIP\", \"WHEEL\", etc.\n2. For ALL authenticated requests, first register a unique test user via POST /api/auth/register with unique username/email/password, then use the Bearer token.\n3. Bet object ID field is \"_id\" (underscore prefix, from MongoDB/Mongoose), NOT \"id\".\n4. For autobet tests, add balance first via POST /api/wallet/add with {currency: \"USD\", amount: 5000}.\n5. For strategy tests, first GET /api/strategy/defaults to find preset strategy IDs (look for name field matching \"Martingale\", \"D'Alembert\", \"Delayed Martingale\").\n6. For custom strategy creation, use POST /api/strategy with proper condition schema: {id: \"c1\", type: \"bet\", betTrigger: {frequency: \"every\", value: 1, target: \"losses\"}, action: \"increase_bet_amount\", actionValue: 100}\n7. Autobet start requires config.numberOfBets to be >= 0 (0 = infinite).\n8. onWin/onLoss objects need {reset: boolean} at minimum.\n9. For DICE gameParams always use {target: 50, isOver: true}.\n10. Wait between autobet start and checking results - use time.sleep(5) to time.sleep(15) depending on numberOfBets.\n11. Session games TOWER, STAIRS, HILO, BLACKJACK must return 400 when used with autobet.\n12. Bet history response is { bets: [...] } where each bet has _id, amount, gameType, isAutoBet, status fields.",
+    "envs": {
+      "API_KEY": "sk-user-aBFrRnbC_VQI_nbXTHZAqfpgZQDNSq4h51g5F_ZIZbe579_ZpqisU_eGgQ4Wvky5nvD3YXW-aOIt7SZdZFz_LpY0IXhG2ymjXAryFG6eHUdUHNZ8f45JqO_0zOMIY771h3A"
+    }
+  },
+  "serverPort": 58382,
+  "proxy": "http://670a599c-0e89-49cf-bcb7-8947253a28f1:GvtF5CeJBgbUVLIfeDZfCRhWoyXfCLyI@tun.testsprite.com:8080"
+}

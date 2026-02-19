@@ -43,6 +43,7 @@ export default function LimboPage() {
   useAutoBetSocket(userId, (data) => {
     console.log('AutoBet result:', data);
     setResult(data.bet.result);
+    setAmount(data.bet.amount); // Sync amount with strategy-adjusted bet
     if (data.wallet) setBalance(data.wallet.balance);
 
     if (data.bet.won) {

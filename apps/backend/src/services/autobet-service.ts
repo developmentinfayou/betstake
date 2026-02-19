@@ -69,7 +69,8 @@ export class AutoBetService {
         console.log('[AutoBet] Job ID:', job.id);
         console.log('[AutoBet] Job Data:', JSON.stringify(job.data, null, 2));
 
-        const { userId, config, betInput, currentBet } = job.data;
+        const { userId, betInput, currentBet } = job.data;
+        let config = job.data.config;
 
         try {
           // ── CHECK 1: Was stop requested BEFORE we place the bet? ──
@@ -133,14 +134,17 @@ export class AutoBetService {
 
           if (config.strategyId && config.strategySessionState) {
             // Strategy mode: use condition evaluator
+            console.log(`[AutoBet] 🎯 Strategy mode active (strategyId: ${config.strategyId})`);
             const sessionState: StrategySessionState = {
               ...config.strategySessionState,
               firedFirstStreaks: new Set(config.strategySessionState.firedFirstStreaks || []),
             };
             StrategyEngine.updateSessionState(sessionState, result.won, result.profit, wallet?.balance || 0);
+            console.log(`[AutoBet] Session: games=${sessionState.totalGames}, streak=${sessionState.currentStreak} ${sessionState.streakType}, amount=${sessionState.currentAmount}`);
             const evalResult = StrategyEngine.evaluateConditions(config.strategyConditions || [], sessionState);
             newAmount = evalResult.newAmount;
             strategyShouldStop = evalResult.shouldStop;
+            console.log(`[AutoBet] Strategy eval: newAmount=$${newAmount.toFixed(2)}, shouldStop=${strategyShouldStop}`);
             // Serialize Set back to array for next job
             config.strategySessionState = {
               ...sessionState,
@@ -149,9 +153,15 @@ export class AutoBetService {
             };
           } else {
             // Auto mode: use traditional adjustment
-            const updateResult = this.updateConfigAfterBet(config, result.won, betInput.amount, totalProfit);
-            config = updateResult.newConfig;
-            newAmount = updateResult.newAmount;
+            const adjustment = config.onWin || config.onLoss ? true : false;
+            if (adjustment) {
+              const updateResult = this.updateConfigAfterBet(config, result.won, betInput.amount, totalProfit);
+              config = updateResult.newConfig;
+              newAmount = updateResult.newAmount;
+            } else {
+              // No adjustment rules — keep same amount (basic auto mode)
+              newAmount = betInput.amount;
+            }
           }
 
           if (strategyShouldStop) {
@@ -202,7 +212,7 @@ export class AutoBetService {
   /**
    * Start autobet session
    */
-  static async startAutoBet(userId: string, config: AutoBetConfig & { strategyId?: string }, betInput: Omit<PlaceBetInput, 'isAutoBet'>) {
+  static async startAutoBet(userId: string, config: AutoBetConfig, betInput: Omit<PlaceBetInput, 'isAutoBet'>) {
     console.log('\n[AutoBet] ========== START AUTOBET ==========');
     console.log('[AutoBet] User:', userId);
     console.log('[AutoBet] Config:', JSON.stringify(config, null, 2));
@@ -244,6 +254,9 @@ export class AutoBetService {
         throw new Error('Strategy not found');
       }
       console.log(`[AutoBet] Using strategy: ${strategy.name} (${strategy.conditions.length} conditions)`);
+      if (strategy.conditions.length === 0) {
+        throw new Error('Strategy has no conditions. Please add at least one condition before starting.');
+      }
       sessionData.strategyId = config.strategyId;
       sessionData.strategyConditions = strategy.conditions;
       sessionData.strategySessionState = {
@@ -348,9 +361,12 @@ export class AutoBetService {
           }
         } else {
           // Auto mode
-          const { newConfig, newAmount } = this.updateConfigAfterBet(config, result.won, betInput.amount, totalProfit);
-          config = newConfig;
-          betInput.amount = newAmount;
+          if (config.onWin || config.onLoss) {
+            const { newConfig, newAmount } = this.updateConfigAfterBet(config, result.won, betInput.amount, totalProfit);
+            config = newConfig;
+            betInput.amount = newAmount;
+          }
+          // If no onWin/onLoss rules, keep same amount (basic auto or empty strategy fallback)
         }
 
         await new Promise(resolve => setTimeout(resolve, 500));

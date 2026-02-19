@@ -44,6 +44,7 @@ export default function CoinFlipPage() {
 
   useAutoBetSocket(userId, (data) => {
     setResult(data.bet.result);
+    setAmount(data.bet.amount); // Sync amount with strategy-adjusted bet
     if (data.wallet) setBalance(data.wallet.balance);
 
     if (data.bet.won) {

@@ -1,0 +1,134 @@
+version: "3"
+type: backend
+tech_stack:
+  - TypeScript
+  - Express.js
+  - MongoDB (Mongoose)
+  - Redis (BullMQ)
+  - JWT Authentication
+  - Zod Validation
+features:
+  - name: Manual Bet Placement
+    description: Place instant bets on various games. gametype must be UPPERCASE (DICE, LIMBO, COINFLIP, KENO, PLINKO, WHEEL, ROULETTE, BALLOON, RUSH, SOLOCRASH, MINES). Use isDemo=true for testing. Demo mode skips wallet debit/credit. Returns bet object with _id (underscore id), result object, and wallet.
+    endpoints:
+      - method: POST
+        path: /api/bet/place
+        auth_required: true
+        request_schema:
+          body:
+            gameType: string (UPPERCASE)
+            currency: string (USD)
+            amount: number (positive)
+            gameParams: object
+            isDemo: boolean (optional)
+        response_schema:
+          "200": "{ bet: {_id, gameType, amount, multiplier, payout, profit, status, result, isDemo, isAutoBet}, result: {won, multiplier, payout, profit, result}, wallet: null_if_demo }"
+        game_params_examples:
+          DICE: "{target: 50, isOver: true}"
+          LIMBO: "{targetMultiplier: 2}"
+          COINFLIP: "{choice: 'heads'}"
+          KENO: "{selectedSpots: [1,5,10,15,20], risk: 'classic'}"
+          PLINKO: "{rows: 8, risk: 'medium'}"
+          WHEEL: "{segments: 10, risk: 'medium'}"
+
+  - name: AutoBet Basic
+    description: Start/stop automated betting sessions. Uses BullMQ queue with Redis. Has sync fallback if Redis fails. Bets marked with isAutoBet=true. Session games (TOWER, STAIRS, HILO, BLACKJACK) are NOT supported for autobet. MINES requires selectedTiles in gameParams.
+    endpoints:
+      - method: POST
+        path: /api/bet/autobet/start
+        auth_required: true
+        request_schema:
+          body:
+            gameType: string (UPPERCASE, not TOWER/STAIRS/HILO/BLACKJACK)
+            currency: string (USD)
+            amount: number (positive)
+            gameParams: object (game-specific, for DICE use {target: 50, isOver: true})
+            config:
+              enabled: boolean (true)
+              numberOfBets: number (0 = infinite, positive = fixed count)
+              strategyId: string (optional, MongoDB ObjectId of strategy)
+              onWin: "{reset: boolean, increaseBy?: number, decreaseBy?: number}" (optional)
+              onLoss: "{reset: boolean, increaseBy?: number, decreaseBy?: number}" (optional)
+              stopOnProfit: number (optional, stop when total profit >= this)
+              stopOnLoss: number (optional, stop when total loss >= this, stored as positive)
+        response_schema:
+          "200": "{ success: true, message: 'Auto-bet started' }"
+          "400": "{ error: 'error message' }"
+      - method: POST
+        path: /api/bet/autobet/stop
+        auth_required: true
+        response_schema:
+          "200": "{ success: true, message: 'Auto-bet stopped' }"
+      - method: GET
+        path: /api/bet/autobet/status
+        auth_required: true
+        response_schema:
+          "200": "{ active: boolean, currentBet: number, totalBets: number }"
+
+  - name: Bet History and Verification
+    description: Get bet history with pagination. Verify bets using provably fair system (requires seed rotation first to reveal server seed).
+    endpoints:
+      - method: GET
+        path: /api/bet/history
+        auth_required: true
+        request_schema:
+          query:
+            limit: number (default 50)
+            offset: number (default 0)
+        response_schema:
+          "200": "{ bets: [...] }"
+      - method: GET
+        path: /api/bet/:betId
+        auth_required: false
+        response_schema:
+          "200": "Bet object"
+
+  - name: Strategy Engine
+    description: Preset strategies (Martingale, Delayed Martingale, Paroli, D'Alembert) and custom strategy CRUD. Strategies have condition blocks with bet triggers (frequency types - every, every_streak_of, first_streak_of, streak_greater_than, streak_lower_than) and profit triggers (source - balance, profit, loss; operator - greater_than, less_than, etc). Actions include increase_bet_amount (%), decrease_bet_amount (%), add_to_bet_amount (absolute), subtract_from_bet_amount (absolute), set_bet_amount, reset_bet_amount, stop_autobet.
+    endpoints:
+      - method: GET
+        path: /api/strategy/defaults
+        auth_required: false
+        response_schema:
+          "200": "{ strategies: [{_id, name, conditions, isPreset}] }"
+      - method: GET
+        path: /api/strategy/all
+        auth_required: true
+      - method: POST
+        path: /api/strategy
+        auth_required: true
+        request_schema:
+          body:
+            name: string
+            conditions: "StrategyConditionBlock[]"
+        response_schema:
+          "201": "{ strategy: {...} }"
+      - method: DELETE
+        path: /api/strategy/:id
+        auth_required: true
+
+  - name: Wallet Operations
+    description: Balance management for testing
+    endpoints:
+      - method: POST
+        path: /api/wallet/add
+        auth_required: true
+        request_schema:
+          body:
+            currency: string (USD)
+            amount: number
+      - method: GET
+        path: /api/wallet/:currency
+        auth_required: true
+
+  - name: Authentication
+    endpoints:
+      - method: POST
+        path: /api/auth/register
+        request_schema:
+          body:
+            username: string (3-20 chars)
+            email: string
+            password: string (min 8)
+        response_schema:
+          "200": "{ token, user }"

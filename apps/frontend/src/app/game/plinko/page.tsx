@@ -57,6 +57,7 @@ export default function PlinkoPage() {
 
   useAutoBetSocket(userId, (data) => {
     setResult(data.bet.result);
+    setAmount(data.bet.amount); // Sync amount with strategy-adjusted bet
     if (data.wallet) setBalance(data.wallet.balance);
     if (data.bet.won) {
       setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + data.bet.profit, wagered: s.wagered + data.bet.amount }));

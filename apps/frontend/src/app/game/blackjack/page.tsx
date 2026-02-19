@@ -50,6 +50,7 @@ export default function BlackjackPage() {
 
   useAutoBetSocket(userId, (data) => {
     if (data.wallet) setBalance(data.wallet.balance);
+    setAmount(data.bet.amount); // Sync amount with strategy-adjusted bet
     if (data.bet.won) {
       setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + data.bet.profit, wagered: s.wagered + data.bet.amount }));
     } else {
