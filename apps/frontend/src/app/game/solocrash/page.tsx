@@ -8,6 +8,7 @@ import { useAutoBetSocket } from '@/hooks/useAutoBetSocket';
 import BetModeSelector from '@/components/betting/BetModeSelector';
 import ManualBetControls from '@/components/betting/ManualBetControls';
 import AutoBetControls, { AutoBetConfig } from '@/components/betting/AutoBetControls';
+import StrategySelector from '@/components/betting/StrategySelector';
 import SoloCrashGameControls, { SoloCrashGameParams } from '@/components/games/solocrash/SoloCrashGameControls';
 import FairnessModal from '@/components/games/FairnessModal';
 
@@ -150,7 +151,17 @@ export default function SoloCrashPage() {
               {betMode === 'auto' && (
                 <AutoBetControls amount={amount} balance={balance} onAmountChange={setAmount} onStart={handleStartAutoBet} onStop={handleStopAutoBet} isActive={autoBetActive} disabled={loading || amount <= 0 || amount > balance} />
               )}
-              {betMode === 'strategy' && (<div className="text-center py-8 text-gray-400">Strategy mode coming soon...</div>)}
+              {betMode === 'strategy' && (
+                <StrategySelector
+                  amount={amount}
+                  balance={balance}
+                  onAmountChange={setAmount}
+                  onStart={handleStartAutoBet}
+                  onStop={handleStopAutoBet}
+                  isActive={autoBetActive}
+                  disabled={loading || amount <= 0 || amount > balance}
+                />
+              )}
             </div>
 
             {autoBetActive && (

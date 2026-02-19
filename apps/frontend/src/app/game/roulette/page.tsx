@@ -8,6 +8,7 @@ import { useAutoBetSocket } from '@/hooks/useAutoBetSocket';
 import BetModeSelector from '@/components/betting/BetModeSelector';
 import ManualBetControls from '@/components/betting/ManualBetControls';
 import AutoBetControls, { AutoBetConfig } from '@/components/betting/AutoBetControls';
+import StrategySelector from '@/components/betting/StrategySelector';
 import RouletteGameControls, { RouletteGameParams } from '@/components/games/roulette/RouletteGameControls';
 import FairnessModal from '@/components/games/FairnessModal';
 
@@ -170,7 +171,7 @@ export default function RoulettePage() {
               {result && (
                 <div className={`mb-6 p-6 rounded-lg text-center ${result.totalPayout > 0 ? 'bg-green-900/20 border border-green-500' : 'bg-red-900/20 border border-red-500'}`}>
                   <div className={`text-6xl font-bold mb-2 w-20 h-20 mx-auto rounded-full flex items-center justify-center ${getNumberColor(result.number) === 'green' ? 'bg-green-600' :
-                      getNumberColor(result.number) === 'red' ? 'bg-red-600' : 'bg-gray-900'
+                    getNumberColor(result.number) === 'red' ? 'bg-red-600' : 'bg-gray-900'
                     } text-white`}>
                     {result.number}
                   </div>
@@ -191,7 +192,7 @@ export default function RoulettePage() {
               <BetModeSelector
                 mode={betMode}
                 onChange={setBetMode}
-                showStrategy={false}
+                showStrategy={true}
               />
 
               {betMode === 'manual' && (
@@ -208,6 +209,18 @@ export default function RoulettePage() {
 
               {betMode === 'auto' && (
                 <AutoBetControls
+                  amount={gameParams.bets.reduce((sum, b) => sum + b.amount, 0) || amount}
+                  balance={balance}
+                  onAmountChange={() => { }}
+                  onStart={handleStartAutoBet}
+                  onStop={handleStopAutoBet}
+                  isActive={autoBetActive}
+                  disabled={loading || gameParams.bets.length === 0}
+                />
+              )}
+
+              {betMode === 'strategy' && (
+                <StrategySelector
                   amount={gameParams.bets.reduce((sum, b) => sum + b.amount, 0) || amount}
                   balance={balance}
                   onAmountChange={() => { }}

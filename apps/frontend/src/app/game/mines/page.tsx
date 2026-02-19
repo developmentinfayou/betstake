@@ -8,10 +8,11 @@ import { useAutoBetSocket } from '@/hooks/useAutoBetSocket';
 import BetModeSelector from '@/components/betting/BetModeSelector';
 import ManualBetControls from '@/components/betting/ManualBetControls';
 import AutoBetControls, { AutoBetConfig } from '@/components/betting/AutoBetControls';
+import StrategySelector from '@/components/betting/StrategySelector';
 import MinesGameControls, { MinesGameParams } from '@/components/games/mines/MinesGameControls';
 import FairnessModal from '@/components/games/FairnessModal';
 
-type BetMode = 'manual' | 'auto';
+type BetMode = 'manual' | 'auto' | 'strategy';
 
 export default function MinesPage() {
   const [betMode, setBetMode] = useState<BetMode>('manual');
@@ -377,7 +378,7 @@ export default function MinesPage() {
                   setBetMode(mode as BetMode);
                   resetGame();
                 }}
-                showStrategy={false}
+                showStrategy={true}
               />
 
               {betMode === 'manual' && !gameActive && (
@@ -394,6 +395,18 @@ export default function MinesPage() {
 
               {betMode === 'auto' && (
                 <AutoBetControls
+                  amount={amount}
+                  balance={balance}
+                  onAmountChange={setAmount}
+                  onStart={handleStartAutoBet}
+                  onStop={handleStopAutoBet}
+                  isActive={autoBetActive}
+                  disabled={loading || amount <= 0 || amount > balance}
+                />
+              )}
+
+              {betMode === 'strategy' && (
+                <StrategySelector
                   amount={amount}
                   balance={balance}
                   onAmountChange={setAmount}
