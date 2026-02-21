@@ -84,10 +84,13 @@ body {
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(to right, #C20DFF, #00C3FF);
-  -webkit-background-clip: text;
+  /* background: linear-gradient(to right, #C20DFF, #00C3FF); */
+  /* -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
+  background-clip: text; */
+  font-size: 14px;
+  font-weight: 500px;
+  color: #ffffff;
 }
 
 /* Button styles */
@@ -101,7 +104,7 @@ body {
 
 /* Card styles */
 .card {
-  @apply bg-gray-800 rounded-lg p-6 border border-gray-700;
+  @apply bg-[#FFFFFF08] rounded p-6 border border-gray-700;
 }
 
 /* Input styles */

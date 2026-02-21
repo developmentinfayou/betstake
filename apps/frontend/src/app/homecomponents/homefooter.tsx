@@ -1,5 +1,6 @@
 import React from "react";
 import ViewIcon from "../../icons/ViewIcon";
+import Bitcoin from "@/icons/Bitcoin";
 
 const HomeFooter = () => {
   const [depositShow, setDepositShow] = React.useState<any>(false);
@@ -10,16 +11,29 @@ const HomeFooter = () => {
 
   const [vaultShow, setvaultShow] = React.useState(false);
   const [transferShow, setTransferShow] = React.useState(false);
+  const [transferAll , setTransferAll ] = React.useState(false);
+  const [finalTransfer , setFinalTransfer ] = React.useState(false);
+const [ confredend , setconfirmedend] = React.useState(false);
+   
+  
 
   const transfer = () => {
     setTransferShow((prev: boolean) => !prev);
     setDepositShow(false);
+    setTransferAll(true);
+  }
 
+  const Transfernow = () => {
+    setFinalTransfer((prev:boolean) => !prev)
   }
 
   const valshow = () => {
     setvaultShow((prev: boolean) => !prev);
   };
+
+  const  confirmed = () => {
+    setconfirmedend ((prev: boolean) => !prev);
+  }
 
   const [isSwapped, setIsSwapped] = React.useState(false);
 
@@ -36,10 +50,7 @@ const WalletCard = () => (
 
 
       <span className="text-white flex items-center gap-1 font-medium text-xs text-nowrap">
-      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M12.8043 8.07255C11.9361 11.5547 8.40902 13.6737 4.92643 12.8056C1.44546 11.9374 -0.673753 8.41034 0.19461 4.92836C1.06236 1.44577 4.58924 -0.673647 8.07081 0.194512C11.5532 1.06267 13.6724 4.59016 12.8043 8.07255Z" fill="#F7931A"/>
-<path d="M9.36529 5.57426C9.49448 4.70935 8.83594 4.2444 7.93549 3.93422L8.22758 2.76259L7.5142 2.58486L7.22983 3.72561C7.04255 3.67889 6.84998 3.63481 6.65864 3.59114L6.94505 2.44287L6.23228 2.26514L5.93998 3.43636C5.78479 3.40102 5.63245 3.36608 5.48457 3.32931L5.48538 3.32566L4.50185 3.08008L4.31213 3.8418C4.31213 3.8418 4.84127 3.96307 4.8301 3.97058C5.11894 4.04269 5.17135 4.23383 5.16241 4.38536L4.82969 5.7201C4.8496 5.72518 4.8754 5.73249 4.90383 5.74387L4.82868 5.72518L4.3621 7.59496C4.32675 7.68271 4.23717 7.81433 4.03527 7.76436C4.04238 7.77472 3.51689 7.63497 3.51689 7.63497L3.16284 8.45154L4.09113 8.6829C4.26378 8.72616 4.43299 8.77146 4.59935 8.81412L4.30421 9.99936L5.01657 10.1771L5.30907 9.00465C5.50346 9.05746 5.69237 9.10621 5.87721 9.15212L5.58593 10.3191L6.29911 10.4968L6.59425 9.31401C7.81036 9.54415 8.72504 9.45132 9.10955 8.3516C9.41973 7.46597 9.09432 6.95511 8.45447 6.62178C8.92044 6.51392 9.27165 6.2074 9.36529 5.57426ZM7.73561 7.85922C7.51502 8.74485 6.02407 8.26629 5.54043 8.14604L5.93206 6.57608C6.4155 6.69673 7.96535 6.93561 7.73561 7.85922ZM7.956 5.56146C7.75491 6.36706 6.51381 5.95776 6.11101 5.85742L6.46607 4.43351C6.86887 4.53385 8.16563 4.72113 7.956 5.56146Z" fill="white"/>
-</svg>  0.0066012 BTC
+      <Bitcoin /> 0.0066012 BTC
       </span>
 
       <span className="text-[10px] bg-emerald-400 text-black px-[5px] rounded text-right font-semibold">
@@ -56,10 +67,7 @@ const PlayCard = () => (
     <div className="flex items-center justify-between gap-3">
       <div className="flex items-center gap-2">
       <span className="text-white flex items-center gap-1 font-medium text-xs text-nowrap">
-      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M12.8043 8.07255C11.9361 11.5547 8.40902 13.6737 4.92643 12.8056C1.44546 11.9374 -0.673753 8.41034 0.19461 4.92836C1.06236 1.44577 4.58924 -0.673647 8.07081 0.194512C11.5532 1.06267 13.6724 4.59016 12.8043 8.07255Z" fill="#F7931A"/>
-<path d="M9.36529 5.57426C9.49448 4.70935 8.83594 4.2444 7.93549 3.93422L8.22758 2.76259L7.5142 2.58486L7.22983 3.72561C7.04255 3.67889 6.84998 3.63481 6.65864 3.59114L6.94505 2.44287L6.23228 2.26514L5.93998 3.43636C5.78479 3.40102 5.63245 3.36608 5.48457 3.32931L5.48538 3.32566L4.50185 3.08008L4.31213 3.8418C4.31213 3.8418 4.84127 3.96307 4.8301 3.97058C5.11894 4.04269 5.17135 4.23383 5.16241 4.38536L4.82969 5.7201C4.8496 5.72518 4.8754 5.73249 4.90383 5.74387L4.82868 5.72518L4.3621 7.59496C4.32675 7.68271 4.23717 7.81433 4.03527 7.76436C4.04238 7.77472 3.51689 7.63497 3.51689 7.63497L3.16284 8.45154L4.09113 8.6829C4.26378 8.72616 4.43299 8.77146 4.59935 8.81412L4.30421 9.99936L5.01657 10.1771L5.30907 9.00465C5.50346 9.05746 5.69237 9.10621 5.87721 9.15212L5.58593 10.3191L6.29911 10.4968L6.59425 9.31401C7.81036 9.54415 8.72504 9.45132 9.10955 8.3516C9.41973 7.46597 9.09432 6.95511 8.45447 6.62178C8.92044 6.51392 9.27165 6.2074 9.36529 5.57426ZM7.73561 7.85922C7.51502 8.74485 6.02407 8.26629 5.54043 8.14604L5.93206 6.57608C6.4155 6.69673 7.96535 6.93561 7.73561 7.85922ZM7.956 5.56146C7.75491 6.36706 6.51381 5.95776 6.11101 5.85742L6.46607 4.43351C6.86887 4.53385 8.16563 4.72113 7.956 5.56146Z" fill="white"/>
-</svg>  0.0066012 BTC
+      <Bitcoin /> 0.0066012 BTC
       </span>
 
       </div>
@@ -77,7 +85,7 @@ const PlayCard = () => (
       {" "}
       {/* ✅ FOOTER */}{" "}
       {depositShow && (
-        <div className="w-full absolute bottom-14 z-50 max-w-md p-3 rounded bg-[#0d121d]/95 border border-gray-800 shadow-2xl backdrop-blur-md text-gray-400 ">
+        <div className="w-full absolute bottom-14 z-50 max-w-md p-3 rounded bg-[#000000D1] border border-gray-800 shadow-2xl backdrop-blur-xl text-gray-400 ">
           <div className="flex items-center justify-between mb-6 space-x-3">
             <div className="flex w-[155px] h-[31px] p-1 bg-[#73FFD70F] rounded ">
               <button className="flex gap-1.5 items-center px-3 py-1.5 text-sm text-white bg-[#FFFFFF0F] rounded shadow-sm">
@@ -300,7 +308,7 @@ const PlayCard = () => (
         </div>
       )}
       {transferShow && (
-        <div className="w-[428px] h-[307px] overflow-hidden absolute bottom-14 z-50 max-w-md p-3 rounded bg-[#0d121d]/95 border border-gray-800 shadow-2xl backdrop-blur-md text-gray-400 ">
+        <div className="left-[187px] w-[428px] h-[307px] overflow-hidden absolute bottom-14 z-50 max-w-md p-3 rounded bg-[#73FFD70F] border border-[#31313F] shadow-2xl backdrop-blur-3xl text-gray-400 ">
           <div className="flex items-center justify-between mb-6 space-x-3">
             <div className="flex w-[155px] h-[31px] p-1 bg-[#73FFD70F] rounded ">
               <button className="flex gap-1.5 items-center px-3 py-1.5 text-sm text-white bg-[#FFFFFF0F] rounded shadow-sm">
@@ -390,7 +398,7 @@ const PlayCard = () => (
 
           <div className="rounded">
 
-  <div className="flex items-center justify-between gap-4 mb-4">
+  {!confredend && <div className="flex items-center justify-between gap-4 mb-4">
 
     {/* LEFT SIDE */}
     <div className="flex-1 transition-all duration-300">
@@ -427,16 +435,19 @@ const PlayCard = () => (
     {/* </button> */}
 
     {/* RIGHT SIDE */}
-    <div className="flex-1 transition-all duration-300 text-right">
+   { <div className="flex-1 transition-all duration-300 text-right">
       {!isSwapped ? <PlayCard /> : <WalletCard />}
     </div>
+}
+   
 
-  </div>
+  </div>}
+
 
 </div>
 
 
-          <div className="space-y-1 w-[404px] h-[178px] overflow-y-auto scrollbar-hidden bg-[#73FFD70F]">
+         {!confredend && <div className="space-y-1 w-[404px] h-[178px] overflow-y-auto scrollbar-hidden bg-[#73FFD70F]">
             <div className="flex items-center justify-between px-2 py-1 rounded hover:bg-gray-800/30 cursor-pointer group">
               <div className="flex items-center space-x-2">
                 <img src="/images/dogecoin.svg" />
@@ -516,7 +527,51 @@ const PlayCard = () => (
                 <div className="text-sm  text-gray-300">266.00000 DOGE</div>
               </div>
             </div>
-          </div>
+          </div>}
+
+  { confredend &&
+
+  <div>
+    <div className="flex items-center justify-between">
+    <p className="text-xs text-[#7c8799] mb-1">Wallet Balance</p>
+
+    <svg className={` text-emerald-400 transition-transform duration-300 ${
+          isSwapped ? "rotate-180" : ""
+        }`} width="14" height="9" viewBox="0 0 14 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0.0452539 3.47833C-0.0465664 3.25924 0.00418359 3.00708 0.173797 2.8394L2.8726 0.171795C3.10434 -0.0572648 3.47985 -0.0572648 3.71156 0.171795C3.94321 0.400719 3.94321 0.772025 3.71156 1.00095L2.02541 2.66761H13.4068C13.7344 2.66761 14 2.9301 14 3.25397C14 3.57785 13.7344 3.84034 13.4068 3.84034H0.593277C0.353336 3.84034 0.137074 3.69742 0.0452539 3.47833ZM13.4067 5.15967H0.593223C0.265617 5.15967 0 5.42216 0 5.74603C0 6.0699 0.265617 6.3324 0.593223 6.3324H11.9746L10.2884 7.99906C10.0568 8.22798 10.0567 8.59929 10.2884 8.82821C10.4042 8.94273 10.556 9 10.7079 9C10.8597 9 11.0115 8.94273 11.1273 8.82821L13.8262 6.16061C13.9958 5.99296 14.0466 5.74076 13.9547 5.52168C13.8629 5.30259 13.6467 5.15967 13.4067 5.15967Z" fill="#73FFD7"/>
+</svg>
+
+
+    <p className="text-xs text-[#7c8799] mb-1">Wallet Balance</p>
+
+
+
+    </div>
+  { [1, 2, 3].map((_, index) => ( <div key={index}>
+     <div className="flex items-center justify-between space-y-2">
+
+
+    <div className="flex flex-col w-[198px] rounded items-left ">
+      <span className="text-white flex items-center gap-1.5 font-normal text-sm text-nowrap">
+     <Bitcoin /> 0.0066012 BTC
+      </span>
+
+      <div className="text-[12px] pl-[15px] text-gray-500">~ 3819.75 INR </div>
+
+      </div>
+    
+     <div className="flex w-[198px] h-[40px] bg-[#73FFD70F] rounded p-[11px] items-center gap-1.5">
+      <span className="text-white flex items-center gap-1.5 font-normal text-sm text-nowrap">
+     <Bitcoin /> 0.0066012 BTC
+      </span>
+
+      <div className="text-[12px] text-gray-500">~ 3819.75 INR </div>
+
+      </div>
+      </div>
+      </div> ))}</div>
+    }
+
 
           <div className="flexxx hidden items-center justify-between pt-4 border-t border-gray-800">
             <div className="flex items-center space-x-6">
@@ -570,6 +625,12 @@ const PlayCard = () => (
           </div>
         </div>
       )}
+
+      {finalTransfer && (
+        <div>infafs</div>
+      )}
+
+
       <div className="flex  items-center justify-between w-full px-4 py-2  text-gray-400">
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-4">
@@ -609,8 +670,8 @@ const PlayCard = () => (
             </svg>
           </div>
 
-          <div className="flex items-center gap-[12px] min-w-[233px] h-[41px]">
-            <div
+        <div className="flex items-center gap-[12px] min-w-[233px] h-[41px]">
+             { !transferAll &&  <div
               onClick={() => depositCoin()}
               className="flex w-[146px] h-[41px] items-center gap-1.5 px-3 py-1.5 bg-[#1a1c2e] border border-gray-800 rounded cursor-pointer hover:bg-[#252841] text-nowrap"
             >
@@ -633,6 +694,26 @@ const PlayCard = () => (
                 />
               </svg>
             </div>
+          }
+
+
+{transferAll && <button
+            
+                className=" w-[41px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#73FFD70F] font-medium rounded text-sm  transition border border-[#31313F]"
+              >
+                <svg width="5" height="3" viewBox="0 0 5 3" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0.5 0.5L2.5 2.5L4.5 0.5" stroke="#73FFD7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+              </button>}
+
+
+{transferAll && <div className={`relative ${confredend ? "w-[200px]" : "w-[186px]"} h-[1px] bg-[#31313F]`}>
+  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#31313F]" />
+</div>}
+
+
+
 
             {depositShow && !vaultShow && (
               <button
@@ -643,7 +724,7 @@ const PlayCard = () => (
               </button>
             )}
 
-            {vaultShow && (
+            {vaultShow && !transferAll && (
               <button
                 onClick={() => transfer()}
                 className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#31313F] font-medium rounded text-sm hover:bg-[#494c4b] transition shadow-lg shadow-emerald-500/10"
@@ -652,7 +733,42 @@ const PlayCard = () => (
               </button>
             )}
 
-            <button
+
+{transferAll && (
+              <button
+                onClick={() => window.location.reload()}
+                className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#31313F] font-normal rounded text-sm hover:bg-[#494c4b] transition shadow-lg shadow-emerald-500/10"
+              >
+               <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0.5 0.5L6.5 6.5M6.5 0.5L0.5 6.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+ Cancel
+              </button>
+            )}
+
+
+
+           {transferAll ?   <button
+              onClick={() => confirmed()}
+              className=" min-w-[75px] h-[41px] px-1 flex items-center justify-center text-center gap-1.5  bg-[#a2ffda] text-[#0a0b14] font-medium rounded text-sm hover:bg-[#85eec5] transition shadow-lg shadow-emerald-500/10 text-nowrap"
+            >
+              <svg
+                className="h-2 w-2"
+                width="8"
+                height="8"
+                viewBox="0 0 8 8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4 0.5V7.5M0.5 4H7.5"
+                  stroke="black"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            {!confredend ?   "Transfer All" : "Confirm"}
+            </button> : <button
               // onClick={() => depositCoin()}
               className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#a2ffda] text-[#0a0b14] font-medium rounded text-sm hover:bg-[#85eec5] transition shadow-lg shadow-emerald-500/10"
             >
@@ -672,7 +788,7 @@ const PlayCard = () => (
                 />
               </svg>
               Deposit
-            </button>
+            </button> }
           </div>
 
           <div className="w-10 h-10 flex items-center justify-center">
@@ -680,11 +796,11 @@ const PlayCard = () => (
           </div>
         </div>
 
-        <div className="hidden relative group xl:flex items-center justify-between p-3 border-[#31313F] border hover:rounded-t-none hover:bg-[#000000f6] bg-[#FFFFFF08] rounded min-w-[706.79px] h-[41px] ">
+        <div className={`hidden relative group xl:flex items-center justify-between p-3 border-[#31313F] border hover:rounded-t-none hover:bg-[#000000f6] bg-[#FFFFFF08] rounded ${transferAll ?  "min-w-[600px]" :" min-w-[706.79px]" } h-[41px]`}>
           {/* 🔥 Hover List */}
           <div
-            className="
-  absolute top- bottom-full -left-[1.2px] mt-1 min-w-[706.79px]
+            className={`
+  absolute top- bottom-full -left-[1.2px] mt-1 ${transferAll ?  "min-w-[600px]" :" min-w-[706.79px]" }
   bg-[#000000f6]
   border border-[#31313F] border-b-0
   rounded
@@ -697,7 +813,7 @@ const PlayCard = () => (
   group-hover:pointer-events-auto
   z-50
   h-[200px] overflow-y-auto scrollbar-hidden
-"
+`}
           >
             {[...Array(10)].map((_, i) => (
               <div

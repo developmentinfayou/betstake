@@ -1,0 +1,134 @@
+Main Frontend Code: Use VUE.js or React.JS otherwise the file size and loading will be too strong.
+DO NOT USE Bootstrap, use custom design.
+Unecessary Boxes and Extra Code Added, Random Chunks, js used for blur (through bootstrap).
+Maintainable Code not there, not well documented, not clean code.
+Recode again from Start without library
+Start from Frame Size 1440px
+
+OREBIT Play (Top Left Logo):
+- Hover Effect (circle on arrows) Missing, Hover and Click should work on Whole logo as well as arrows
+- When Clicked, Switch Arrows and their colour, Pop and Subtle appear in animation
+- Opened Model, Current One should be bright (orebit play), rest should be dull, Hover effect on Links missing, Bottom Text (Wallet, play, Connect) Should align with the OREBiT "T", they are overflowing
+
+Dashboard / Casino / Multiplayer Selector:
+- Glow Should be Outside both the boxes and behind them, glow spread is also wrong
+- Hover Effect Wrong, Check Design
+- Click Effect (series): 
+-- Glow disappears from background (fade out)
+-- Move the box from left to right / right to left instead of appear disappear
+-- Glow Slowly Appears again on new selected icon (fade in), when fade in is happening, fill colour in icon as well, subtle and smoothly
+- Designer Mistake: Dashboard will be Home, change Icon and text.
+
+Top Middle Nav:
+- Range / Scrollbar Should not be in middle, shift it to the right side
+- Range / Scrollbar should only appear when the box is hovered, it will slide in from top to bottom.
+- The Dot Should not Glow always, remove ripple / blink effect, Glow only when the content is scrolled (using mouse scroll wheel), or when user is hovering the dot / clicking and dragging it
+- HEX Code wrong, Design HEX: #73FFD7, Used HEX: #34d399
+- Hover Effect: Fill Icon Colour and slightly bright text, check design for reference.
+- Click Effect: Remove the glow (fade out) when clicked on other link, then when the bar reaches on the new link, fade in the glow again.
+
+Right Buttons:
+- Spin and Lottery Hover Effect
+
+Jackpot Box:
+- Normal State is not aligned with the design, Rightmost image will be bright, currently all are bright, then as we go to the left they will slowly get dull, they will also switch (move like a dial) every few seconds.
+- Hover Effect Wrong, check Hover Design
+- Default No Coin is selected (highest reward coin should be selected, just as shown in design)
+- Hover Effect on Coin Name: Do not Shift Content / Text, it should increase in size at its own place.
+- When Site just loaded: Jackpot number should start from 0 then count up animation to main Amount.
+- Glow on Image is not proper: do glass type blurry glow
+
+Rakeback:
+- Icon Missing on Close
+- SemiBOLD The Main Rakeback Percentage
+- Claim Button: Default opacity = 84%, Hover Effect: Opacity = 100%, also add ripple click effect
+- When See Boost is clicked, existing content of box is shifting position, it should not happen.
+- Colour of "See Boost" text and its "icon" should be same (as in design), currently its different
+- When box is opened / closed, the animation should be subtle and slowly expanding type
+- Box Open State: Hide Text "Rakeback", Glass effect (same as balance), it should NOT Shift the content, it will be an overflowing Modal (just like balance modal)
+- Claim Button On Click modal is not opening, design missing [pop up animation]
+
+House Edge:
+- Premium and VIP Glow Missing
+- Hover Effect Wrong (Only shift the glow and colour fill)
+- VIP Click effect, colour is not filling, its also wrong, Same slide animation like top nav
+- Bar Should Not Extend the Top Selector, its overextended
+- Text Hex wrong, and green hex (amount) hex also wrong, Copy Exact hex
+
+General Design:
+- Gap Between top boxes should be 32px (as in design), currently its 12px
+- ALL Alignment is wrong, there should not be any space it should align with the bulb as well, put this all content in a hidden symmtrical box.
+- In Recently Played, Do not leave whitespace, alight it properly
+- Gap Between Content inside the box and its border is not accurate to design given in any box, fix it, it should be consistent on all sides.
+- Gap Between Each Section is 64px, but the gap on site is not consistent, its 40px at some position, 56px at the other, it should be consistent everywhere
+- Top and Bottom Bar should be Floating (sticky)
+
+Recently Played:
+- Hover On Image: Blur is OK, but image is not getting dull (black) on hover as shown in design.
+- Hover Effect: Right Content is not changing
+- Scroll Effect not working on Recently Played
+- Continue button, same as claim button, all clickable main buttons are default 84% opacity and hover is 100%, do the same.
+- Clicking on Whole image should redirect as well, not just button
+- Favourite Heart: Hover Effect: Fill with grey colour
+- Max Slots: 10, if not 10 recently played, then make other boxes empty but it should always be scrollable 
+- Gap Between Card and Text box is 32px, its currently 16 which is half, fix
+- Recently Played bottom text gap is not proper, its less.
+- Right Text Colour is not greyish, it should Match the HEX.
+
+Trending:
+- Animation is Very Laggy, Character Switch is Laggy and not smooth, as I said earlier in meeting, the line should fade out and fade into the other character, Line is becoming dot mid animation, After all the characters are filled, hold the characters still for a few seconds, shine animation and then animation replays, The Alpha / Opacity Will keep increasing and characters will become white. No Outline in starting, the animated line will create the outline.
+- When hovering on a game, The text also changes to the game name and animation replays, text and bottom content change as well
+- Hover Effect On Left right Arrows: Change arrow colour to Black and box colour to white, its grey currently
+- Hover On Image: Image dullness and blur percent is also not accurate, make image dull on hover as in design
+- Hover Effect on image: Box Animation is Not Smooth, its shaking, image is also not fixed on its placed when card is getting big, Image should fit and get big with same ratio of card, Play button and Heart have slide animations from bottom and left right, add fade in and fade out animation and make them clean, Player Count Colour should become white on hover, its not happening as shown in design
+- Sort By: Colour is different than design, copy exact HEX code from design
+- Scroll Fill bar on right, the background colour of bar is wrong, copy HEX
+- Right Side Area Description Colour is white, it should be grey, copy HEX, Orebit originals should be in SemiBold, its normal.
+- Right Side Area something is wrong, Either Font size is big or spacing is wrong, there is less text fitting on right than design.
+- Spacing between search and bottom cards is wrong (less)
+- Search Games Text in search bar, the Colour is wrong, it's dull in design, copy HEX
+- Gap Between Right Text Section (Trending), and left icons is bad
+- Add more cards in this section so that we can check scroll animation
+
+Rankings:
+- Make Leaderboard and Contest Switch Working, and DMWY button also switch, we need to check animation
+- Normal Text Colour Wrong
+- Hover Effect Wrong, check design for exact hover
+- Selected Option in Switch is MediumBold (copy from design), you have set it normal
+- Gap Between Ranking Cards is Also Wrong from left right and top bottom both.
+- Gap Between Top Switches, controls and Content is less than given.
+- Bottom Moving Rankings, Number box, wrong colour, copy HEX
+- Box Internal Colour Wrong
+- Internal Spacing (Inside the box) and Internal Margins (gap between inside text and border) is not accurate
+- The Active Switch option Margin which overflow from normal box are really less, not accurate to design
+- 01 Text should be black, you have set it white
+- When Hovering on Bottom Moving line, the moving rankings should pause and Fade in Blur should come (hover effect) as shown in design.
+- Hover effect missing for both bottom and top
+- Make Moving Speed Slower and the animation is choppy, make it smooth.
+- Break 4th wall on bottom line, it should come from overall page outside, also it stops randomly after some time, fix it.
+
+Challenges:
+- Loading Bar Should be working, and auto switch when time runs out.
+- Animation: Fade out the text and all other data, then like a moving reel, change the image then make other content blur and show data of new image, explained in previous meeting.
+- Font Colour Wrong, Complete challenge button not bold and positioning of text inside the button is also not proper
+- Arrow Hover colour should be white with arrow colour black, and even manual click should trigger the clip reel animation.
+- Blur intensity is less, also there is no dull.
+
+Bottom Nav:
+- Avatar Size Wrong
+- Spacing Wrong
+- Game Hover Effect Does not Exist
+- Multiplier (12x) HEX code wrong, colour
+- Spacing Wrong, All text Colours Wrong
+- Gap between Live and bar not accurate.
+- Bottom bar broken from between and spacing wrong, also height of hover box is wrong, add proper records and hover effect
+
+Balance Modal:
+- Username should be hidden when balance box is opening
+- Bitcoin Icon missing
+- Heart is Filled by Default, Heart Hover Effect Wrong
+- Text Colour Wrong
+- Settings and All Icons Wrong
+- Fiat and Crypto Box, wrong Gap
+- Transfer Also Wrong
+- WHOLE MODAL IS WRONG, no functionality is accurate, transfer button not working currently, scroll not working

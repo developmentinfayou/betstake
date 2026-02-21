@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { betAPI } from '@/lib/api';
-import { useAuthStore } from '@/store/useAuthStore';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { betAPI } from "@/lib/api";
+import { useAuthStore } from "@/store/useAuthStore";
+import toast from "react-hot-toast";
 
 export default function HistoryPage() {
   const { user } = useAuthStore();
@@ -23,7 +23,7 @@ export default function HistoryPage() {
       const response = await betAPI.getHistory(50, 0);
       setBets(response.data.bets);
     } catch (error) {
-      toast.error('Failed to load bet history');
+      toast.error("Failed to load bet history");
     } finally {
       setLoading(false);
     }
@@ -34,14 +34,14 @@ export default function HistoryPage() {
       const response = await betAPI.verify(bet._id);
       setVerifyModal(response.data);
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Verification failed');
+      toast.error(error.response?.data?.error || "Verification failed");
     }
   };
 
   const openVerifier = (bet: any) => {
     const seedPair = bet.seedPairId;
     if (!seedPair?.revealed) {
-      toast.error('Rotate your seed pair first to reveal the server seed');
+      toast.error("Rotate your seed pair first to reveal the server seed");
       return;
     }
 
@@ -52,7 +52,7 @@ export default function HistoryPage() {
       gameType: bet.gameType,
     });
 
-    window.open(`/verifier?${params.toString()}`, '_blank');
+    window.open(`/verifier?${params.toString()}`, "_blank");
   };
 
   if (!user) {
@@ -73,14 +73,16 @@ export default function HistoryPage() {
       <header className="border-b border-gray-800">
         <div className="container mx-auto px-4 py-4">
           <Link href="/" className="text-2xl font-bold gradient-text">
-            ← Bet History
+            Bet History
           </Link>
         </div>
       </header>
 
       <div className="container mx-auto px-4 py-8">
         <div className="card">
-          <h1 className="text-3xl font-bold mb-6 gradient-text">Your Bet History</h1>
+          <h1 className="text-3xl font-bold mb-6 gradient-text">
+            Your Bet History
+          </h1>
 
           {loading ? (
             <div className="text-center py-12">
@@ -109,29 +111,49 @@ export default function HistoryPage() {
                 </thead>
                 <tbody>
                   {bets.map((bet) => (
-                    <tr key={bet._id} className="border-b border-gray-800 hover:bg-gray-800/50">
+                    <tr
+                      key={bet._id}
+                      className="border-b border-gray-800 hover:bg-gray-800/50"
+                    >
                       <td className="p-3">
                         <div className="font-bold">{bet.gameType}</div>
-                        <div className="text-xs text-gray-500">Nonce: {bet.nonce + 1}</div>
+                        <div className="text-xs text-gray-500">
+                          Nonce: {bet.nonce + 1}
+                        </div>
                       </td>
                       <td className="p-3">
                         {bet.amount} {bet.currency}
                       </td>
                       <td className="p-3">
-                        <span className={bet.multiplier >= 2 ? 'text-green-500' : 'text-gray-400'}>
+                        <span
+                          className={
+                            bet.multiplier >= 2
+                              ? "text-green-500"
+                              : "text-gray-400"
+                          }
+                        >
                           {bet.multiplier.toFixed(2)}x
                         </span>
                       </td>
                       <td className="p-3">
-                        <span className={bet.status === 'WON' ? 'text-green-500' : 'text-gray-400'}>
+                        <span
+                          className={
+                            bet.status === "WON"
+                              ? "text-green-500"
+                              : "text-gray-400"
+                          }
+                        >
                           {bet.payout.toFixed(2)} {bet.currency}
                         </span>
                       </td>
                       <td className="p-3">
-                        <span className={`px-2 py-1 rounded text-xs font-bold ${bet.status === 'WON'
-                            ? 'bg-green-500/20 text-green-500'
-                            : 'bg-red-500/20 text-red-500'
-                          }`}>
+                        <span
+                          className={`px-2 py-1 rounded text-xs font-bold ${
+                            bet.status === "WON"
+                              ? "bg-green-500/20 text-green-500"
+                              : "bg-red-500/20 text-red-500"
+                          }`}
+                        >
                           {bet.status}
                         </span>
                       </td>
@@ -171,32 +193,47 @@ export default function HistoryPage() {
           <div className="bg-gray-900 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold gradient-text">Bet Verification</h2>
-                <button onClick={() => setVerifyModal(null)} className="text-gray-400 hover:text-white text-2xl">
+                <h2 className="text-2xl font-bold gradient-text">
+                  Bet Verification
+                </h2>
+                <button
+                  onClick={() => setVerifyModal(null)}
+                  className="text-gray-400 hover:text-white text-2xl"
+                >
                   ×
                 </button>
               </div>
 
               {!verifyModal.canVerify ? (
                 <div className="bg-yellow-900/20 border border-yellow-500 rounded-lg p-4">
-                  <div className="font-bold text-yellow-500 mb-2">⚠️ Cannot Verify Yet</div>
+                  <div className="font-bold text-yellow-500 mb-2">
+                    ⚠️ Cannot Verify Yet
+                  </div>
                   <p className="text-gray-400">{verifyModal.message}</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {/* Match Status */}
-                  <div className={`border rounded-lg p-4 ${verifyModal.matches
-                      ? 'bg-green-900/20 border-green-500'
-                      : 'bg-red-900/20 border-red-500'
-                    }`}>
-                    <div className={`font-bold text-xl mb-2 ${verifyModal.matches ? 'text-green-500' : 'text-red-500'
-                      }`}>
-                      {verifyModal.matches ? '✅ Verification Passed' : '❌ Verification Failed'}
+                  <div
+                    className={`border rounded-lg p-4 ${
+                      verifyModal.matches
+                        ? "bg-green-900/20 border-green-500"
+                        : "bg-red-900/20 border-red-500"
+                    }`}
+                  >
+                    <div
+                      className={`font-bold text-xl mb-2 ${
+                        verifyModal.matches ? "text-green-500" : "text-red-500"
+                      }`}
+                    >
+                      {verifyModal.matches
+                        ? "✅ Verification Passed"
+                        : "❌ Verification Failed"}
                     </div>
                     <p className="text-sm text-gray-400">
                       {verifyModal.matches
-                        ? 'The bet result matches the provably fair calculation'
-                        : 'Warning: Result mismatch detected'}
+                        ? "The bet result matches the provably fair calculation"
+                        : "Warning: Result mismatch detected"}
                     </p>
                   </div>
 
@@ -206,19 +243,27 @@ export default function HistoryPage() {
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
                         <div className="text-gray-400">Game</div>
-                        <div className="font-bold">{verifyModal.bet.gameType}</div>
+                        <div className="font-bold">
+                          {verifyModal.bet.gameType}
+                        </div>
                       </div>
                       <div>
                         <div className="text-gray-400">Amount</div>
-                        <div className="font-bold">{verifyModal.bet.amount}</div>
+                        <div className="font-bold">
+                          {verifyModal.bet.amount}
+                        </div>
                       </div>
                       <div>
                         <div className="text-gray-400">Multiplier</div>
-                        <div className="font-bold">{verifyModal.bet.multiplier.toFixed(2)}x</div>
+                        <div className="font-bold">
+                          {verifyModal.bet.multiplier.toFixed(2)}x
+                        </div>
                       </div>
                       <div>
                         <div className="text-gray-400">Payout</div>
-                        <div className="font-bold">{verifyModal.bet.payout.toFixed(2)}</div>
+                        <div className="font-bold">
+                          {verifyModal.bet.payout.toFixed(2)}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -229,15 +274,21 @@ export default function HistoryPage() {
                     <div className="space-y-2 text-sm">
                       <div>
                         <div className="text-gray-400">Server Seed</div>
-                        <div className="font-mono text-xs break-all">{verifyModal.seedData.serverSeed}</div>
+                        <div className="font-mono text-xs break-all">
+                          {verifyModal.seedData.serverSeed}
+                        </div>
                       </div>
                       <div>
                         <div className="text-gray-400">Client Seed</div>
-                        <div className="font-mono text-xs break-all">{verifyModal.seedData.clientSeed}</div>
+                        <div className="font-mono text-xs break-all">
+                          {verifyModal.seedData.clientSeed}
+                        </div>
                       </div>
                       <div>
                         <div className="text-gray-400">Nonce</div>
-                        <div className="font-mono">{verifyModal.seedData.nonce + 1}</div>
+                        <div className="font-mono">
+                          {verifyModal.seedData.nonce + 1}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -247,21 +298,32 @@ export default function HistoryPage() {
                     <h3 className="font-bold mb-3">Result Comparison</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <div className="text-gray-400 text-sm mb-2">Original Result</div>
+                        <div className="text-gray-400 text-sm mb-2">
+                          Original Result
+                        </div>
                         <pre className="bg-gray-900 p-2 rounded text-xs overflow-auto max-h-40">
                           {JSON.stringify(verifyModal.bet.result, null, 2)}
                         </pre>
                       </div>
                       <div>
-                        <div className="text-gray-400 text-sm mb-2">Verified Result</div>
+                        <div className="text-gray-400 text-sm mb-2">
+                          Verified Result
+                        </div>
                         <pre className="bg-gray-900 p-2 rounded text-xs overflow-auto max-h-40">
-                          {JSON.stringify(verifyModal.verification.result, null, 2)}
+                          {JSON.stringify(
+                            verifyModal.verification.result,
+                            null,
+                            2
+                          )}
                         </pre>
                       </div>
                     </div>
                   </div>
 
-                  <Link href="/verifier" className="btn-primary w-full block text-center">
+                  <Link
+                    href="/verifier"
+                    className="btn-primary w-full block text-center"
+                  >
                     Open Full Verifier
                   </Link>
                 </div>
