@@ -11,15 +11,16 @@ const TopCards = () => {
   );
 
   return (
-    <section className="grid gap-3 lg:grid-cols-[592px_335px_385px]">
+    <section className="grid gap-[32px] lg:grid-cols-[592px_335px_385px] mx-[32px]">
       {/* Jackpot card */}
       <div className="flex flex-col gap-1.5">
         <div className="relative h-[86px] w-full rounded overflow-hidden border border-[#31313F]">
           {/* Glow effect */}
           <div
-            className="absolute top-[45px] left-[490px] w-px h-px rounded"
-            style={{ boxShadow: "0px 0px 24px 6px #ff4500" }}
+            className="absolute top-[47px] left-[490px] w-[3px] h-[3px] rounded"
+            style={{ boxShadow: "0px 0px 48px 14px #DB5506" }}
             aria-hidden="true"
+            
           />
 
           {/* Game cards row - left side */}
@@ -66,7 +67,7 @@ const TopCards = () => {
               /> */}
 
           {/* Crypto tabs */}
-          <nav className="absolute top-[18px] left-[267px] flex w-[307px] h-3.5 items-center gap-4 overflow-x-auto scrollbar-hidden">
+          <nav className="absolute top-[18px] left-[267px] flex w-[307px] h-[14px] items-center gap-[16px] overflow-x-auto scrollbar-hidden">
             {[
               "Bitcoin",
               "Tron",
@@ -78,15 +79,23 @@ const TopCards = () => {
             ].map((crypto, index) => (
               <button
                 key={index}
-                className="
-          relative w-fit mt-[-1px] whitespace-nowrap
-          text-xs tracking-[0.96px] leading-normal
-           font-light
-          text-white opacity-[0.24]
-          transition-all duration-200
+                className={`
+    relative w-fit mt-[-1px] 
+    text-[12px] leading-[14px] tracking-[0.08em]
+    transition-all duration-200
+
+    ${
+      index === 0
+        ? "font-semibold text-[#FF9169]"
+        : `
+          font-light text-white opacity-[0.24]
           hover:opacity-100
-          hover:text-[#ff9168]
-          hover:font-semibold"
+          hover:text-[#828282]
+          hover:font-normal
+        `
+    }
+  `}
+                
               >
                 {crypto}
               </button>
@@ -111,10 +120,7 @@ const TopCards = () => {
           <img
             src="/images/gems.svg"
             className="absolute  top-[63.84px] left-[400px] -translate-y-1/2"
-            style={{
-              background:
-                "radial-gradient(ellipse at center, rgba(255, 215, 0, 0.3) 0%, rgba(255, 165, 0, 0.2) 30%, transparent 70%)",
-            }}
+           
           />
         </div>
 

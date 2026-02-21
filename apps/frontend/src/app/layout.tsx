@@ -15,17 +15,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen text-white min-w-[1440px]" 
+    <html lang="en" className="">
+      <body className="min-h-screen text-white  " 
       style={{
       background:
         "radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 0%, rgba(8,8,25,1) 100%)",
-    }}
+    }} 
     >
+      <div className="min-w-[1440px] max-w-full mx-auto">
         <MainHeader />
         {children}
         <JackpotNotifications />
         <Toaster position="top-right" />
+      </div>
       </body>
     </html>
   );
