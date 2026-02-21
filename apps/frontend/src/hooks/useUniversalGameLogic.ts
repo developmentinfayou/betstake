@@ -19,10 +19,10 @@ export interface UseUniversalGameLogicProps {
   initialAmount?: number;
 }
 
-export function useUniversalGameLogic({ 
-  gameType, 
+export function useUniversalGameLogic({
+  gameType,
   currency = 'USD',
-  initialAmount = 10 
+  initialAmount = 10
 }: UseUniversalGameLogicProps) {
   // Common state across all games
   const [amount, setAmount] = useState(initialAmount);
@@ -45,13 +45,20 @@ export function useUniversalGameLogic({
   }, []);
 
   // Socket.IO for AutoBet - unified across all games
-  useAutoBetSocket(userId, (data) => {
-    console.log(`${gameType} AutoBet result:`, data);
-    setResult(data.bet.result);
-    if (data.wallet) setBalance(data.wallet.balance);
-    
-    updateStats(data.bet.amount, data.bet.profit, data.bet.won);
-  });
+  useAutoBetSocket(
+    userId,
+    (data) => {
+      console.log(`${gameType} AutoBet result:`, data);
+      setResult(data.bet.result);
+      if (data.wallet) setBalance(data.wallet.balance);
+      updateStats(data.bet.amount, data.bet.profit, data.bet.won);
+    },
+    // Server confirmed autobet stopped — force UI sync
+    () => {
+      setAutoBetActive(false);
+      loadBalance();
+    }
+  );
 
   // Unified balance loading
   const loadBalance = useCallback(async () => {
@@ -102,7 +109,7 @@ export function useUniversalGameLogic({
 
       updateStats(amount, gameResult.profit, gameResult.won);
       await loadBalance();
-      
+
       return gameResult;
     } catch (error: any) {
       toast.error(error.response?.data?.error || 'Bet failed');
@@ -158,7 +165,7 @@ export function useUniversalGameLogic({
     autoBetActive,
     fairnessModalOpen,
     userId,
-    
+
     // Actions
     setAmount,
     setResult,
@@ -168,7 +175,7 @@ export function useUniversalGameLogic({
     resetStats,
     setFairnessModalOpen,
     loadBalance,
-    
+
     // Computed
     canBet: amount > 0 && amount <= balance && !loading && !autoBetActive,
   };

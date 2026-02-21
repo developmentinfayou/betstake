@@ -67,6 +67,9 @@ export default function RoulettePage() {
         wagered: s.wagered + data.bet.amount,
       }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const loadBalance = async () => {
@@ -270,7 +273,7 @@ export default function RoulettePage() {
               <BetModeSelector
                 mode={betMode}
                 onChange={setBetMode}
-                showStrategy={false}
+                showStrategy={true}
               />
 
               {betMode === "manual" && (
@@ -280,7 +283,7 @@ export default function RoulettePage() {
                     amount
                   }
                   balance={balance}
-                  onAmountChange={() => {}}
+                  onAmountChange={() => { }}
                   onBet={placeBet}
                   disabled={autoBetActive || gameParams.bets.length === 0}
                   loading={loading}
@@ -295,7 +298,19 @@ export default function RoulettePage() {
                     amount
                   }
                   balance={balance}
-                  onAmountChange={() => {}}
+                  onAmountChange={() => { }}
+                  onStart={handleStartAutoBet}
+                  onStop={handleStopAutoBet}
+                  isActive={autoBetActive}
+                  disabled={loading || gameParams.bets.length === 0}
+                />
+              )}
+
+              {betMode === 'strategy' && (
+                <StrategySelector
+                  amount={gameParams.bets.reduce((sum, b) => sum + b.amount, 0) || amount}
+                  balance={balance}
+                  onAmountChange={() => { }}
                   onStart={handleStartAutoBet}
                   onStop={handleStopAutoBet}
                   isActive={autoBetActive}

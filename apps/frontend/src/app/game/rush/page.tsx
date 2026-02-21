@@ -64,6 +64,9 @@ export default function RushPage() {
         wagered: s.wagered + data.bet.amount,
       }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const loadBalance = async () => {
@@ -237,6 +240,17 @@ export default function RushPage() {
                 <div className="text-center py-8 text-gray-400">
                   Strategy mode coming soon...
                 </div>
+              )}
+              {betMode === 'strategy' && (
+                <StrategySelector
+                  amount={amount}
+                  balance={balance}
+                  onAmountChange={setAmount}
+                  onStart={handleStartAutoBet}
+                  onStop={handleStopAutoBet}
+                  isActive={autoBetActive}
+                  disabled={loading || amount <= 0 || amount > balance}
+                />
               )}
             </div>
 

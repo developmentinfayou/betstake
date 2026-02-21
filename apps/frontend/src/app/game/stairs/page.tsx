@@ -66,6 +66,9 @@ export default function StairsPage() {
         wagered: s.wagered + data.bet.amount,
       }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const loadBalance = async () => {
@@ -158,12 +161,7 @@ export default function StairsPage() {
         .filter((idx: number) => idx !== -1);
       setDangerTiles(dangers);
 
-      setStats((s) => ({
-        ...s,
-        wins: s.wins + 1,
-        profit: s.profit + response.data.profit,
-        wagered: s.wagered + amount,
-      }));
+      setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + response.data.profit, wagered: s.wagered + amount }));
       await loadBalance();
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Failed to cash out");

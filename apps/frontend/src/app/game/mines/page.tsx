@@ -56,7 +56,7 @@ export default function MinesPage() {
     return () => {
       if (sessionId && gameActive) {
         // Attempt to clean up session on unmount
-        minesAPI.cashout({ sessionId }).catch(() => {});
+        minesAPI.cashout({ sessionId }).catch(() => { });
       }
     };
   }, []);
@@ -93,6 +93,9 @@ export default function MinesPage() {
         wagered: s.wagered + data.bet.amount,
       }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const loadBalance = async () => {
@@ -434,7 +437,7 @@ export default function MinesPage() {
                   setBetMode(mode as BetMode);
                   resetGame();
                 }}
-                showStrategy={false}
+                showStrategy={true}
               />
 
               {betMode === "manual" && !gameActive && (
@@ -451,6 +454,18 @@ export default function MinesPage() {
 
               {betMode === "auto" && (
                 <AutoBetControls
+                  amount={amount}
+                  balance={balance}
+                  onAmountChange={setAmount}
+                  onStart={handleStartAutoBet}
+                  onStop={handleStopAutoBet}
+                  isActive={autoBetActive}
+                  disabled={loading || amount <= 0 || amount > balance}
+                />
+              )}
+
+              {betMode === 'strategy' && (
+                <StrategySelector
                   amount={amount}
                   balance={balance}
                   onAmountChange={setAmount}

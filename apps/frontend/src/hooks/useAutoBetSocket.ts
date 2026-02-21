@@ -26,7 +26,8 @@ interface AutoBetResult {
 
 export function useAutoBetSocket(
   userId: string | undefined,
-  onResult: (result: AutoBetResult) => void
+  onResult: (result: AutoBetResult) => void,
+  onStopped?: (data: { reason: string }) => void
 ) {
   const socket = useSocket(userId);
 
@@ -38,10 +39,16 @@ export function useAutoBetSocket(
       onResult(data);
     });
 
+    socket.on('autobet:stopped', (data: { reason: string }) => {
+      console.log('🛑 AutoBet stopped by server:', data);
+      onStopped?.(data);
+    });
+
     return () => {
       socket.off('autobet:result');
+      socket.off('autobet:stopped');
     };
-  }, [socket, onResult]);
+  }, [socket, onResult, onStopped]);
 
   return socket;
 }

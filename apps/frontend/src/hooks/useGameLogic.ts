@@ -38,12 +38,19 @@ export function useGameLogic({ gameType, currency = 'USD' }: UseGameLogicProps) 
   }, []);
 
   // Socket.IO for AutoBet
-  useAutoBetSocket(userId, (data) => {
-    setResult(data.bet.result);
-    if (data.wallet) setBalance(data.wallet.balance);
-    
-    updateStats(data.bet.amount, data.bet.profit, data.bet.won);
-  });
+  useAutoBetSocket(
+    userId,
+    (data) => {
+      setResult(data.bet.result);
+      if (data.wallet) setBalance(data.wallet.balance);
+      updateStats(data.bet.amount, data.bet.profit, data.bet.won);
+    },
+    // Server confirmed autobet stopped — force UI sync
+    () => {
+      setAutoBetActive(false);
+      loadBalance();
+    }
+  );
 
   const loadBalance = async () => {
     try {
@@ -138,7 +145,7 @@ export function useGameLogic({ gameType, currency = 'USD' }: UseGameLogicProps) 
     stats,
     autoBetActive,
     fairnessModalOpen,
-    
+
     // Actions
     setAmount,
     placeBet,

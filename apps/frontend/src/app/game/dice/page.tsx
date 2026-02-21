@@ -47,22 +47,26 @@ export default function DicePage() {
     console.log('AutoBet result:', data);
     setResult(data.bet.result);
     if (data.wallet) setBalance(data.wallet.balance);
-    
+
     if (data.bet.won) {
-      setStats(s => ({ 
-        ...s, 
-        wins: s.wins + 1, 
-        profit: s.profit + data.bet.profit, 
-        wagered: s.wagered + data.bet.amount 
+      setStats(s => ({
+        ...s,
+        wins: s.wins + 1,
+        profit: s.profit + data.bet.profit,
+        wagered: s.wagered + data.bet.amount
       }));
     } else {
-      setStats(s => ({ 
-        ...s, 
-        losses: s.losses + 1, 
-        profit: s.profit + data.bet.profit, 
-        wagered: s.wagered + data.bet.amount 
+      setStats(s => ({
+        ...s,
+        losses: s.losses + 1,
+        profit: s.profit + data.bet.profit,
+        wagered: s.wagered + data.bet.amount
       }));
     }
+  }, () => {
+    // Server confirmed autobet stopped — force UI sync
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const loadBalance = async () => {
@@ -181,7 +185,7 @@ export default function DicePage() {
                       {result.won ? `+$${(amount * gameParams.multiplier - amount).toFixed(2)}` : `-$${amount.toFixed(2)}`}
                     </div>
                   </div>
-                  
+
                   {/* Visual Result Bar */}
                   <div className="mt-4 relative h-12 bg-gray-700 rounded-lg overflow-hidden">
                     {gameParams.rangeType === 'under' && (

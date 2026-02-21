@@ -533,6 +533,12 @@ export function setupLudoSocket(io: Server) {
   function nextTurn(room: LudoRoom, namespace: any) {
     if (!room.gameState) return;
 
+    // Reset dice result for next turn
+    room.gameState.diceResult = null;
+
+    // Advance to next player
+    room.gameState.currentTurnIndex = (room.gameState.currentTurnIndex + 1) % room.gameState.players.length;
+
     namespace.to(room.gameId).emit('turn-changed', {
       currentPlayerId: room.gameState.players[room.gameState.currentTurnIndex].userId
     });
@@ -546,14 +552,36 @@ export function setupLudoSocket(io: Server) {
 
       const tokenId = LudoGame.autoSelectMove(room.gameState);
       if (tokenId !== null) {
-        LudoGame.executeMove(room.gameState, tokenId);
+        const result = LudoGame.executeMove(room.gameState, tokenId);
         namespace.to(room.gameId).emit('auto-move', {
           playerId: room.gameState.players[room.gameState.currentTurnIndex].userId,
-          tokenId
+          tokenId,
+          captured: result.captured
         });
-      }
 
-      nextTurn(room, namespace);
+        // Check win condition
+        if (room.gameState.winner || room.gameState.winningTeam !== undefined) {
+          endGame(room, namespace);
+          return;
+        }
+
+        // Check if rolled 6 for extra turn
+        const lastMove = room.gameState.moveHistory[room.gameState.moveHistory.length - 1];
+        const rolledSix = lastMove && lastMove.diceRoll === 6;
+        
+        if (!rolledSix) {
+          nextTurn(room, namespace);
+        } else {
+          // Reset dice for extra turn
+          room.gameState.diceResult = null;
+          namespace.to(room.gameId).emit('extra-turn', { 
+            playerId: room.gameState.players[room.gameState.currentTurnIndex].userId 
+          });
+        }
+      } else {
+        // No valid moves, skip turn
+        nextTurn(room, namespace);
+      }
     }, 30000); // 30 seconds
   }
 

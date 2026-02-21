@@ -64,6 +64,9 @@ export default function HiLoPage() {
         wagered: s.wagered + data.bet.amount,
       }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const clearActiveSessions = async () => {

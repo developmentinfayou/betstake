@@ -74,13 +74,12 @@ export const gameAPI = {
 
 // Strategy API
 export const strategyAPI = {
+  getAll: () => api.get('/strategy/all'),
   getDefaults: () => api.get('/strategy/defaults'),
-  create: (data: any) => api.post('/strategy', data),
-  getMy: () => api.get('/strategy/my'),
-  getPublic: (gameType?: string, limit?: number) =>
-    api.get('/strategy/public', { params: { gameType, limit } }),
-  publish: (strategyId: string, commission: number) =>
-    api.post(`/strategy/${strategyId}/publish`, { commission }),
+  getById: (id: string) => api.get(`/strategy/${id}`),
+  create: (data: { name: string; conditions: any[] }) => api.post('/strategy', data),
+  update: (id: string, data: { name: string; conditions: any[] }) => api.put(`/strategy/${id}`, data),
+  delete: (id: string) => api.delete(`/strategy/${id}`),
 };
 
 // Contest API
@@ -154,8 +153,8 @@ export const hiloAPI = {
   cashout: (data: { sessionId: string }) =>
     api.post('/hilo/cashout', data),
   probabilities: (currentCard: number, cardHistory: number[] = []) =>
-    api.get(`/hilo/probabilities/${currentCard}`, { 
-      params: { cardHistory: JSON.stringify(cardHistory) } 
+    api.get(`/hilo/probabilities/${currentCard}`, {
+      params: { cardHistory: JSON.stringify(cardHistory) }
     }),
 };
 

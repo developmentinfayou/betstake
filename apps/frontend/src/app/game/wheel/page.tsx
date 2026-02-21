@@ -1,19 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { betAPI, walletAPI } from "@/lib/api";
-import Link from "next/link";
-import toast from "react-hot-toast";
-import { useAutoBetSocket } from "@/hooks/useAutoBetSocket";
-import BetModeSelector from "@/components/betting/BetModeSelector";
-import ManualBetControls from "@/components/betting/ManualBetControls";
-import AutoBetControls, {
-  AutoBetConfig,
-} from "@/components/betting/AutoBetControls";
-import WheelGameControls, {
-  WheelGameParams,
-} from "@/components/games/wheel/WheelGameControls";
-import FairnessModal from "@/components/games/FairnessModal";
+import { useState, useEffect } from 'react';
+import { betAPI, walletAPI } from '@/lib/api';
+import Link from 'next/link';
+import toast from 'react-hot-toast';
+import { useAutoBetSocket } from '@/hooks/useAutoBetSocket';
+import BetModeSelector from '@/components/betting/BetModeSelector';
+import ManualBetControls from '@/components/betting/ManualBetControls';
+import AutoBetControls, { AutoBetConfig } from '@/components/betting/AutoBetControls';
+import StrategySelector from '@/components/betting/StrategySelector';
+import WheelGameControls, { WheelGameParams } from '@/components/games/wheel/WheelGameControls';
+import FairnessModal from '@/components/games/FairnessModal';
 
 type BetMode = "manual" | "auto" | "strategy";
 
@@ -64,6 +61,9 @@ export default function WheelPage() {
         wagered: s.wagered + data.bet.amount,
       }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const loadBalance = async () => {
@@ -236,6 +236,17 @@ export default function WheelPage() {
                 <div className="text-center py-8 text-gray-400">
                   Strategy mode coming soon...
                 </div>
+              )}
+              {betMode === 'strategy' && (
+                <StrategySelector
+                  amount={amount}
+                  balance={balance}
+                  onAmountChange={setAmount}
+                  onStart={handleStartAutoBet}
+                  onStop={handleStopAutoBet}
+                  isActive={autoBetActive}
+                  disabled={loading || amount <= 0 || amount > balance}
+                />
               )}
             </div>
 
