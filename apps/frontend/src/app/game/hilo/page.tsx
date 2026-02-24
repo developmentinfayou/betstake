@@ -170,16 +170,12 @@ export default function HiLoPage() {
       setGameActive(false);
       setGameOver(true);
 
-<<<<<<< HEAD
       setStats((s) => ({
         ...s,
         wins: s.wins + 1,
         profit: s.profit + response.data.profit,
         wagered: s.wagered + amount,
       }));
-=======
-      setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + response.data.profit, wagered: s.wagered + amount }));
->>>>>>> samarpit
       await loadBalance();
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Failed to cash out");

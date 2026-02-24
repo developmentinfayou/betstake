@@ -10,6 +10,7 @@ import ManualBetControls from "@/components/betting/ManualBetControls";
 import AutoBetControls, {
   AutoBetConfig,
 } from "@/components/betting/AutoBetControls";
+import StrategySelector from "@/components/betting/StrategySelector";
 import KenoGameControls, {
   KenoGameParams,
 } from "@/components/games/keno/KenoGameControls";
@@ -52,7 +53,6 @@ export default function KenoPage() {
     if (data.wallet) setBalance(data.wallet.balance);
 
     if (data.bet.won) {
-<<<<<<< HEAD
       setStats((s) => ({
         ...s,
         wins: s.wins + 1,
@@ -65,20 +65,6 @@ export default function KenoPage() {
         losses: s.losses + 1,
         profit: s.profit + data.bet.profit,
         wagered: s.wagered + data.bet.amount,
-=======
-      setStats(s => ({
-        ...s,
-        wins: s.wins + 1,
-        profit: s.profit + data.bet.profit,
-        wagered: s.wagered + data.bet.amount
-      }));
-    } else {
-      setStats(s => ({
-        ...s,
-        losses: s.losses + 1,
-        profit: s.profit + data.bet.profit,
-        wagered: s.wagered + data.bet.amount
->>>>>>> samarpit
       }));
     }
   }, () => {
@@ -143,8 +129,7 @@ export default function KenoPage() {
 
       if (gameResult.won) {
         toast.success(
-          `Won $${gameResult.profit.toFixed(2)}! ${
-            gameResult.result.matchCount
+          `Won $${gameResult.profit.toFixed(2)}! ${gameResult.result.matchCount
           } matches`
         );
         setStats((s) => ({
@@ -239,11 +224,10 @@ export default function KenoPage() {
 
               {result && (
                 <div
-                  className={`mb-6 p-6 rounded-lg ${
-                    result.multiplier > 0
+                  className={`mb-6 p-6 rounded-lg ${result.multiplier > 0
                       ? "bg-green-900/20 border border-green-500"
                       : "bg-red-900/20 border border-red-500"
-                  }`}
+                    }`}
                 >
                   <div className="text-center mb-3">
                     <div className="text-4xl font-bold mb-2">
@@ -256,8 +240,8 @@ export default function KenoPage() {
                       {result.multiplier}x -{" "}
                       {result.multiplier > 0
                         ? `+$${(amount * result.multiplier - amount).toFixed(
-                            2
-                          )}`
+                          2
+                        )}`
                         : `-$${amount.toFixed(2)}`}
                     </div>
                   </div>
@@ -268,11 +252,10 @@ export default function KenoPage() {
                     {result.drawnNumbers.map((num: number) => (
                       <div
                         key={num}
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold ${
-                          result.matchedNumbers.includes(num)
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold ${result.matchedNumbers.includes(num)
                             ? "bg-green-500 text-white"
                             : "bg-gray-700"
-                        }`}
+                          }`}
                       >
                         {num}
                       </div>
@@ -321,9 +304,15 @@ export default function KenoPage() {
               )}
 
               {betMode === "strategy" && (
-                <div className="text-center py-8 text-gray-400">
-                  Strategy mode coming soon...
-                </div>
+                <StrategySelector
+                  amount={amount}
+                  balance={balance}
+                  onAmountChange={setAmount}
+                  onStart={handleStartAutoBet}
+                  onStop={handleStopAutoBet}
+                  isActive={autoBetActive}
+                  disabled={loading || amount <= 0 || amount > balance}
+                />
               )}
             </div>
 

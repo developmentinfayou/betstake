@@ -56,7 +56,6 @@ export default function LimboPage() {
     if (data.wallet) setBalance(data.wallet.balance);
 
     if (data.bet.won) {
-<<<<<<< HEAD
       setStats((s) => ({
         ...s,
         wins: s.wins + 1,
@@ -69,20 +68,6 @@ export default function LimboPage() {
         losses: s.losses + 1,
         profit: s.profit + data.bet.profit,
         wagered: s.wagered + data.bet.amount,
-=======
-      setStats(s => ({
-        ...s,
-        wins: s.wins + 1,
-        profit: s.profit + data.bet.profit,
-        wagered: s.wagered + data.bet.amount
-      }));
-    } else {
-      setStats(s => ({
-        ...s,
-        losses: s.losses + 1,
-        profit: s.profit + data.bet.profit,
-        wagered: s.wagered + data.bet.amount
->>>>>>> samarpit
       }));
     }
   }, () => {
@@ -206,11 +191,10 @@ export default function LimboPage() {
               {/* Result Display */}
               {result && (
                 <div
-                  className={`mb-6 p-6 rounded-lg text-center ${
-                    result.won
+                  className={`mb-6 p-6 rounded-lg text-center ${result.won
                       ? "bg-green-900/20 border border-green-500"
                       : "bg-red-900/20 border border-red-500"
-                  }`}
+                    }`}
                 >
                   <div className="text-6xl font-bold mb-2">
                     {result.result?.toFixed(2) || "0.00"}x
@@ -221,9 +205,9 @@ export default function LimboPage() {
                   <div className="text-xl">
                     {result.won
                       ? `+$${(
-                          amount * gameParams.targetMultiplier -
-                          amount
-                        ).toFixed(2)}`
+                        amount * gameParams.targetMultiplier -
+                        amount
+                      ).toFixed(2)}`
                       : `-$${amount.toFixed(2)}`}
                   </div>
                   <div className="text-sm text-gray-400 mt-2">
