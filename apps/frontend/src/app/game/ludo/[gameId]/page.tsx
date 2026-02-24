@@ -1,5 +1,6 @@
 "use client";
 
+<<<<<<< HEAD
 import { useState, useEffect, useRef } from "react";
 import { walletAPI } from "@/lib/api";
 import Link from "next/link";
@@ -14,15 +15,22 @@ const COLOR_MAP: Record<string, string> = {
   GREEN: "#10b981",
   YELLOW: "#eab308",
 };
+=======
+import { useState, useEffect } from 'react';
+import { walletAPI } from '@/lib/api';
+import Link from 'next/link';
+import toast from 'react-hot-toast';
+import { useParams, useRouter } from 'next/navigation';
+import LudoGame from '@/components/LudoGameNew';
+>>>>>>> samarpit
 
 export default function LudoGamePage() {
   const params = useParams();
   const router = useRouter();
   const gameId = params.gameId as string;
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  const [socket, setSocket] = useState<Socket | null>(null);
+  
   const [balance, setBalance] = useState(0);
+<<<<<<< HEAD
   const [userId, setUserId] = useState("");
   const [username, setUsername] = useState("");
 
@@ -34,6 +42,11 @@ export default function LudoGamePage() {
   const [isMyTurn, setIsMyTurn] = useState(false);
   const [hasRolled, setHasRolled] = useState(false);
   const [shareableLink, setShareableLink] = useState("");
+=======
+  const [userId, setUserId] = useState('');
+  const [username, setUsername] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+>>>>>>> samarpit
 
   useEffect(() => {
     loadBalance();
@@ -45,6 +58,7 @@ export default function LudoGamePage() {
 
     const payload = JSON.parse(atob(token.split(".")[1]));
     setUserId(payload.id);
+<<<<<<< HEAD
     setUsername(payload.username || "Player");
 
     const newSocket = io("http://localhost:3001/ludo", {
@@ -166,6 +180,11 @@ export default function LudoGamePage() {
       drawBoard();
     }
   }, [gameState, selectedToken]);
+=======
+    setUsername(payload.username || 'Player');
+    setIsLoading(false);
+  }, []);
+>>>>>>> samarpit
 
   const loadBalance = async () => {
     try {
@@ -177,6 +196,7 @@ export default function LudoGamePage() {
     }
   };
 
+<<<<<<< HEAD
   const rollDice = () => {
     if (!socket || !isMyTurn || hasRolled) return;
     socket.emit("roll-dice", { gameId, userId });
@@ -298,6 +318,14 @@ export default function LudoGamePage() {
   };
 
   if (!room) {
+=======
+  const handleGameEnd = () => {
+    loadBalance();
+    router.push('/game/ludo');
+  };
+
+  if (isLoading) {
+>>>>>>> samarpit
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
@@ -307,9 +335,6 @@ export default function LudoGamePage() {
       </div>
     );
   }
-
-  const currentPlayer = gameState?.players[gameState?.currentTurnIndex];
-  const myPlayer = gameState?.players.find((p: any) => p.userId === userId);
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -329,6 +354,7 @@ export default function LudoGamePage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+<<<<<<< HEAD
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="card">
@@ -522,6 +548,14 @@ export default function LudoGamePage() {
             </div>
           </div>
         </div>
+=======
+        <LudoGame 
+          gameId={gameId}
+          userId={userId}
+          username={username}
+          onGameEnd={handleGameEnd}
+        />
+>>>>>>> samarpit
       </div>
     </div>
   );

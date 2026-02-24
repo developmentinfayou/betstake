@@ -52,9 +52,11 @@ export default function LimboPage() {
   useAutoBetSocket(userId, (data) => {
     console.log("AutoBet result:", data);
     setResult(data.bet.result);
+    setAmount(data.bet.amount); // Sync amount with strategy-adjusted bet
     if (data.wallet) setBalance(data.wallet.balance);
 
     if (data.bet.won) {
+<<<<<<< HEAD
       setStats((s) => ({
         ...s,
         wins: s.wins + 1,
@@ -67,8 +69,25 @@ export default function LimboPage() {
         losses: s.losses + 1,
         profit: s.profit + data.bet.profit,
         wagered: s.wagered + data.bet.amount,
+=======
+      setStats(s => ({
+        ...s,
+        wins: s.wins + 1,
+        profit: s.profit + data.bet.profit,
+        wagered: s.wagered + data.bet.amount
+      }));
+    } else {
+      setStats(s => ({
+        ...s,
+        losses: s.losses + 1,
+        profit: s.profit + data.bet.profit,
+        wagered: s.wagered + data.bet.amount
+>>>>>>> samarpit
       }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const loadBalance = async () => {

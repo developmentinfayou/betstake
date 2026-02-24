@@ -1,5 +1,6 @@
 "use client";
 
+<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import { betAPI, walletAPI } from "@/lib/api";
 import Link from "next/link";
@@ -14,6 +15,19 @@ import RushGameControls, {
   RushGameParams,
 } from "@/components/games/rush/RushGameControls";
 import FairnessModal from "@/components/games/FairnessModal";
+=======
+import { useState, useEffect } from 'react';
+import { betAPI, walletAPI } from '@/lib/api';
+import Link from 'next/link';
+import toast from 'react-hot-toast';
+import { useAutoBetSocket } from '@/hooks/useAutoBetSocket';
+import BetModeSelector from '@/components/betting/BetModeSelector';
+import ManualBetControls from '@/components/betting/ManualBetControls';
+import AutoBetControls, { AutoBetConfig } from '@/components/betting/AutoBetControls';
+import StrategySelector from '@/components/betting/StrategySelector';
+import RushGameControls, { RushGameParams } from '@/components/games/rush/RushGameControls';
+import FairnessModal from '@/components/games/FairnessModal';
+>>>>>>> samarpit
 
 type BetMode = "manual" | "auto" | "strategy";
 
@@ -48,6 +62,7 @@ export default function RushPage() {
 
   useAutoBetSocket(userId, (data) => {
     setResult(data.bet.result);
+    setAmount(data.bet.amount); // Sync amount with strategy-adjusted bet
     if (data.wallet) setBalance(data.wallet.balance);
     if (data.bet.won) {
       setStats((s) => ({
@@ -64,6 +79,9 @@ export default function RushPage() {
         wagered: s.wagered + data.bet.amount,
       }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const loadBalance = async () => {
@@ -238,6 +256,20 @@ export default function RushPage() {
                   Strategy mode coming soon...
                 </div>
               )}
+<<<<<<< HEAD
+=======
+              {betMode === 'strategy' && (
+                <StrategySelector
+                  amount={amount}
+                  balance={balance}
+                  onAmountChange={setAmount}
+                  onStart={handleStartAutoBet}
+                  onStop={handleStopAutoBet}
+                  isActive={autoBetActive}
+                  disabled={loading || amount <= 0 || amount > balance}
+                />
+              )}
+>>>>>>> samarpit
             </div>
 
             {autoBetActive && (

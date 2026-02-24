@@ -38,12 +38,13 @@ export enum BetStatus {
 export interface AutoBetConfig {
   enabled: boolean;
   numberOfBets: number; // 0 = infinite
-  onWin: {
+  strategyId?: string;
+  onWin?: {
     reset: boolean;
     increaseBy?: number; // percentage
     decreaseBy?: number;
   };
-  onLoss: {
+  onLoss?: {
     reset: boolean;
     increaseBy?: number;
     decreaseBy?: number;
@@ -52,21 +53,52 @@ export interface AutoBetConfig {
   stopOnLoss?: number;
 }
 
-export interface StrategyCondition {
-  type: 'bet' | 'profit' | 'loss' | 'streak';
-  operator: 'gt' | 'lt' | 'eq' | 'gte' | 'lte';
+// === Strategy Condition Block Types ===
+
+export type BetTriggerFrequency = 'every' | 'every_streak_of' | 'first_streak_of' | 'streak_greater_than' | 'streak_lower_than';
+export type BetTriggerTarget = 'wins' | 'losses' | 'bets';
+export type ProfitTriggerSource = 'balance' | 'loss' | 'profit';
+export type ProfitTriggerOp = 'greater_than' | 'greater_than_or_equal' | 'less_than' | 'less_than_or_equal';
+export type ConditionType = 'bet' | 'profit';
+
+export type ConditionAction =
+  | 'increase_bet_amount'
+  | 'decrease_bet_amount'
+  | 'add_to_bet_amount'
+  | 'subtract_from_bet_amount'
+  | 'set_bet_amount'
+  | 'reset_bet_amount'
+  | 'stop_autobet';
+
+export interface BetTrigger {
+  frequency: BetTriggerFrequency;
   value: number;
-  action: 'increase' | 'decrease' | 'reset' | 'stop';
+  target: BetTriggerTarget;
+}
+
+export interface ProfitTrigger {
+  source: ProfitTriggerSource;
+  operator: ProfitTriggerOp;
+  value: number;
+}
+
+export interface StrategyConditionBlock {
+  id: string;
+  type: ConditionType;
+  betTrigger?: BetTrigger;
+  profitTrigger?: ProfitTrigger;
+  action: ConditionAction;
   actionValue?: number;
 }
 
-export interface Strategy {
-  id: string;
-  title: string;
-  gameType: GameType;
-  conditions: StrategyCondition[];
-  isPublic: boolean;
-  commission?: number;
+export interface UserStrategy {
+  _id?: string;
+  userId: string;
+  name: string;
+  conditions: StrategyConditionBlock[];
+  isPreset: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface JackpotCondition {

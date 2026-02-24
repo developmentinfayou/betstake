@@ -71,8 +71,9 @@ export class GameRegistry {
    * Get game instance
    */
   getGame(gameType: string): BaseGame {
-    const GameClass = this.games.get(gameType);
-    const config = this.configs.get(gameType);
+    const normalizedType = gameType.toUpperCase();
+    const GameClass = this.games.get(normalizedType);
+    const config = this.configs.get(normalizedType);
 
     if (!GameClass || !config) {
       throw new Error(`Game ${gameType} not found`);
@@ -85,12 +86,13 @@ export class GameRegistry {
    * Update game config
    */
   updateConfig(gameType: string, config: Partial<GameConfig>) {
-    const existingConfig = this.configs.get(gameType);
+    const normalizedType = gameType.toUpperCase();
+    const existingConfig = this.configs.get(normalizedType);
     if (!existingConfig) {
       throw new Error(`Game ${gameType} not found`);
     }
 
-    this.configs.set(gameType, { ...existingConfig, ...config });
+    this.configs.set(normalizedType, { ...existingConfig, ...config });
   }
 
   /**
@@ -104,7 +106,7 @@ export class GameRegistry {
    * Check if game exists
    */
   hasGame(gameType: string): boolean {
-    return this.games.has(gameType);
+    return this.games.has(gameType.toUpperCase());
   }
 
   /**

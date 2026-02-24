@@ -49,6 +49,7 @@ export default function HiLoPage() {
 
   useAutoBetSocket(userId, (data) => {
     if (data.wallet) setBalance(data.wallet.balance);
+    setAmount(data.bet.amount); // Sync amount with strategy-adjusted bet
     if (data.bet.won) {
       setStats((s) => ({
         ...s,
@@ -64,6 +65,9 @@ export default function HiLoPage() {
         wagered: s.wagered + data.bet.amount,
       }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const clearActiveSessions = async () => {
@@ -166,12 +170,16 @@ export default function HiLoPage() {
       setGameActive(false);
       setGameOver(true);
 
+<<<<<<< HEAD
       setStats((s) => ({
         ...s,
         wins: s.wins + 1,
         profit: s.profit + response.data.profit,
         wagered: s.wagered + amount,
       }));
+=======
+      setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + response.data.profit, wagered: s.wagered + amount }));
+>>>>>>> samarpit
       await loadBalance();
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Failed to cash out");

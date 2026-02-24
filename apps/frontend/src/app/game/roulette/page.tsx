@@ -1,5 +1,6 @@
 "use client";
 
+<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import { betAPI, walletAPI } from "@/lib/api";
 import Link from "next/link";
@@ -14,6 +15,19 @@ import RouletteGameControls, {
   RouletteGameParams,
 } from "@/components/games/roulette/RouletteGameControls";
 import FairnessModal from "@/components/games/FairnessModal";
+=======
+import { useState, useEffect } from 'react';
+import { betAPI, walletAPI } from '@/lib/api';
+import Link from 'next/link';
+import toast from 'react-hot-toast';
+import { useAutoBetSocket } from '@/hooks/useAutoBetSocket';
+import BetModeSelector from '@/components/betting/BetModeSelector';
+import ManualBetControls from '@/components/betting/ManualBetControls';
+import AutoBetControls, { AutoBetConfig } from '@/components/betting/AutoBetControls';
+import StrategySelector from '@/components/betting/StrategySelector';
+import RouletteGameControls, { RouletteGameParams } from '@/components/games/roulette/RouletteGameControls';
+import FairnessModal from '@/components/games/FairnessModal';
+>>>>>>> samarpit
 
 type BetMode = "manual" | "auto" | "strategy";
 
@@ -51,6 +65,7 @@ export default function RoulettePage() {
 
   useAutoBetSocket(userId, (data) => {
     setResult(data.bet.result);
+    setAmount(data.bet.amount); // Sync amount with strategy-adjusted bet
     if (data.wallet) setBalance(data.wallet.balance);
     if (data.bet.won) {
       setStats((s) => ({
@@ -67,6 +82,9 @@ export default function RoulettePage() {
         wagered: s.wagered + data.bet.amount,
       }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const loadBalance = async () => {
@@ -223,6 +241,7 @@ export default function RoulettePage() {
               <h2 className="text-2xl font-bold mb-6">Roulette</h2>
 
               {result && (
+<<<<<<< HEAD
                 <div
                   className={`mb-6 p-6 rounded-lg text-center ${
                     result.totalPayout > 0
@@ -239,6 +258,12 @@ export default function RoulettePage() {
                         : "bg-gray-900"
                     } text-white`}
                   >
+=======
+                <div className={`mb-6 p-6 rounded-lg text-center ${result.totalPayout > 0 ? 'bg-green-900/20 border border-green-500' : 'bg-red-900/20 border border-red-500'}`}>
+                  <div className={`text-6xl font-bold mb-2 w-20 h-20 mx-auto rounded-full flex items-center justify-center ${getNumberColor(result.number) === 'green' ? 'bg-green-600' :
+                    getNumberColor(result.number) === 'red' ? 'bg-red-600' : 'bg-gray-900'
+                    } text-white`}>
+>>>>>>> samarpit
                     {result.number}
                   </div>
                   <div className="text-2xl mb-2 capitalize">
@@ -270,7 +295,7 @@ export default function RoulettePage() {
               <BetModeSelector
                 mode={betMode}
                 onChange={setBetMode}
-                showStrategy={false}
+                showStrategy={true}
               />
 
               {betMode === "manual" && (
@@ -280,7 +305,7 @@ export default function RoulettePage() {
                     amount
                   }
                   balance={balance}
-                  onAmountChange={() => {}}
+                  onAmountChange={() => { }}
                   onBet={placeBet}
                   disabled={autoBetActive || gameParams.bets.length === 0}
                   loading={loading}
@@ -295,7 +320,19 @@ export default function RoulettePage() {
                     amount
                   }
                   balance={balance}
-                  onAmountChange={() => {}}
+                  onAmountChange={() => { }}
+                  onStart={handleStartAutoBet}
+                  onStop={handleStopAutoBet}
+                  isActive={autoBetActive}
+                  disabled={loading || gameParams.bets.length === 0}
+                />
+              )}
+
+              {betMode === 'strategy' && (
+                <StrategySelector
+                  amount={gameParams.bets.reduce((sum, b) => sum + b.amount, 0) || amount}
+                  balance={balance}
+                  onAmountChange={() => { }}
                   onStart={handleStartAutoBet}
                   onStop={handleStopAutoBet}
                   isActive={autoBetActive}

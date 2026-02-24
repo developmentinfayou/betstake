@@ -1,0 +1,77 @@
+[
+  {
+    "id": "TC01",
+    "title": "Manual DICE bet in demo mode",
+    "description": "Register test user. Place DICE bet with POST /api/bet/place: gameType DICE, currency USD, amount 10, isDemo true, gameParams {target: 50, isOver: true}. Verify response has bet._id (string), result.won (boolean), result.multiplier (number), result.payout (number), result.profit (number). Verify wallet is null since demo mode."
+  },
+  {
+    "id": "TC02",
+    "title": "Manual bet across multiple game types",
+    "description": "Register test user. Place 4 demo bets sequentially: 1) DICE with {target: 50, isOver: true} 2) LIMBO with {targetMultiplier: 2} 3) COINFLIP with {choice: 'heads'} 4) WHEEL with {segments: 10, risk: 'medium'}. All with gameType UPPERCASE, currency USD, amount 5, isDemo true. Verify each returns 200 with result.won as boolean and result.multiplier as number."
+  },
+  {
+    "id": "TC03",
+    "title": "Manual bet edge cases and validation",
+    "description": "Register test user. Test these edge cases: 1) POST /api/bet/place with amount 0 and isDemo false - expect 400 error. 2) POST with amount -5 - expect 400 error. 3) POST with gameType INVALID_GAME, amount 10, isDemo true - expect 400 error containing 'not found'. 4) POST with valid gameType DICE but isDemo false and no wallet balance (fresh user) - expect 400 error about insufficient balance."
+  },
+  {
+    "id": "TC04",
+    "title": "Basic autobet start status stop lifecycle",
+    "description": "Register test user. Add 1000 USD balance via POST /api/wallet/add with {currency: USD, amount: 1000}. Start autobet via POST /api/bet/autobet/start with gameType DICE, currency USD, amount 10, gameParams {target: 50, isOver: true}, config {enabled: true, numberOfBets: 5}. Wait 5 seconds. GET /api/bet/autobet/status. POST /api/bet/autobet/stop. GET /api/bet/history - verify at least 1 bet exists with isAutoBet true."
+  },
+  {
+    "id": "TC05",
+    "title": "AutoBet infinite mode and stop",
+    "description": "Register user, add 5000 USD. Start autobet with numberOfBets 0 (infinite), gameType DICE, currency USD, amount 5, gameParams {target: 50, isOver: true}, config {enabled: true, numberOfBets: 0}. Wait 3 seconds. POST /api/bet/autobet/stop. Verify stop returns success. GET /api/bet/history and verify multiple bets placed with isAutoBet true."
+  },
+  {
+    "id": "TC06",
+    "title": "AutoBet advanced onWin reset onLoss increase",
+    "description": "Register user, add 5000 USD. Start autobet: gameType DICE, currency USD, amount 10, gameParams {target: 50, isOver: true}, config {enabled: true, numberOfBets: 10, onWin: {reset: true}, onLoss: {reset: false, increaseBy: 100}}. Wait 10 seconds for completion. GET /api/bet/history with limit 10. Verify: bets exist as array, each bet has amount field. Check that not all amounts are the same (strategy adjusted them on win/loss)."
+  },
+  {
+    "id": "TC07",
+    "title": "AutoBet stopOnProfit condition",
+    "description": "Register user, add 5000 USD. Start autobet: gameType DICE, currency USD, amount 10, gameParams {target: 75, isOver: false}, config {enabled: true, numberOfBets: 0, stopOnProfit: 20}. Wait 15 seconds. GET /api/bet/autobet/status - expect active false (should have stopped). GET /api/bet/history to verify bets were placed."
+  },
+  {
+    "id": "TC08",
+    "title": "AutoBet stopOnLoss condition",
+    "description": "Register user, add 5000 USD. Start autobet: gameType DICE, currency USD, amount 10, gameParams {target: 10, isOver: true}, config {enabled: true, numberOfBets: 0, stopOnLoss: 30}. Wait 15 seconds. GET /api/bet/autobet/status - expect active false (should have stopped due to loss limit). GET /api/bet/history to verify bets and check total profit is negative."
+  },
+  {
+    "id": "TC09",
+    "title": "AutoBet session game rejection",
+    "description": "Register user. Test that autobet rejects session games: 1) POST /api/bet/autobet/start with gameType TOWER, config {enabled: true, numberOfBets: 5} - expect 400 error containing 'not supported'. 2) Same with gameType STAIRS - expect 400 error. 3) Same with gameType HILO - expect 400 error. 4) Same with gameType BLACKJACK - expect 400 error."
+  },
+  {
+    "id": "TC10",
+    "title": "Strategy mode Martingale preset autobet",
+    "description": "Register user, add 5000 USD. GET /api/strategy/defaults and find the strategy with name Martingale, save its _id. Start autobet: gameType DICE, currency USD, amount 10, gameParams {target: 50, isOver: true}, config {enabled: true, numberOfBets: 10, strategyId: <martingale_id>}. Wait 12 seconds. GET /api/bet/history with limit 10, verify: multiple bets exist with isAutoBet true. Check that bet amounts vary (Martingale doubles on loss, resets on win)."
+  },
+  {
+    "id": "TC11",
+    "title": "Custom strategy with profit trigger and stop action",
+    "description": "Register user. Create custom strategy via POST /api/strategy with name 'Profit Stop Test' and conditions: [{id: 'c1', type: 'profit', profitTrigger: {source: 'profit', operator: 'greater_than', value: 20}, action: 'stop_autobet'}, {id: 'c2', type: 'bet', betTrigger: {frequency: 'every', value: 1, target: 'losses'}, action: 'increase_bet_amount', actionValue: 50}]. Save strategy _id from response. Add 5000 USD balance. Start autobet with strategyId set to created strategy, numberOfBets 0, gameType DICE, amount 10, gameParams {target: 50, isOver: true}, isDemo false. Wait 15 seconds. GET /api/bet/autobet/status verify active is false. GET /api/bet/history verify bets exist."
+  },
+  {
+    "id": "TC12",
+    "title": "D'Alembert strategy preset autobet",
+    "description": "Register user, add 5000 USD. GET /api/strategy/defaults and find strategy with name containing Alembert, save its _id. Start autobet: gameType DICE, currency USD, amount 10, gameParams {target: 50, isOver: true}, config {enabled: true, numberOfBets: 10, strategyId: <dalembert_id>}. Wait 12 seconds. GET /api/bet/history with limit 10. Verify: bets exist and amounts change by small absolute increments (D'Alembert adds $1 on loss, subtracts $1 on win)."
+  },
+  {
+    "id": "TC13",
+    "title": "Delayed Martingale strategy first_streak_of trigger",
+    "description": "Register user, add 5000 USD. GET /api/strategy/defaults and find Delayed Martingale, save its _id. Start autobet: gameType DICE, currency USD, amount 10, gameParams {target: 50, isOver: true}, config {enabled: true, numberOfBets: 15, strategyId: <delayed_martingale_id>}. Wait 18 seconds. GET /api/bet/history with limit 15. Verify: bets exist with isAutoBet true. First bets should maintain initial amount until a loss streak of 2 is reached."
+  },
+  {
+    "id": "TC14",
+    "title": "Double start race condition autobet restart",
+    "description": "Register user, add 5000 USD. Start autobet 1: gameType DICE, currency USD, amount 10, gameParams {target: 50, isOver: true}, config {enabled: true, numberOfBets: 0}. Wait 1 second. Start autobet 2 (same user, same endpoint): gameType LIMBO, currency USD, amount 5, gameParams {targetMultiplier: 2}, config {enabled: true, numberOfBets: 5}. This should stop autobet 1 and start autobet 2 cleanly. Wait 8 seconds. GET /api/bet/autobet/status. GET /api/bet/history. Verify: no errors, bets placed for both game types exist in history."
+  },
+  {
+    "id": "TC15",
+    "title": "Rapid stop start cycling no orphaned sessions",
+    "description": "Register user, add 5000 USD. Cycle 1: POST /api/bet/autobet/start with gameType DICE, currency USD, amount 10, gameParams {target: 50, isOver: true}, config {enabled: true, numberOfBets: 0}. Wait 500ms. POST /api/bet/autobet/stop. Cycle 2: POST /api/bet/autobet/start with same params. Wait 500ms. POST /api/bet/autobet/stop. After both cycles, GET /api/bet/autobet/status - verify active is false. No errors should occur."
+  }
+]

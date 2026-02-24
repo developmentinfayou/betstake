@@ -51,6 +51,7 @@ export default function BalloonPage() {
 
   useAutoBetSocket(userId, (data) => {
     setResult(data.bet.result);
+    setAmount(data.bet.amount); // Sync amount with strategy-adjusted bet
     if (data.wallet) setBalance(data.wallet.balance);
     if (data.bet.won) {
       setStats((s) => ({
@@ -67,6 +68,9 @@ export default function BalloonPage() {
         wagered: s.wagered + data.bet.amount,
       }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const loadBalance = async () => {
@@ -210,26 +214,16 @@ export default function BalloonPage() {
 
           <div className="space-y-6">
             <div className="card">
-              <BetModeSelector
-                mode={betMode}
-                onChange={setBetMode}
-                showStrategy={true}
-              />
-              {betMode === "manual" && (
-                <ManualBetControls
-                  amount={amount}
-                  balance={balance}
-                  onAmountChange={setAmount}
-                  onBet={placeBet}
-                  disabled={autoBetActive}
-                  loading={loading}
-                  multiplier={
-                    gameParams.pumpMode === "custom"
-                      ? gameParams.targetMultiplier
-                      : gameParams.pumpMode === "specific"
-                      ? 1 + gameParams.targetPumps * 0.05
-                      : 2.0
-                  }
+              <BetModeSelector mode={betMode} onChange={setBetMode} showStrategy={true} />
+              {betMode === 'manual' && (
+                <ManualBetControls 
+                  amount={amount} 
+                  balance={balance} 
+                  onAmountChange={setAmount} 
+                  onBet={placeBet} 
+                  disabled={autoBetActive} 
+                  loading={loading} 
+                  multiplier={gameParams.pumpMode === 'custom' ? gameParams.targetMultiplier : gameParams.pumpMode === 'specific' ? 1 + (gameParams.targetPumps * 0.05) : 2.0} 
                 />
               )}
               {betMode === "auto" && (

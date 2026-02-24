@@ -1,5 +1,6 @@
 "use client";
 
+<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import { betAPI, walletAPI, minesAPI } from "@/lib/api";
 import Link from "next/link";
@@ -16,6 +17,21 @@ import MinesGameControls, {
 import FairnessModal from "@/components/games/FairnessModal";
 
 type BetMode = "manual" | "auto";
+=======
+import { useState, useEffect } from 'react';
+import { betAPI, walletAPI, minesAPI } from '@/lib/api';
+import Link from 'next/link';
+import toast from 'react-hot-toast';
+import { useAutoBetSocket } from '@/hooks/useAutoBetSocket';
+import BetModeSelector from '@/components/betting/BetModeSelector';
+import ManualBetControls from '@/components/betting/ManualBetControls';
+import AutoBetControls, { AutoBetConfig } from '@/components/betting/AutoBetControls';
+import StrategySelector from '@/components/betting/StrategySelector';
+import MinesGameControls, { MinesGameParams } from '@/components/games/mines/MinesGameControls';
+import FairnessModal from '@/components/games/FairnessModal';
+
+type BetMode = 'manual' | 'auto' | 'strategy';
+>>>>>>> samarpit
 
 export default function MinesPage() {
   const [betMode, setBetMode] = useState<BetMode>("manual");
@@ -56,7 +72,7 @@ export default function MinesPage() {
     return () => {
       if (sessionId && gameActive) {
         // Attempt to clean up session on unmount
-        minesAPI.cashout({ sessionId }).catch(() => {});
+        minesAPI.cashout({ sessionId }).catch(() => { });
       }
     };
   }, []);
@@ -65,7 +81,11 @@ export default function MinesPage() {
     // Enhanced feedback for Mines autobet
     if (data.bet.gameType === "MINES") {
       const result = data.bet.result;
+<<<<<<< HEAD
       const roundNum = data.stats?.currentBet || "Unknown";
+=======
+      const roundNum = data.stats?.currentBet || 'Unknown';
+>>>>>>> samarpit
 
       if (result.hitMine) {
         toast.error(`Round ${roundNum}: Mine hit! -$${data.bet.amount}`);
@@ -77,6 +97,7 @@ export default function MinesPage() {
     }
 
     if (data.wallet) setBalance(data.wallet.balance);
+<<<<<<< HEAD
 
     if (data.bet.won) {
       setStats((s) => ({
@@ -91,8 +112,28 @@ export default function MinesPage() {
         losses: s.losses + 1,
         profit: s.profit + data.bet.profit,
         wagered: s.wagered + data.bet.amount,
+=======
+    setAmount(data.bet.amount); // Sync amount with strategy-adjusted bet
+
+    if (data.bet.won) {
+      setStats(s => ({
+        ...s,
+        wins: s.wins + 1,
+        profit: s.profit + data.bet.profit,
+        wagered: s.wagered + data.bet.amount
+      }));
+    } else {
+      setStats(s => ({
+        ...s,
+        losses: s.losses + 1,
+        profit: s.profit + data.bet.profit,
+        wagered: s.wagered + data.bet.amount
+>>>>>>> samarpit
       }));
     }
+  }, () => {
+    setAutoBetActive(false);
+    loadBalance();
   });
 
   const loadBalance = async () => {
@@ -252,12 +293,16 @@ export default function MinesPage() {
         .filter((idx: number) => idx !== -1);
       setMineTiles(mines);
 
+<<<<<<< HEAD
       setStats((s) => ({
         ...s,
         wins: s.wins + 1,
         profit: s.profit + response.data.profit,
         wagered: s.wagered + amount,
       }));
+=======
+      setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + response.data.profit, wagered: s.wagered + amount }));
+>>>>>>> samarpit
       await loadBalance();
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Failed to cash out");
@@ -434,7 +479,7 @@ export default function MinesPage() {
                   setBetMode(mode as BetMode);
                   resetGame();
                 }}
-                showStrategy={false}
+                showStrategy={true}
               />
 
               {betMode === "manual" && !gameActive && (
@@ -451,6 +496,18 @@ export default function MinesPage() {
 
               {betMode === "auto" && (
                 <AutoBetControls
+                  amount={amount}
+                  balance={balance}
+                  onAmountChange={setAmount}
+                  onStart={handleStartAutoBet}
+                  onStop={handleStopAutoBet}
+                  isActive={autoBetActive}
+                  disabled={loading || amount <= 0 || amount > balance}
+                />
+              )}
+
+              {betMode === 'strategy' && (
+                <StrategySelector
                   amount={amount}
                   balance={balance}
                   onAmountChange={setAmount}
