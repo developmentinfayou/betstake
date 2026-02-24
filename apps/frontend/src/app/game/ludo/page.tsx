@@ -1,16 +1,14 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { walletAPI } from "@/lib/api";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { io, Socket } from "socket.io-client";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
 
 type LudoMode = "1v1" | "2v2" | "1v1v1v1";
 
 export default function LudoLobbyPage() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [balance, setBalance] = useState(0);
   const [selectedMode, setSelectedMode] = useState<LudoMode>("1v1");
@@ -29,7 +27,7 @@ export default function LudoLobbyPage() {
     loadBalance();
     const token = localStorage.getItem("token");
     if (!token) {
-      router.push("/login");
+      navigate("/login");
       return;
     }
 
@@ -43,7 +41,7 @@ export default function LudoLobbyPage() {
 
     newSocket.on("game-created", (data) => {
       toast.success("Game created!");
-      router.push(`/game/ludo/${data.gameId}`);
+      navigate(`/game/ludo/${data.gameId}`);
     });
 
     newSocket.on("queue-joined", (data) => {
@@ -54,7 +52,7 @@ export default function LudoLobbyPage() {
 
     newSocket.on("match-found", (data) => {
       toast.success("Match found!");
-      router.push(`/game/ludo/${data.gameId}`);
+      navigate(`/game/ludo/${data.gameId}`);
     });
 
     newSocket.on("queue-left", () => {
@@ -141,7 +139,7 @@ export default function LudoLobbyPage() {
     <div className="min-h-screen bg-gray-900">
       <header className="border-b border-gray-800">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold gradient-text">
+          <Link to="/" className="text-2xl font-bold gradient-text">
             {" "}
             Ludo
           </Link>
@@ -170,8 +168,8 @@ export default function LudoLobbyPage() {
                   key={mode}
                   onClick={() => setSelectedMode(mode)}
                   className={`p-4 rounded-lg border-2 transition ${selectedMode === mode
-                      ? "border-primary bg-primary/10"
-                      : "border-gray-700 hover:border-gray-600"
+                    ? "border-primary bg-primary/10"
+                    : "border-gray-700 hover:border-gray-600"
                     }`}
                 >
                   <div className="text-2xl font-bold mb-2">{mode}</div>

@@ -1,5 +1,3 @@
-'use client';
-
 interface JackpotTrackerProps {
   condition?: {
     type: 'streak' | 'next_bets' | 'percentage';

@@ -1,5 +1,3 @@
-'use client';
-
 import PlayingCard from './PlayingCard';
 import CardHistory from './CardHistory';
 import { calculateProbabilities } from '@/lib/hiloUtils';

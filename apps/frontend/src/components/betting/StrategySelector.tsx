@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect, useCallback } from 'react';
 import { strategyAPI } from '@/lib/api';
 import BetAmountSlider from './BetAmountSlider';

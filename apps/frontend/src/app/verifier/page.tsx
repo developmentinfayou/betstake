@@ -1,7 +1,5 @@
-"use client";
-
 import { useState } from "react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import {
   verifyGame,
   verifyServerSeedHash,
@@ -38,14 +36,17 @@ export default function VerifierPage() {
     }
   };
 
-  const checkServerSeedHash = () => {
+  const checkServerSeedHash = async () => {
     if (!serverSeed) {
       alert("Please enter server seed");
       return;
     }
 
-    const crypto = require("crypto");
-    const hash = crypto.createHash("sha256").update(serverSeed).digest("hex");
+    const encoder = new TextEncoder();
+    const data = encoder.encode(serverSeed);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     alert(`Server Seed Hash:\n${hash}`);
   };
 
@@ -57,7 +58,7 @@ export default function VerifierPage() {
     <div className="min-h-screen bg-gray-900">
       <header className="border-b border-gray-800">
         <div className="container mx-auto px-4 py-4">
-          <Link href="/" className="text-2xl font-bold gradient-text">
+          <Link to="/" className="text-2xl font-bold gradient-text">
             Bet Verifier
           </Link>
         </div>
@@ -377,9 +378,8 @@ export default function VerifierPage() {
                           (isMine: boolean, idx: number) => (
                             <div
                               key={idx}
-                              className={`aspect-square flex items-center justify-center text-xs font-bold rounded ${
-                                isMine ? "bg-red-600" : "bg-green-600/30"
-                              }`}
+                              className={`aspect-square flex items-center justify-center text-xs font-bold rounded ${isMine ? "bg-red-600" : "bg-green-600/30"
+                                }`}
                             >
                               {isMine ? "💣" : idx}
                             </div>
@@ -505,9 +505,8 @@ export default function VerifierPage() {
                             (isDanger: boolean, idx: number) => (
                               <div
                                 key={idx}
-                                className={`aspect-square flex items-center justify-center text-xs font-bold rounded ${
-                                  isDanger ? "bg-red-600" : "bg-green-600/30"
-                                }`}
+                                className={`aspect-square flex items-center justify-center text-xs font-bold rounded ${isDanger ? "bg-red-600" : "bg-green-600/30"
+                                  }`}
                               >
                                 {isDanger ? "⚠️" : "✓"}
                               </div>
@@ -533,9 +532,8 @@ export default function VerifierPage() {
                             (isDanger: boolean, idx: number) => (
                               <div
                                 key={idx}
-                                className={`aspect-square flex items-center justify-center text-xs font-bold rounded ${
-                                  isDanger ? "bg-red-600" : "bg-green-600/30"
-                                }`}
+                                className={`aspect-square flex items-center justify-center text-xs font-bold rounded ${isDanger ? "bg-red-600" : "bg-green-600/30"
+                                  }`}
                               >
                                 {isDanger ? "⚠️" : "✓"}
                               </div>

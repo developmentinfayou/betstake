@@ -1,9 +1,8 @@
-"use client";
 import React, { useState } from "react";
 import Logo from "@/icons/Logo";
 import LogoToggle from "@/icons/LogoToggle";
 import Spin from "@/icons/Spin";
-import { usePathname } from "next/navigation";
+import { useLocation } from "react-router-dom";
 import PrimaryTab from "./headercomponents/primaryTab";
 import GameTab from "./headercomponents/gameTab";
 
@@ -25,7 +24,7 @@ const MainHeader = () => {
   // Render game icon based on id and active state
 
   // Render icon based on id and active state
-  const pathname = usePathname();
+  const { pathname } = useLocation();
   return (
     <div className={`${pathname.includes("game") ? "bg-gray-900" : ""}`}>
       {/* ✅ HEADER */}

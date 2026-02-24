@@ -1,5 +1,3 @@
-'use client';
-
 interface GameResultProps {
   result: any;
   amount: number;

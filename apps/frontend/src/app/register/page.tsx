@@ -1,9 +1,7 @@
-'use client';
-
 import { useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 export default function RegisterPage() {
@@ -12,7 +10,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { register } = useAuthStore();
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +19,7 @@ export default function RegisterPage() {
     try {
       await register(username, email, password);
       toast.success('Account created!');
-      router.push('/');
+      navigate('/');
     } catch (error: any) {
       toast.error(error.response?.data?.error || 'Registration failed');
     } finally {
@@ -51,7 +49,7 @@ export default function RegisterPage() {
           </button>
         </form>
         <p className="text-center mt-4 text-gray-400">
-          Have an account? <Link href="/login" className="text-primary">Login</Link>
+          Have an account? <Link to="/login" className="text-primary">Login</Link>
         </p>
       </div>
     </div>

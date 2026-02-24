@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 
 export type KenoRisk = 'low' | 'medium' | 'high';

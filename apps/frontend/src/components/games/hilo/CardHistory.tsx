@@ -1,5 +1,3 @@
-'use client';
-
 import PlayingCard from './PlayingCard';
 
 interface CardHistoryProps {

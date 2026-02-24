@@ -1,7 +1,5 @@
-"use client";
-
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { betAPI } from "@/lib/api";
 import { useAuthStore } from "@/store/useAuthStore";
 import toast from "react-hot-toast";
@@ -60,7 +58,7 @@ export default function HistoryPage() {
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Please Login</h1>
-          <Link href="/login" className="btn-primary">
+          <Link to="/login" className="btn-primary">
             Go to Login
           </Link>
         </div>
@@ -72,7 +70,7 @@ export default function HistoryPage() {
     <div className="min-h-screen bg-gray-900">
       <header className="border-b border-gray-800">
         <div className="container mx-auto px-4 py-4">
-          <Link href="/" className="text-2xl font-bold gradient-text">
+          <Link to="/" className="text-2xl font-bold gradient-text">
             Bet History
           </Link>
         </div>
@@ -91,7 +89,7 @@ export default function HistoryPage() {
           ) : bets.length === 0 ? (
             <div className="text-center py-12 text-gray-400">
               <p className="text-xl mb-4">No bets yet</p>
-              <Link href="/" className="btn-primary">
+              <Link to="/" className="btn-primary">
                 Start Playing
               </Link>
             </div>

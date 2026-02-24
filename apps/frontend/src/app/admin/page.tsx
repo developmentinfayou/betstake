@@ -1,16 +1,14 @@
-'use client';
-
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 export default function AdminPanel() {
   const { user, token } = useAuthStore();
-  const router = useRouter();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(true);
 
@@ -123,11 +121,11 @@ export default function AdminPanel() {
     if (authLoading) return; // Wait for auth to load
 
     if (!user || (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN')) {
-      router.push('/');
+      navigate('/');
       return;
     }
     loadData();
-  }, [user, router, authLoading]);
+  }, [user, navigate, authLoading]);
 
   const loadData = async () => {
     setLoading(true);
@@ -789,12 +787,12 @@ export default function AdminPanel() {
       <header className="border-b border-gray-800 bg-gray-950">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/" className="text-2xl font-bold gradient-text">
+            <Link to="/" className="text-2xl font-bold gradient-text">
               CasinoBit Admin
             </Link>
             <span className="text-sm text-gray-400">Welcome, {user?.username}</span>
           </div>
-          <Link href="/" className="btn-secondary">
+          <Link to="/" className="btn-secondary">
             Back to Site
           </Link>
         </div>

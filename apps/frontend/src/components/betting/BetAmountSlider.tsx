@@ -1,5 +1,3 @@
-'use client';
-
 interface BetAmountSliderProps {
   value: number;
   min: number;

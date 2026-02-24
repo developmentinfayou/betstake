@@ -1,5 +1,3 @@
-'use client';
-
 interface LiveStatsProps {
   stats: {
     profit: number;

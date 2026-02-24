@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, ReactNode } from 'react';
 import { useUniversalGameLogic } from '@/hooks/useUniversalGameLogic';
 import { GameType } from '@casino/shared';

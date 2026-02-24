@@ -1,6 +1,6 @@
 import React from 'react'
 import TrendingText from './trendingtext';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 
 const Maingames = () => {
 

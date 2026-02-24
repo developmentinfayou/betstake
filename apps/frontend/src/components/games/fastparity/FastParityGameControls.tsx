@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 
 export type ParityColor = 'green' | 'red' | 'violet';

@@ -1,5 +1,3 @@
-'use client';
-
 interface PlayingCardProps {
   value: number;
   suit?: 'hearts' | 'diamonds' | 'clubs' | 'spades';

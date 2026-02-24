@@ -1,5 +1,3 @@
-'use client';
-
 interface Card {
   rank: string;
   suit: string;

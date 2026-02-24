@@ -1,5 +1,3 @@
-"use client";
-
 import Baccart from "@/icons/Baccart";
 import BlackJack from "@/icons/BlackJack";
 import Casino from "@/icons/Casino";

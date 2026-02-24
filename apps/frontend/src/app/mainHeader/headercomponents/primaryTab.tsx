@@ -1,10 +1,8 @@
-"use client";
-
 import Casino from "@/icons/Casino";
 
 import DashBoard from "@/icons/DashBoard";
 import MultiPlayer from "@/icons/MultiPlayer";
-import { usePathname } from "next/navigation";
+import { useLocation } from "react-router-dom";
 import React from "react";
 
 const PrimaryTab = () => {
@@ -115,7 +113,7 @@ const PrimaryTab = () => {
         return null;
     }
   };
-  const pathname = usePathname();
+  const { pathname } = useLocation();
   return (
     <nav
       className="inline-flex  items-start p-[6px] gap-[12px] bg-[#73ffd70f] h-[41px] w-[326px] rounded overflow-hidden"
@@ -126,9 +124,8 @@ const PrimaryTab = () => {
         className="absolute top-[6px] left-[234px] h-[29px] w-[102px] 
 bg-[#ffffff0f] rounded transition-all duration-500 ease-in-out"
         style={{
-          transform: `translateX(${
-            activeTab == "dashboard" ? 0 : activeTab == "casino" ? 104 : 210
-          }px)`,
+          transform: `translateX(${activeTab == "dashboard" ? 0 : activeTab == "casino" ? 104 : 210
+            }px)`,
         }}
       />
 
@@ -150,9 +147,8 @@ bg-[#ffffff0f] rounded transition-all duration-500 ease-in-out"
 
             {renderNavIcon(item.id, isActive, item.icon)}
             <span
-              className={` text-sm tracking-[1.12px] ${
-                isActive ? "text-white" : "text-[#828282]"
-              }`}
+              className={` text-sm tracking-[1.12px] ${isActive ? "text-white" : "text-[#828282]"
+                }`}
             >
               {item.label}
             </span>

@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 
 // Types matching the shared package
