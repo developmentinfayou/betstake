@@ -24,7 +24,7 @@ Top Middle Nav:
 - Range / Scrollbar should only appear when the box is hovered, it will slide in from top to bottom.
 - The Dot Should not Glow always, remove ripple / blink effect, Glow only when the content is scrolled (using mouse scroll wheel), or when user is hovering the dot / clicking and dragging it
 - HEX Code wrong, Design HEX: #73FFD7, Used HEX: #34d399
-- Hover Effect: Fill Icon Colour and slightly bright text, check design for reference.
+- Hover Effect:Fill Icon Colour and slightly bright text, check design for reference.
 - Click Effect: Remove the glow (fade out) when clicked on other link, then when the bar reaches on the new link, fade in the glow again.
 
 Right Buttons:

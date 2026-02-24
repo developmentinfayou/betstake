@@ -1,6 +1,5 @@
 "use client";
 
-<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import { betAPI, walletAPI } from "@/lib/api";
 import Link from "next/link";
@@ -11,23 +10,11 @@ import ManualBetControls from "@/components/betting/ManualBetControls";
 import AutoBetControls, {
   AutoBetConfig,
 } from "@/components/betting/AutoBetControls";
+import StrategySelector from "@/components/betting/StrategySelector";
 import RushGameControls, {
   RushGameParams,
 } from "@/components/games/rush/RushGameControls";
 import FairnessModal from "@/components/games/FairnessModal";
-=======
-import { useState, useEffect } from 'react';
-import { betAPI, walletAPI } from '@/lib/api';
-import Link from 'next/link';
-import toast from 'react-hot-toast';
-import { useAutoBetSocket } from '@/hooks/useAutoBetSocket';
-import BetModeSelector from '@/components/betting/BetModeSelector';
-import ManualBetControls from '@/components/betting/ManualBetControls';
-import AutoBetControls, { AutoBetConfig } from '@/components/betting/AutoBetControls';
-import StrategySelector from '@/components/betting/StrategySelector';
-import RushGameControls, { RushGameParams } from '@/components/games/rush/RushGameControls';
-import FairnessModal from '@/components/games/FairnessModal';
->>>>>>> samarpit
 
 type BetMode = "manual" | "auto" | "strategy";
 
@@ -197,11 +184,10 @@ export default function RushPage() {
 
               {result && (
                 <div
-                  className={`mb-6 p-6 rounded-lg text-center ${
-                    result.won
+                  className={`mb-6 p-6 rounded-lg text-center ${result.won
                       ? "bg-green-900/20 border border-green-500"
                       : "bg-red-900/20 border border-red-500"
-                  }`}
+                    }`}
                 >
                   <div className="text-6xl font-bold mb-2">
                     {result.crashPoint.toFixed(2)}x
@@ -252,13 +238,6 @@ export default function RushPage() {
                 />
               )}
               {betMode === "strategy" && (
-                <div className="text-center py-8 text-gray-400">
-                  Strategy mode coming soon...
-                </div>
-              )}
-<<<<<<< HEAD
-=======
-              {betMode === 'strategy' && (
                 <StrategySelector
                   amount={amount}
                   balance={balance}
@@ -269,7 +248,6 @@ export default function RushPage() {
                   disabled={loading || amount <= 0 || amount > balance}
                 />
               )}
->>>>>>> samarpit
             </div>
 
             {autoBetActive && (

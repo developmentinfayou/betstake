@@ -10,6 +10,7 @@ import ManualBetControls from "@/components/betting/ManualBetControls";
 import AutoBetControls, {
   AutoBetConfig,
 } from "@/components/betting/AutoBetControls";
+import StrategySelector from "@/components/betting/StrategySelector";
 import CoinFlipGameControls, {
   CoinFlipGameParams,
 } from "@/components/games/coinflip/CoinFlipGameControls";
@@ -206,11 +207,10 @@ export default function CoinFlipPage() {
 
                 {result && !isFlipping && (
                   <div
-                    className={`mt-4 p-4 rounded-lg text-center ${
-                      result.won
+                    className={`mt-4 p-4 rounded-lg text-center ${result.won
                         ? "bg-green-900/20 border border-green-500"
                         : "bg-red-900/20 border border-red-500"
-                    }`}
+                      }`}
                   >
                     <div className="text-2xl mb-2">
                       {result.won ? "🎉 WIN!" : "😢 LOST"}
@@ -257,8 +257,8 @@ export default function CoinFlipPage() {
                     gameParams.mode === "normal"
                       ? 1.98
                       : gameParams.mode === "series"
-                      ? 1.98 * gameParams.seriesCount
-                      : undefined
+                        ? 1.98 * gameParams.seriesCount
+                        : undefined
                   }
                 />
               )}
@@ -276,17 +276,19 @@ export default function CoinFlipPage() {
               )}
 
               {betMode === "strategy" && (
-                <div className="text-center py-8 text-gray-400">
-                  Strategy mode coming soon...
-                </div>
+                <StrategySelector
+                  amount={amount}
+                  balance={balance}
+                  onAmountChange={setAmount}
+                  onStart={handleStartAutoBet}
+                  onStop={handleStopAutoBet}
+                  isActive={autoBetActive}
+                  disabled={loading || amount <= 0 || amount > balance}
+                />
               )}
             </div>
 
-<<<<<<< HEAD
             {gameParams.mode === "jackpot" && (
-=======
-            {gameParams.mode === 'jackpot' && (
->>>>>>> samarpit
               <JackpotTracker
                 condition={gameParams.jackpotCondition}
                 currentStreak={jackpotStats.currentStreak}

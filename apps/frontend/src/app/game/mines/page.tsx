@@ -1,6 +1,5 @@
 "use client";
 
-<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import { betAPI, walletAPI, minesAPI } from "@/lib/api";
 import Link from "next/link";
@@ -11,27 +10,13 @@ import ManualBetControls from "@/components/betting/ManualBetControls";
 import AutoBetControls, {
   AutoBetConfig,
 } from "@/components/betting/AutoBetControls";
+import StrategySelector from "@/components/betting/StrategySelector";
 import MinesGameControls, {
   MinesGameParams,
 } from "@/components/games/mines/MinesGameControls";
 import FairnessModal from "@/components/games/FairnessModal";
 
-type BetMode = "manual" | "auto";
-=======
-import { useState, useEffect } from 'react';
-import { betAPI, walletAPI, minesAPI } from '@/lib/api';
-import Link from 'next/link';
-import toast from 'react-hot-toast';
-import { useAutoBetSocket } from '@/hooks/useAutoBetSocket';
-import BetModeSelector from '@/components/betting/BetModeSelector';
-import ManualBetControls from '@/components/betting/ManualBetControls';
-import AutoBetControls, { AutoBetConfig } from '@/components/betting/AutoBetControls';
-import StrategySelector from '@/components/betting/StrategySelector';
-import MinesGameControls, { MinesGameParams } from '@/components/games/mines/MinesGameControls';
-import FairnessModal from '@/components/games/FairnessModal';
-
-type BetMode = 'manual' | 'auto' | 'strategy';
->>>>>>> samarpit
+type BetMode = "manual" | "auto" | "strategy";
 
 export default function MinesPage() {
   const [betMode, setBetMode] = useState<BetMode>("manual");
@@ -81,11 +66,7 @@ export default function MinesPage() {
     // Enhanced feedback for Mines autobet
     if (data.bet.gameType === "MINES") {
       const result = data.bet.result;
-<<<<<<< HEAD
       const roundNum = data.stats?.currentBet || "Unknown";
-=======
-      const roundNum = data.stats?.currentBet || 'Unknown';
->>>>>>> samarpit
 
       if (result.hitMine) {
         toast.error(`Round ${roundNum}: Mine hit! -$${data.bet.amount}`);
@@ -97,38 +78,21 @@ export default function MinesPage() {
     }
 
     if (data.wallet) setBalance(data.wallet.balance);
-<<<<<<< HEAD
-
-    if (data.bet.won) {
-      setStats((s) => ({
-        ...s,
-        wins: s.wins + 1,
-        profit: s.profit + data.bet.profit,
-        wagered: s.wagered + data.bet.amount,
-      }));
-    } else {
-      setStats((s) => ({
-        ...s,
-        losses: s.losses + 1,
-        profit: s.profit + data.bet.profit,
-        wagered: s.wagered + data.bet.amount,
-=======
     setAmount(data.bet.amount); // Sync amount with strategy-adjusted bet
 
     if (data.bet.won) {
-      setStats(s => ({
+      setStats((s) => ({
         ...s,
         wins: s.wins + 1,
         profit: s.profit + data.bet.profit,
-        wagered: s.wagered + data.bet.amount
+        wagered: s.wagered + data.bet.amount,
       }));
     } else {
-      setStats(s => ({
+      setStats((s) => ({
         ...s,
         losses: s.losses + 1,
         profit: s.profit + data.bet.profit,
-        wagered: s.wagered + data.bet.amount
->>>>>>> samarpit
+        wagered: s.wagered + data.bet.amount,
       }));
     }
   }, () => {
@@ -176,7 +140,7 @@ export default function MinesPage() {
         // Try to cleanup and restart
         try {
           await minesAPI.cleanup();
-          toast.info("Cleaned up previous session, starting new game...");
+          toast.success("Cleaned up previous session, starting new game...");
           // Retry starting the game
           const response = await minesAPI.start({
             minesCount: gameParams.minesCount,
@@ -196,7 +160,7 @@ export default function MinesPage() {
         } catch (retryError: any) {
           toast.error(
             retryError.response?.data?.error ||
-              "Failed to start game after cleanup"
+            "Failed to start game after cleanup"
           );
         }
       } else {
@@ -293,16 +257,12 @@ export default function MinesPage() {
         .filter((idx: number) => idx !== -1);
       setMineTiles(mines);
 
-<<<<<<< HEAD
       setStats((s) => ({
         ...s,
         wins: s.wins + 1,
         profit: s.profit + response.data.profit,
         wagered: s.wagered + amount,
       }));
-=======
-      setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + response.data.profit, wagered: s.wagered + amount }));
->>>>>>> samarpit
       await loadBalance();
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Failed to cash out");
@@ -346,8 +306,7 @@ export default function MinesPage() {
       });
       setAutoBetActive(true);
       toast.success(
-        `AutoBet started: ${gameParams.selectedTiles.length} tiles, ${
-          config.numberOfBets || "∞"
+        `AutoBet started: ${gameParams.selectedTiles.length} tiles, ${config.numberOfBets || "∞"
         } rounds`
       );
     } catch (error: any) {

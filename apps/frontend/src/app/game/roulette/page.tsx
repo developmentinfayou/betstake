@@ -1,6 +1,5 @@
 "use client";
 
-<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import { betAPI, walletAPI } from "@/lib/api";
 import Link from "next/link";
@@ -11,23 +10,11 @@ import ManualBetControls from "@/components/betting/ManualBetControls";
 import AutoBetControls, {
   AutoBetConfig,
 } from "@/components/betting/AutoBetControls";
+import StrategySelector from "@/components/betting/StrategySelector";
 import RouletteGameControls, {
   RouletteGameParams,
 } from "@/components/games/roulette/RouletteGameControls";
 import FairnessModal from "@/components/games/FairnessModal";
-=======
-import { useState, useEffect } from 'react';
-import { betAPI, walletAPI } from '@/lib/api';
-import Link from 'next/link';
-import toast from 'react-hot-toast';
-import { useAutoBetSocket } from '@/hooks/useAutoBetSocket';
-import BetModeSelector from '@/components/betting/BetModeSelector';
-import ManualBetControls from '@/components/betting/ManualBetControls';
-import AutoBetControls, { AutoBetConfig } from '@/components/betting/AutoBetControls';
-import StrategySelector from '@/components/betting/StrategySelector';
-import RouletteGameControls, { RouletteGameParams } from '@/components/games/roulette/RouletteGameControls';
-import FairnessModal from '@/components/games/FairnessModal';
->>>>>>> samarpit
 
 type BetMode = "manual" | "auto" | "strategy";
 
@@ -241,29 +228,20 @@ export default function RoulettePage() {
               <h2 className="text-2xl font-bold mb-6">Roulette</h2>
 
               {result && (
-<<<<<<< HEAD
                 <div
-                  className={`mb-6 p-6 rounded-lg text-center ${
-                    result.totalPayout > 0
+                  className={`mb-6 p-6 rounded-lg text-center ${result.totalPayout > 0
                       ? "bg-green-900/20 border border-green-500"
                       : "bg-red-900/20 border border-red-500"
-                  }`}
+                    }`}
                 >
                   <div
-                    className={`text-6xl font-bold mb-2 w-20 h-20 mx-auto rounded-full flex items-center justify-center ${
-                      getNumberColor(result.number) === "green"
+                    className={`text-6xl font-bold mb-2 w-20 h-20 mx-auto rounded-full flex items-center justify-center ${getNumberColor(result.number) === "green"
                         ? "bg-green-600"
                         : getNumberColor(result.number) === "red"
-                        ? "bg-red-600"
-                        : "bg-gray-900"
-                    } text-white`}
+                          ? "bg-red-600"
+                          : "bg-gray-900"
+                      } text-white`}
                   >
-=======
-                <div className={`mb-6 p-6 rounded-lg text-center ${result.totalPayout > 0 ? 'bg-green-900/20 border border-green-500' : 'bg-red-900/20 border border-red-500'}`}>
-                  <div className={`text-6xl font-bold mb-2 w-20 h-20 mx-auto rounded-full flex items-center justify-center ${getNumberColor(result.number) === 'green' ? 'bg-green-600' :
-                    getNumberColor(result.number) === 'red' ? 'bg-red-600' : 'bg-gray-900'
-                    } text-white`}>
->>>>>>> samarpit
                     {result.number}
                   </div>
                   <div className="text-2xl mb-2 capitalize">

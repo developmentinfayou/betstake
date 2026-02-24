@@ -15,7 +15,7 @@ import StairsGameControls, {
 } from "@/components/games/stairs/StairsGameControls";
 import FairnessModal from "@/components/games/FairnessModal";
 
-type BetMode = "manual" | "auto";
+type BetMode = "manual" | "auto" | "strategy";
 
 export default function StairsPage() {
   const [betMode, setBetMode] = useState<BetMode>("manual");
@@ -162,16 +162,12 @@ export default function StairsPage() {
         .filter((idx: number) => idx !== -1);
       setDangerTiles(dangers);
 
-<<<<<<< HEAD
       setStats((s) => ({
         ...s,
         wins: s.wins + 1,
         profit: s.profit + response.data.profit,
         wagered: s.wagered + amount,
       }));
-=======
-      setStats(s => ({ ...s, wins: s.wins + 1, profit: s.profit + response.data.profit, wagered: s.wagered + amount }));
->>>>>>> samarpit
       await loadBalance();
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Failed to cash out");

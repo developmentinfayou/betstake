@@ -59,11 +59,7 @@ export default function LudoLobbyPage() {
 
     newSocket.on("queue-left", () => {
       setInQueue(false);
-<<<<<<< HEAD
-      toast.info("Left queue");
-=======
-      toast('Left queue');
->>>>>>> samarpit
+      toast.success("Left queue");
     });
 
     newSocket.on("error", (data) => {
@@ -173,11 +169,10 @@ export default function LudoLobbyPage() {
                 <button
                   key={mode}
                   onClick={() => setSelectedMode(mode)}
-                  className={`p-4 rounded-lg border-2 transition ${
-                    selectedMode === mode
+                  className={`p-4 rounded-lg border-2 transition ${selectedMode === mode
                       ? "border-primary bg-primary/10"
                       : "border-gray-700 hover:border-gray-600"
-                  }`}
+                    }`}
                 >
                   <div className="text-2xl font-bold mb-2">{mode}</div>
                   <div className="text-sm text-gray-400">
@@ -286,14 +281,10 @@ export default function LudoLobbyPage() {
             </div>
             <div className="flex gap-3">
               <span className="text-primary font-bold">💰</span>
-<<<<<<< HEAD
               <span>
                 Winner takes {selectedMode === "1v1v1v1" ? "97%" : "98%"} of
                 total pot
               </span>
-=======
-              <span>Winner takes the pot (minus small house edge)</span>
->>>>>>> samarpit
             </div>
           </div>
         </div>
