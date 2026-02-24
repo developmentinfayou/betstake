@@ -1,5 +1,3 @@
-'use client';
-
 interface AutoBetStatusProps {
   active: boolean;
 }

@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import { seedAPI } from '@/lib/api';
 import toast from 'react-hot-toast';

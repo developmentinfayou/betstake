@@ -1,5 +1,3 @@
-'use client';
-
 import BetAmountSlider from './BetAmountSlider';
 
 interface ManualBetControlsProps {

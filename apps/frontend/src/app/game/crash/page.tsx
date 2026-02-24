@@ -1,8 +1,6 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import { walletAPI } from "@/lib/api";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { io, Socket } from "socket.io-client";
 import BetModeSelector from "@/components/betting/BetModeSelector";
@@ -333,7 +331,7 @@ export default function CrashPage() {
     <div className="min-h-screen bg-gray-900">
       <header className="border-b border-gray-800">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold gradient-text">
+          <Link to="/" className="text-2xl font-bold gradient-text">
             {" "}
             Crash
           </Link>

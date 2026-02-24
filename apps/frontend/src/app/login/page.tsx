@@ -1,9 +1,7 @@
-'use client';
-
 import { useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
@@ -11,7 +9,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuthStore();
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +18,7 @@ export default function LoginPage() {
     try {
       await login(email, password);
       toast.success('Logged in!');
-      router.push('/');
+      navigate('/');
     } catch (error: any) {
       toast.error('Invalid credentials');
     } finally {
@@ -46,7 +44,7 @@ export default function LoginPage() {
           </button>
         </form>
         <p className="text-center mt-4 text-gray-400">
-          No account? <Link href="/register" className="text-primary">Register</Link>
+          No account? <Link to="/register" className="text-primary">Register</Link>
         </p>
       </div>
     </div>

@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect, useCallback } from 'react';
 import { betAPI, walletAPI } from '@/lib/api';
 import { useAutoBetSocket } from '@/hooks/useAutoBetSocket';

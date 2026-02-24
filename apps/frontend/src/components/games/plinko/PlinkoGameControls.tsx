@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 
 export type PlinkoRisk = 'low' | 'medium' | 'high' | 'lightning-low' | 'lightning-medium' | 'lightning-high';

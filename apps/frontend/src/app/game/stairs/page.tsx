@@ -1,8 +1,6 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { walletAPI, stairsAPI, betAPI } from "@/lib/api";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAutoBetSocket } from "@/hooks/useAutoBetSocket";
 import BetModeSelector from "@/components/betting/BetModeSelector";
@@ -216,7 +214,7 @@ export default function StairsPage() {
     <div className="min-h-screen bg-gray-900">
       <header className="border-b border-gray-800">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold gradient-text">
+          <Link to="/" className="text-2xl font-bold gradient-text">
             {" "}
             Stairs
           </Link>

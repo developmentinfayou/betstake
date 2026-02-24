@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 
 export type BalloonDifficulty = 'simple' | 'easy' | 'medium' | 'hard' | 'expert';

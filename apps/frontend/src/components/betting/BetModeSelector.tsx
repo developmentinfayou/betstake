@@ -1,5 +1,3 @@
-'use client';
-
 type BetMode = 'manual' | 'auto' | 'strategy';
 
 interface BetModeSelectorProps {

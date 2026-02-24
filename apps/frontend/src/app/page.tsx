@@ -1,7 +1,5 @@
-"use client";
-
 import React, { useRef, useState } from "react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import Challenge from "./homecomponents/challanges";
 import HomeFooter from "./homecomponents/homefooter";
 import ContestWinnerList from "./homecomponents/contestWinnerList";
@@ -316,7 +314,7 @@ export default function HomePage() {
             <div className="text-xs tracking-[0.08em] text-[#5B5B79]">
               Challenges
             </div>
-            <Link href="#" className="text-xs text-[#FF9169] underline">
+            <Link to="#" className="text-xs text-[#FF9169] underline">
               View All
             </Link>
           </div>
