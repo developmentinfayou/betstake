@@ -10,8 +10,9 @@ export interface CoinFlipGameParams {
   jackpotCondition?: {
     type: 'streak' | 'next_bets' | 'percentage';
     value: number;
-    streakType?: 'win' | 'lose';
-    side?: CoinSide;
+    outcome?: 'win' | 'lose';
+    side?: CoinSide | 'any';
+    seriesStreak?: number; // for series mode: y times in a row
   };
 }
 
@@ -25,14 +26,20 @@ export default function CoinFlipGameControls({ onChange, disabled = false }: Coi
   const [mode, setMode] = useState<CoinFlipMode>('normal');
   const [seriesCount, setSeriesCount] = useState(3);
   const [jackpotCondition, setJackpotCondition] = useState({
-    type: 'streak' as const,
+    type: 'streak' as 'streak' | 'next_bets' | 'percentage',
     value: 5,
-    streakType: 'win' as const,
-    side: 'heads' as CoinSide
+    outcome: 'win' as 'win' | 'lose',
+    side: 'heads' as CoinSide | 'any',
+    seriesStreak: 3,
   });
 
   useEffect(() => {
-    onChange({ choice, mode, seriesCount, jackpotCondition: mode === 'jackpot' ? jackpotCondition : undefined });
+    onChange({
+      choice,
+      mode,
+      seriesCount,
+      jackpotCondition: mode === 'jackpot' ? jackpotCondition : undefined,
+    });
   }, [choice, mode, seriesCount, jackpotCondition, onChange]);
 
   return (
@@ -43,18 +50,16 @@ export default function CoinFlipGameControls({ onChange, disabled = false }: Coi
           <button
             onClick={() => setChoice('heads')}
             disabled={disabled}
-            className={`py-8 rounded-lg font-bold text-2xl transition-all ${
-              choice === 'heads' ? 'bg-primary text-white' : 'bg-gray-800 hover:bg-gray-700'
-            } disabled:opacity-50`}
+            className={`py-8 rounded-lg font-bold text-2xl transition-all ${choice === 'heads' ? 'bg-primary text-white' : 'bg-gray-800 hover:bg-gray-700'
+              } disabled:opacity-50`}
           >
             🪙 HEADS
           </button>
           <button
             onClick={() => setChoice('tails')}
             disabled={disabled}
-            className={`py-8 rounded-lg font-bold text-2xl transition-all ${
-              choice === 'tails' ? 'bg-primary text-white' : 'bg-gray-800 hover:bg-gray-700'
-            } disabled:opacity-50`}
+            className={`py-8 rounded-lg font-bold text-2xl transition-all ${choice === 'tails' ? 'bg-primary text-white' : 'bg-gray-800 hover:bg-gray-700'
+              } disabled:opacity-50`}
           >
             🪙 TAILS
           </button>
@@ -67,27 +72,24 @@ export default function CoinFlipGameControls({ onChange, disabled = false }: Coi
           <button
             onClick={() => setMode('normal')}
             disabled={disabled}
-            className={`py-3 rounded-lg font-bold transition-all ${
-              mode === 'normal' ? 'bg-primary text-white' : 'bg-gray-800 hover:bg-gray-700'
-            } disabled:opacity-50`}
+            className={`py-3 rounded-lg font-bold transition-all ${mode === 'normal' ? 'bg-primary text-white' : 'bg-gray-800 hover:bg-gray-700'
+              } disabled:opacity-50`}
           >
             Normal
           </button>
           <button
             onClick={() => setMode('series')}
             disabled={disabled}
-            className={`py-3 rounded-lg font-bold transition-all ${
-              mode === 'series' ? 'bg-primary text-white' : 'bg-gray-800 hover:bg-gray-700'
-            } disabled:opacity-50`}
+            className={`py-3 rounded-lg font-bold transition-all ${mode === 'series' ? 'bg-primary text-white' : 'bg-gray-800 hover:bg-gray-700'
+              } disabled:opacity-50`}
           >
             Series
           </button>
           <button
             onClick={() => setMode('jackpot')}
             disabled={disabled}
-            className={`py-3 rounded-lg font-bold transition-all ${
-              mode === 'jackpot' ? 'bg-special text-white' : 'bg-gray-800 hover:bg-gray-700'
-            } disabled:opacity-50`}
+            className={`py-3 rounded-lg font-bold transition-all ${mode === 'jackpot' ? 'bg-special text-white' : 'bg-gray-800 hover:bg-gray-700'
+              } disabled:opacity-50`}
           >
             🎰 Jackpot
           </button>
@@ -115,23 +117,91 @@ export default function CoinFlipGameControls({ onChange, disabled = false }: Coi
             <label className="block text-sm text-gray-400 mb-2">Jackpot Condition</label>
             <select
               value={jackpotCondition.type}
-              onChange={(e) => setJackpotCondition({...jackpotCondition, type: e.target.value as any})}
+              onChange={(e) => setJackpotCondition({ ...jackpotCondition, type: e.target.value as any })}
               className="input w-full"
               disabled={disabled}
             >
               <option value="streak">Win/Lose Streak</option>
-              <option value="next_bets">Next X Bets</option>
+              <option value="next_bets">Next X Bets in Row</option>
               <option value="percentage">Percentage Chance</option>
             </select>
           </div>
 
+          {/* Condition 1: Streak — varies by normal vs series context */}
           {jackpotCondition.type === 'streak' && (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">Outcome</label>
+                  <select
+                    value={jackpotCondition.outcome}
+                    onChange={(e) => setJackpotCondition({ ...jackpotCondition, outcome: e.target.value as any })}
+                    className="input w-full text-sm"
+                    disabled={disabled}
+                  >
+                    <option value="win">Win</option>
+                    <option value="lose">Lose</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">Side</label>
+                  <select
+                    value={jackpotCondition.side}
+                    onChange={(e) => setJackpotCondition({ ...jackpotCondition, side: e.target.value as any })}
+                    className="input w-full text-sm"
+                    disabled={disabled}
+                  >
+                    <option value="heads">Heads</option>
+                    <option value="tails">Tails</option>
+                    <option value="any">Any</option>
+                  </select>
+                </div>
+              </div>
               <div>
-                <label className="block text-xs text-gray-400 mb-1">Type</label>
+                <label className="block text-xs text-gray-400 mb-1">
+                  Times in a Row
+                </label>
+                <input
+                  type="number"
+                  value={jackpotCondition.value}
+                  onChange={(e) => setJackpotCondition({ ...jackpotCondition, value: Number(e.target.value) })}
+                  className="input w-full text-sm"
+                  min="2"
+                  max="10"
+                  disabled={disabled}
+                />
+              </div>
+              {/* Series-specific: x times in series y times in a row */}
+              {mode === 'jackpot' && (
+                <div className="bg-gray-800/50 rounded-lg p-3">
+                  <label className="block text-xs text-gray-400 mb-1">
+                    Series Streak (in a row)
+                  </label>
+                  <input
+                    type="number"
+                    value={jackpotCondition.seriesStreak}
+                    onChange={(e) => setJackpotCondition({ ...jackpotCondition, seriesStreak: Number(e.target.value) })}
+                    className="input w-full text-sm"
+                    min="1"
+                    max="10"
+                    disabled={disabled}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {jackpotCondition.outcome === 'win' ? 'Win' : 'Lose'} {jackpotCondition.value}x on {jackpotCondition.side === 'any' ? 'any side' : jackpotCondition.side}, {jackpotCondition.seriesStreak} times in a row
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Condition 2: Next X bets in row */}
+          {jackpotCondition.type === 'next_bets' && (
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">Outcome</label>
                 <select
-                  value={jackpotCondition.streakType}
-                  onChange={(e) => setJackpotCondition({...jackpotCondition, streakType: e.target.value as any})}
+                  value={jackpotCondition.outcome}
+                  onChange={(e) => setJackpotCondition({ ...jackpotCondition, outcome: e.target.value as any })}
                   className="input w-full text-sm"
                   disabled={disabled}
                 >
@@ -140,42 +210,28 @@ export default function CoinFlipGameControls({ onChange, disabled = false }: Coi
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-gray-400 mb-1">Times</label>
+                <label className="block text-xs text-gray-400 mb-1">Next X Number of Bets in Row</label>
                 <input
                   type="number"
                   value={jackpotCondition.value}
-                  onChange={(e) => setJackpotCondition({...jackpotCondition, value: Number(e.target.value)})}
-                  className="input w-full text-sm"
-                  min="2"
-                  max="10"
+                  onChange={(e) => setJackpotCondition({ ...jackpotCondition, value: Number(e.target.value) })}
+                  className="input w-full"
+                  min="1"
+                  max="20"
                   disabled={disabled}
                 />
               </div>
             </div>
           )}
 
-          {jackpotCondition.type === 'next_bets' && (
-            <div>
-              <label className="block text-xs text-gray-400 mb-1">Next X Bets</label>
-              <input
-                type="number"
-                value={jackpotCondition.value}
-                onChange={(e) => setJackpotCondition({...jackpotCondition, value: Number(e.target.value)})}
-                className="input w-full"
-                min="1"
-                max="20"
-                disabled={disabled}
-              />
-            </div>
-          )}
-
+          {/* Condition 3: Percentage chance */}
           {jackpotCondition.type === 'percentage' && (
             <div>
-              <label className="block text-xs text-gray-400 mb-1">Chance (%)</label>
+              <label className="block text-xs text-gray-400 mb-1">Chance (%) Every Bet</label>
               <input
                 type="number"
                 value={jackpotCondition.value}
-                onChange={(e) => setJackpotCondition({...jackpotCondition, value: Number(e.target.value)})}
+                onChange={(e) => setJackpotCondition({ ...jackpotCondition, value: Number(e.target.value) })}
                 className="input w-full"
                 min="0.1"
                 max="10"
@@ -191,9 +247,9 @@ export default function CoinFlipGameControls({ onChange, disabled = false }: Coi
         <div className="text-center">
           <div className="text-sm text-gray-400">Win Chance</div>
           <div className="text-2xl font-bold text-primary">
-            {mode === 'normal' ? '49.5%' : 
-             mode === 'series' ? `${((0.5 ** seriesCount) * 100).toFixed(2)}%` :
-             mode === 'jackpot' ? '🎰 Jackpot Mode' : '49.5%'}
+            {mode === 'normal' ? '49.5%' :
+              mode === 'series' ? `${((0.5 ** seriesCount) * 100).toFixed(2)}%` :
+                mode === 'jackpot' ? '🎰 Jackpot Mode' : '49.5%'}
           </div>
         </div>
       </div>

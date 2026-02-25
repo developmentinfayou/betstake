@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { walletAPI } from "@/lib/api";
+import { useActiveGameGuard } from "@/hooks/useActiveGameGuard";
+import ActiveGameBlocker from "@/components/games/ActiveGameBlocker";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { io, Socket } from "socket.io-client";
@@ -43,6 +45,7 @@ export default function CrashPage() {
   const [history, setHistory] = useState<RoundHistory[]>([]);
   const [userId, setUserId] = useState<string>("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { isBlocked, blockedByGame } = useActiveGameGuard({ currentGameType: 'CRASH' });
 
   useEffect(() => {
     loadBalance();
@@ -345,25 +348,26 @@ export default function CrashPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {isBlocked && blockedByGame && (
+          <ActiveGameBlocker gameType={blockedByGame.gameType} betAmount={blockedByGame.betAmount} />
+        )}
         {/* Mode Tabs */}
         <div className="mb-6 flex gap-2">
           <button
             onClick={() => setGameMode("classic")}
-            className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-              gameMode === "classic"
+            className={`px-6 py-2 rounded-lg font-medium transition-colors ${gameMode === "classic"
                 ? "bg-green-600 text-white"
                 : "bg-gray-800 text-gray-400 hover:bg-gray-700"
-            }`}
+              }`}
           >
             Classic
           </button>
           <button
             onClick={() => setGameMode("trenball")}
-            className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-              gameMode === "trenball"
+            className={`px-6 py-2 rounded-lg font-medium transition-colors ${gameMode === "trenball"
                 ? "bg-green-600 text-white"
                 : "bg-gray-800 text-gray-400 hover:bg-gray-700"
-            }`}
+              }`}
           >
             Trenball
           </button>
@@ -374,11 +378,10 @@ export default function CrashPage() {
           {history.map((h) => (
             <div
               key={h.roundNumber}
-              className={`px-3 py-1 rounded text-sm font-medium ${
-                h.crashPoint >= 2
+              className={`px-3 py-1 rounded text-sm font-medium ${h.crashPoint >= 2
                   ? "bg-green-900/30 text-green-400"
                   : "bg-red-900/30 text-red-400"
-              }`}
+                }`}
             >
               {h.crashPoint.toFixed(2)}x
             </div>
@@ -400,15 +403,14 @@ export default function CrashPage() {
                     gameMode === "trenball" &&
                     trenballResult && (
                       <span
-                        className={`font-bold ${
-                          trenballResult.type === "green"
+                        className={`font-bold ${trenballResult.type === "green"
                             ? "text-green-400"
                             : trenballResult.type === "red"
-                            ? "text-red-400"
-                            : trenballResult.type === "moon"
-                            ? "text-yellow-400"
-                            : "text-purple-400"
-                        }`}
+                              ? "text-red-400"
+                              : trenballResult.type === "moon"
+                                ? "text-yellow-400"
+                                : "text-purple-400"
+                          }`}
                       >
                         {trenballResult.type.toUpperCase()} -{" "}
                         {trenballResult.multiplier}x
@@ -483,15 +485,14 @@ export default function CrashPage() {
                       {trenballResult.type === "moon" && "🌙"}
                     </div>
                     <div
-                      className={`text-3xl font-bold ${
-                        trenballResult.type === "green"
+                      className={`text-3xl font-bold ${trenballResult.type === "green"
                           ? "text-green-400"
                           : trenballResult.type === "red"
-                          ? "text-red-400"
-                          : trenballResult.type === "moon"
-                          ? "text-yellow-400"
-                          : "text-purple-400"
-                      }`}
+                            ? "text-red-400"
+                            : trenballResult.type === "moon"
+                              ? "text-yellow-400"
+                              : "text-purple-400"
+                        }`}
                     >
                       {trenballResult.type.toUpperCase()} WINS!
                     </div>
@@ -557,15 +558,14 @@ export default function CrashPage() {
                     )}
                     {gameMode === "trenball" && bet.betType && (
                       <span
-                        className={`capitalize ${
-                          bet.betType === "green"
+                        className={`capitalize ${bet.betType === "green"
                             ? "text-green-400"
                             : bet.betType === "red"
-                            ? "text-red-400"
-                            : bet.betType === "moon"
-                            ? "text-yellow-400"
-                            : "text-purple-400"
-                        }`}
+                              ? "text-red-400"
+                              : bet.betType === "moon"
+                                ? "text-yellow-400"
+                                : "text-purple-400"
+                          }`}
                       >
                         {bet.betType}
                       </span>

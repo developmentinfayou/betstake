@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { betAPI, walletAPI } from '@/lib/api';
 import { useAutoBetSocket } from '@/hooks/useAutoBetSocket';
 import toast from 'react-hot-toast';
@@ -33,6 +33,19 @@ export function useGameLogic({ gameType, currency = 'USD' }: UseGameLogicProps) 
       const payload = JSON.parse(atob(token.split('.')[1]));
       setUserId(payload.id);
     }
+  }, []);
+
+  // Stop autobet on page unmount (navigating away)
+  const autoBetActiveRef = useRef(false);
+  useEffect(() => {
+    autoBetActiveRef.current = autoBetActive;
+  }, [autoBetActive]);
+  useEffect(() => {
+    return () => {
+      if (autoBetActiveRef.current) {
+        betAPI.stopAutobet().catch(() => { });
+      }
+    };
   }, []);
 
   // Socket.IO for AutoBet

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { betAPI, walletAPI } from "@/lib/api";
+import { useActiveGameGuard } from "@/hooks/useActiveGameGuard";
+import ActiveGameBlocker from "@/components/games/ActiveGameBlocker";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAutoBetSocket } from "@/hooks/useAutoBetSocket";
@@ -8,13 +10,13 @@ import ManualBetControls from "@/components/betting/ManualBetControls";
 import AutoBetControls, {
   AutoBetConfig,
 } from "@/components/betting/AutoBetControls";
-import StrategySelector from "@/components/betting/StrategySelector";
+
 import WheelGameControls, {
   WheelGameParams,
 } from "@/components/games/wheel/WheelGameControls";
 import FairnessModal from "@/components/games/FairnessModal";
 
-type BetMode = "manual" | "auto" | "strategy";
+type BetMode = "manual" | "auto";
 
 export default function WheelPage() {
   const [betMode, setBetMode] = useState<BetMode>("manual");
@@ -33,6 +35,7 @@ export default function WheelPage() {
     wagered: 0,
   });
   const [autoBetActive, setAutoBetActive] = useState(false);
+  const { isBlocked, blockedByGame } = useActiveGameGuard({ currentGameType: 'WHEEL', autoBetActive });
   const [fairnessModalOpen, setFairnessModalOpen] = useState(false);
   const [userId, setUserId] = useState<string>();
 
@@ -175,6 +178,9 @@ export default function WheelPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {isBlocked && blockedByGame && (
+          <ActiveGameBlocker gameType={blockedByGame.gameType} betAmount={blockedByGame.betAmount} />
+        )}
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="card">
@@ -183,8 +189,8 @@ export default function WheelPage() {
               {result && (
                 <div
                   className={`mb-6 p-6 rounded-lg text-center ${result.multiplier > 0
-                      ? "bg-green-900/20 border border-green-500"
-                      : "bg-red-900/20 border border-red-500"
+                    ? "bg-green-900/20 border border-green-500"
+                    : "bg-red-900/20 border border-red-500"
                     }`}
                 >
                   <div
@@ -209,8 +215,7 @@ export default function WheelPage() {
             <div className="card">
               <BetModeSelector
                 mode={betMode}
-                onChange={setBetMode}
-                showStrategy={true}
+                onChange={(m) => setBetMode(m as BetMode)}
               />
               {betMode === "manual" && (
                 <ManualBetControls
@@ -234,17 +239,7 @@ export default function WheelPage() {
                   disabled={loading || amount <= 0 || amount > balance}
                 />
               )}
-              {betMode === "strategy" && (
-                <StrategySelector
-                  amount={amount}
-                  balance={balance}
-                  onAmountChange={setAmount}
-                  onStart={handleStartAutoBet}
-                  onStop={handleStopAutoBet}
-                  isActive={autoBetActive}
-                  disabled={loading || amount <= 0 || amount > balance}
-                />
-              )}
+
             </div>
 
             {autoBetActive && (

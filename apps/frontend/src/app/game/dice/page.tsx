@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { betAPI, walletAPI } from '@/lib/api';
+import { useActiveGameGuard } from '@/hooks/useActiveGameGuard';
+import ActiveGameBlocker from '@/components/games/ActiveGameBlocker';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAutoBetSocket } from '@/hooks/useAutoBetSocket';
@@ -28,6 +30,7 @@ export default function DicePage() {
   const [balance, setBalance] = useState(0);
   const [stats, setStats] = useState({ profit: 0, wins: 0, losses: 0, wagered: 0 });
   const [autoBetActive, setAutoBetActive] = useState(false);
+  const { isBlocked, blockedByGame } = useActiveGameGuard({ currentGameType: 'DICE', autoBetActive });
   const [fairnessModalOpen, setFairnessModalOpen] = useState(false);
   const [lastBetInfo, setLastBetInfo] = useState<{ amount: number; profit: number; payout: number; multiplier: number } | null>(null);
   const [userId, setUserId] = useState<string>();
@@ -179,6 +182,9 @@ export default function DicePage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {isBlocked && blockedByGame && (
+          <ActiveGameBlocker gameType={blockedByGame.gameType} betAmount={blockedByGame.betAmount} />
+        )}
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Game Area */}
           <div className="lg:col-span-2">

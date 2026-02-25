@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSocket } from "@/hooks/useSocket";
+import { useActiveGameGuard } from "@/hooks/useActiveGameGuard";
+import ActiveGameBlocker from "@/components/games/ActiveGameBlocker";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import FastParityGameControls, {
@@ -76,6 +78,7 @@ export default function FastParityPage() {
     useState<ProbabilityStats | null>(null);
 
   const socket = useSocket();
+  const { isBlocked, blockedByGame } = useActiveGameGuard({ currentGameType: 'FAST_PARITY' });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -227,6 +230,9 @@ export default function FastParityPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {isBlocked && blockedByGame && (
+          <ActiveGameBlocker gameType={blockedByGame.gameType} betAmount={blockedByGame.betAmount} />
+        )}
         <div className="grid lg:grid-cols-4 gap-6">
           {/* Main Game Area */}
           <div className="lg:col-span-3">
@@ -243,9 +249,8 @@ export default function FastParityPage() {
                 {/* Progress Bar */}
                 <div className="w-full bg-gray-700 rounded-full h-2 mb-4">
                   <div
-                    className={`h-2 rounded-full transition-all duration-1000 ${
-                      canBet ? "bg-green-500" : "bg-red-500"
-                    }`}
+                    className={`h-2 rounded-full transition-all duration-1000 ${canBet ? "bg-green-500" : "bg-red-500"
+                      }`}
                     style={{
                       width: currentRound
                         ? `${(currentRound.timeLeft / 30) * 100}%`
@@ -258,8 +263,8 @@ export default function FastParityPage() {
                   {canBet
                     ? "Place your bets"
                     : currentRound?.status === "closed"
-                    ? "No more bets"
-                    : "Waiting..."}
+                      ? "No more bets"
+                      : "Waiting..."}
                 </div>
               </div>
 
@@ -301,11 +306,10 @@ export default function FastParityPage() {
                 <button
                   onClick={placeBet}
                   disabled={!canBet}
-                  className={`px-8 py-3 rounded-lg font-bold text-lg ${
-                    canBet
+                  className={`px-8 py-3 rounded-lg font-bold text-lg ${canBet
                       ? "bg-primary hover:bg-primary/80 text-white"
                       : "bg-gray-700 text-gray-400 cursor-not-allowed"
-                  }`}
+                    }`}
                 >
                   {canBet ? "Place Bet" : "Betting Closed"}
                 </button>
@@ -320,11 +324,10 @@ export default function FastParityPage() {
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`px-4 py-2 rounded-lg font-bold capitalize ${
-                        activeTab === tab
+                      className={`px-4 py-2 rounded-lg font-bold capitalize ${activeTab === tab
                           ? "bg-primary text-white"
                           : "bg-gray-800 hover:bg-gray-700"
-                      }`}
+                        }`}
                     >
                       {tab}
                     </button>

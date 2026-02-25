@@ -1,7 +1,13 @@
 import { Router } from 'express';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { BlackjackSession, Bet, Wallet, UserStats } from '@casino/database';
-import { BlackjackGame, Card } from '@casino/game-engine';
+import { BlackjackGame } from '@casino/game-engine';
+
+interface Card {
+  rank: string;
+  suit: string;
+  value: number;
+}
 import { SeedManager, shuffle } from '@casino/fairness';
 import { gameRegistry } from '@casino/game-engine';
 import { UnifiedJackpotService } from '../services/unified-jackpot-service';
@@ -96,9 +102,72 @@ const calculateTotal = (hand: Card[]): number => {
   return total;
 };
 
+// Get active session for recovery on page refresh
+router.get('/active-session', authenticate, async (req: AuthRequest, res) => {
+  try {
+    const session = await BlackjackSession.findOne({ userId: req.userId, active: true });
+    if (!session) {
+      return res.json({ hasActiveSession: false });
+    }
+
+    // Only show dealer's first card (hide hole card)
+    const visibleDealerHand = [session.dealerHand[0]];
+    const dealerTotal = session.dealerHand[0].value;
+
+    const playerTotals = session.playerHands.map(hand => calculateTotal(hand));
+    const canSplit = session.playerHands.length === 1 &&
+      session.playerHands[0].length === 2 &&
+      session.playerHands[0][0].rank === session.playerHands[0][1].rank;
+    const activeHand = session.playerHands[session.activeHandIndex];
+    const canDouble = activeHand && activeHand.length === 2;
+    const canHit = calculateTotal(activeHand) < 21;
+
+    res.json({
+      hasActiveSession: true,
+      sessionId: session._id,
+      playerHands: session.playerHands,
+      dealerHand: visibleDealerHand,
+      playerTotals,
+      dealerTotal,
+      activeHandIndex: session.activeHandIndex,
+      canHit,
+      canDouble,
+      canSplit,
+      betAmount: session.betAmount,
+      currency: session.currency,
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+// Legacy: clear session (now creates loss records)
 router.delete('/session', authenticate, async (req: AuthRequest, res) => {
   try {
-    await BlackjackSession.deleteMany({ userId: req.userId, active: true });
+    const sessions = await BlackjackSession.find({ userId: req.userId, active: true });
+    for (const session of sessions) {
+      session.active = false;
+      session.status = 'forfeited';
+      await session.save();
+
+      await Bet.create({
+        userId: req.userId,
+        gameType: 'BLACKJACK',
+        currency: session.currency,
+        amount: session.betAmount,
+        multiplier: 0,
+        payout: 0,
+        profit: -session.betAmount,
+        won: false,
+        seedPairId: session.seedPairId,
+        nonce: session.nonce,
+        gameData: { playerHands: session.playerHands, dealerHand: session.dealerHand },
+        result: { forfeited: true, cleanedUp: true },
+      });
+
+      await SeedManager.unlockSeedAfterGame(session._id.toString());
+    }
     res.json({ message: 'Active sessions cleared' });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -194,7 +263,7 @@ router.post('/start', authenticate, async (req: AuthRequest, res) => {
       });
 
       session.active = false;
-      session.betId = bet._id;
+      session.betId = bet._id.toString();
       await session.save();
       await SeedManager.unlockSeedAfterGame(session._id.toString());
 
@@ -299,7 +368,7 @@ router.post('/hit', authenticate, async (req: AuthRequest, res) => {
         });
 
         session.active = false;
-        session.betId = bet._id;
+        session.betId = bet._id.toString();
         await session.save();
         await SeedManager.unlockSeedAfterGame(session._id.toString());
 
@@ -444,7 +513,7 @@ router.post('/stand', authenticate, async (req: AuthRequest, res) => {
     });
 
     session.active = false;
-    session.betId = bet._id;
+    session.betId = bet._id.toString();
     await session.save();
 
     // Unlock seed when game ends
@@ -548,7 +617,7 @@ router.post('/double', authenticate, async (req: AuthRequest, res) => {
     });
 
     session.active = false;
-    session.betId = bet._id;
+    session.betId = bet._id.toString();
     await session.save();
 
     // Unlock seed when game ends

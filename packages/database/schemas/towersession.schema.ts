@@ -4,9 +4,13 @@ export interface ITowerSession extends Document {
   userId: string;
   grid: boolean[];
   floors: number;
+  difficulty: string;
+  tilesPerFloor: number;
+  dangersPerFloor: number;
   betAmount: number;
   currency: string;
   revealedTiles: number[];
+  currentFloor: number;
   currentMultiplier: number;
   active: boolean;
   seedPairId: string;
@@ -19,9 +23,13 @@ const towerSessionSchema = new Schema<ITowerSession>({
   userId: { type: String, required: true, index: true },
   grid: { type: [Boolean], required: true },
   floors: { type: Number, required: true },
+  difficulty: { type: String, required: true },
+  tilesPerFloor: { type: Number, required: true },
+  dangersPerFloor: { type: Number, required: true },
   betAmount: { type: Number, required: true },
   currency: { type: String, required: true },
   revealedTiles: { type: [Number], default: [] },
+  currentFloor: { type: Number, default: 0 },
   currentMultiplier: { type: Number, default: 1 },
   active: { type: Boolean, default: true, index: true },
   seedPairId: { type: String, required: true },

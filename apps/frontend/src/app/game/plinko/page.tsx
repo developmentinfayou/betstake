@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { betAPI, walletAPI } from '@/lib/api';
+import { useActiveGameGuard } from '@/hooks/useActiveGameGuard';
+import ActiveGameBlocker from '@/components/games/ActiveGameBlocker';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAutoBetSocket } from '@/hooks/useAutoBetSocket';
@@ -27,6 +29,7 @@ export default function PlinkoPage() {
   const [balance, setBalance] = useState(0);
   const [stats, setStats] = useState({ profit: 0, wins: 0, losses: 0, wagered: 0 });
   const [autoBetActive, setAutoBetActive] = useState(false);
+  const { isBlocked, blockedByGame } = useActiveGameGuard({ currentGameType: 'PLINKO', autoBetActive });
   const [fairnessModalOpen, setFairnessModalOpen] = useState(false);
   const [userId, setUserId] = useState<string>();
   const [goldenPegs, setGoldenPegs] = useState<Array<{ row: number; position: number; multiplier: number }>>([]);
@@ -241,6 +244,9 @@ export default function PlinkoPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {isBlocked && blockedByGame && (
+          <ActiveGameBlocker gameType={blockedByGame.gameType} betAmount={blockedByGame.betAmount} />
+        )}
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="card">

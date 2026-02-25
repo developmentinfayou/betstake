@@ -17,6 +17,7 @@ import jackpotRoutes from './routes/jackpot';
 import leaderboardRoutes from './routes/leaderboard';
 import adminRoutes from './routes/admin';
 import minesRoutes from './routes/mines';
+import coinflipRoutes from './routes/coinflip';
 import towerRoutes from './routes/tower';
 import stairsRoutes from './routes/stairs';
 import hiloRoutes from './routes/hilo';
@@ -27,6 +28,7 @@ import fastparityJackpotRoutes from './routes/fastparity-jackpot';
 import crashJackpotRoutes from './routes/crash-jackpot';
 import challengeAdminRoutes from './routes/challenge-admin';
 import activityLogsRoutes from './routes/activity-logs';
+import activeSessionsRoutes from './routes/active-sessions';
 import jackpotConditionsRoutes from './routes/jackpot-conditions';
 import rakebackAdminRoutes from './routes/rakeback-admin';
 import financialReportsRoutes from './routes/financial-reports';
@@ -87,6 +89,7 @@ async function start() {
   app.use('/api/leaderboard', leaderboardRoutes);
   app.use('/api/admin', adminRoutes);
   app.use('/api/mines', minesRoutes);
+  app.use('/api/coinflip', coinflipRoutes);
   app.use('/api/tower', towerRoutes);
   app.use('/api/stairs', stairsRoutes);
   app.use('/api/hilo', hiloRoutes);
@@ -101,6 +104,7 @@ async function start() {
   app.use('/api/admin/rakeback', rakebackAdminRoutes);
   app.use('/api/admin/reports', financialReportsRoutes);
   app.use('/api/admin/settings', platformSettingsRoutes);
+  app.use('/api/active-sessions', activeSessionsRoutes);
 
   // Setup Socket.IO
   const io = new Server(httpServer, {

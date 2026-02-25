@@ -311,36 +311,49 @@ function verifyBalloon(input: VerificationInput): VerificationResult {
 }
 
 // TOWER — matches games/tower/index.ts
-// Uses: shuffle with cursor=3, nonce + floor for each floor
+// Uses: shuffle with cursor=3, nonce + floor for each floor, variable tiles per floor by difficulty
 function verifyTower(input: VerificationInput): VerificationResult {
-  const floors = input.gameParams?.floors || 8;
+  const difficulty = input.gameParams?.difficulty || 'easy';
+
+  // Difficulty configs matching game engine TOWER_CONFIG
+  const diffConfigs: Record<string, { tilesPerFloor: number; dangersPerFloor: number; floors: number }> = {
+    easy: { tilesPerFloor: 4, dangersPerFloor: 1, floors: 9 },
+    medium: { tilesPerFloor: 3, dangersPerFloor: 1, floors: 9 },
+    hard: { tilesPerFloor: 2, dangersPerFloor: 1, floors: 9 },
+    extreme: { tilesPerFloor: 3, dangersPerFloor: 2, floors: 9 },
+    nightmare: { tilesPerFloor: 4, dangersPerFloor: 3, floors: 9 },
+  };
+
+  const config = diffConfigs[difficulty] || diffConfigs.easy;
+  const { tilesPerFloor, dangersPerFloor, floors } = config;
   const cursor = 3;
-  const totalTiles = floors * 3;
+  const totalTiles = floors * tilesPerFloor;
   const grid = Array(totalTiles).fill(false);
   const allFloats: number[] = [];
 
-  // Game engine creates per-floor shuffle: shuffle([0,1,2], { cursor: 3, nonce: nonce + floor })
+  // Game engine creates per-floor shuffle with variable tile count
   for (let floor = 0; floor < floors; floor++) {
     const floorNonce = input.nonce + floor;
-    const floorFloats = generateFloats(input.serverSeed, input.clientSeed, floorNonce, 3, cursor);
+    const floorFloats = generateFloats(input.serverSeed, input.clientSeed, floorNonce, tilesPerFloor, cursor);
     allFloats.push(...floorFloats);
 
-    const positions = [0, 1, 2];
+    const positions = Array.from({ length: tilesPerFloor }, (_, i) => i);
     const shuffled = shuffle(positions, floorFloats);
 
-    // First 2 positions in shuffled result are danger
-    grid[floor * 3 + shuffled[0]] = true;
-    grid[floor * 3 + shuffled[1]] = true;
+    // First N positions in shuffled result are danger
+    for (let d = 0; d < dangersPerFloor; d++) {
+      grid[floor * tilesPerFloor + shuffled[d]] = true;
+    }
   }
 
   const dangerPositions = grid.map((isDanger, idx) => isDanger ? idx : -1).filter(x => x >= 0);
 
   return {
     gameType: 'TOWER',
-    result: { grid, dangerPositions, floors },
+    result: { grid, dangerPositions, floors, difficulty, tilesPerFloor, dangersPerFloor },
     floats: allFloats.slice(0, 10),
     hmac: generateHmac(input.serverSeed, input.clientSeed, input.nonce, 0),
-    explanation: `Danger positions: [${dangerPositions.join(', ')}] (${floors} floors, 2 dangers per floor, cursor=${cursor})`
+    explanation: `Danger positions: [${dangerPositions.join(', ')}] (${difficulty}, ${floors} floors, ${tilesPerFloor} tiles/floor, ${dangersPerFloor} dangers/floor, cursor=${cursor})`
   };
 }
 
