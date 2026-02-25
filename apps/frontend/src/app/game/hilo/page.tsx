@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { walletAPI, hiloAPI, betAPI } from "@/lib/api";
+import { useActiveGameGuard } from "@/hooks/useActiveGameGuard";
+import ActiveGameBlocker from "@/components/games/ActiveGameBlocker";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAutoBetSocket } from "@/hooks/useAutoBetSocket";
@@ -25,6 +27,7 @@ export default function HiLoPage() {
     wagered: 0,
   });
   const [autoBetActive, setAutoBetActive] = useState(false);
+  const { isBlocked, blockedByGame } = useActiveGameGuard({ currentGameType: 'HILO', autoBetActive });
   const [fairnessModalOpen, setFairnessModalOpen] = useState(false);
   const [userId, setUserId] = useState<string>();
 
@@ -37,12 +40,12 @@ export default function HiLoPage() {
 
   useEffect(() => {
     loadBalance();
-    clearActiveSessions(); // Clear any existing sessions
     const token = localStorage.getItem("token");
     if (token) {
       const payload = JSON.parse(atob(token.split(".")[1]));
       setUserId(payload.id);
     }
+    checkActiveSession();
   }, []);
 
   useAutoBetSocket(userId, (data) => {
@@ -68,14 +71,6 @@ export default function HiLoPage() {
     loadBalance();
   });
 
-  const clearActiveSessions = async () => {
-    try {
-      await hiloAPI.clearSession();
-    } catch (error) {
-      // Ignore errors - session might not exist
-    }
-  };
-
   const loadBalance = async () => {
     try {
       const response = await walletAPI.getAll();
@@ -86,6 +81,25 @@ export default function HiLoPage() {
     }
   };
 
+  const checkActiveSession = async () => {
+    try {
+      const response = await hiloAPI.getActiveSession();
+      if (response.data.hasActiveSession) {
+        setSessionId(response.data.sessionId);
+        setCurrentCard(response.data.currentCard);
+        setCardHistory(response.data.cardHistory || []);
+        setCurrentMultiplier(response.data.currentMultiplier || 1);
+        setGameActive(true);
+        setGameOver(false);
+        setAmount(response.data.betAmount);
+        toast.success("Resumed your active game");
+      }
+    } catch (error) {
+      // No active session — continue normally
+    }
+  };
+
+
   const startGame = async () => {
     if (amount > balance) {
       toast.error("Insufficient balance");
@@ -94,9 +108,6 @@ export default function HiLoPage() {
 
     setLoading(true);
     try {
-      // Clear any existing sessions first
-      await clearActiveSessions();
-
       const response = await hiloAPI.start({
         betAmount: amount,
         currency: "USD",
@@ -113,9 +124,6 @@ export default function HiLoPage() {
     } catch (error: any) {
       console.error("Start game error:", error);
       toast.error(error.response?.data?.error || "Failed to start game");
-      // Try to clear sessions and reset state on error
-      await clearActiveSessions();
-      resetGame();
     } finally {
       setLoading(false);
     }
@@ -249,6 +257,9 @@ export default function HiLoPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {isBlocked && blockedByGame && (
+          <ActiveGameBlocker gameType={blockedByGame.gameType} betAmount={blockedByGame.betAmount} />
+        )}
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="card">

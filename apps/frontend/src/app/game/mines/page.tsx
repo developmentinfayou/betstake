@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { betAPI, walletAPI, minesAPI } from "@/lib/api";
+import { useActiveGameGuard } from "@/hooks/useActiveGameGuard";
+import ActiveGameBlocker from "@/components/games/ActiveGameBlocker";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAutoBetSocket } from "@/hooks/useAutoBetSocket";
@@ -8,13 +10,13 @@ import ManualBetControls from "@/components/betting/ManualBetControls";
 import AutoBetControls, {
   AutoBetConfig,
 } from "@/components/betting/AutoBetControls";
-import StrategySelector from "@/components/betting/StrategySelector";
+
 import MinesGameControls, {
   MinesGameParams,
 } from "@/components/games/mines/MinesGameControls";
 import FairnessModal from "@/components/games/FairnessModal";
 
-type BetMode = "manual" | "auto" | "strategy";
+type BetMode = "manual" | "auto";
 
 export default function MinesPage() {
   const [betMode, setBetMode] = useState<BetMode>("manual");
@@ -32,6 +34,7 @@ export default function MinesPage() {
     wagered: 0,
   });
   const [autoBetActive, setAutoBetActive] = useState(false);
+  const { isBlocked, blockedByGame } = useActiveGameGuard({ currentGameType: 'MINES', autoBetActive });
   const [fairnessModalOpen, setFairnessModalOpen] = useState(false);
   const [userId, setUserId] = useState<string>();
 
@@ -51,13 +54,8 @@ export default function MinesPage() {
       setUserId(payload.id);
     }
 
-    // Clean up any active session on page load
-    return () => {
-      if (sessionId && gameActive) {
-        // Attempt to clean up session on unmount
-        minesAPI.cashout({ sessionId }).catch(() => { });
-      }
-    };
+    // Check for active session to resume
+    checkActiveSession();
   }, []);
 
   useAutoBetSocket(userId, (data) => {
@@ -108,6 +106,26 @@ export default function MinesPage() {
     }
   };
 
+  const checkActiveSession = async () => {
+    try {
+      const response = await minesAPI.getActiveSession();
+      if (response.data.hasActiveSession) {
+        setSessionId(response.data.sessionId);
+        setRevealedTiles(response.data.revealedTiles || []);
+        setCurrentMultiplier(response.data.currentMultiplier || 1);
+        setGameActive(true);
+        setGameOver(false);
+        setMineTiles([]);
+        setAmount(response.data.betAmount);
+        setGameParams(prev => ({ ...prev, minesCount: response.data.minesCount }));
+        toast.success("Resumed your active game");
+      }
+    } catch (error) {
+      // No active session or error checking — continue normally
+    }
+  };
+
+
   const startManualGame = async () => {
     if (amount > balance) {
       toast.error("Insufficient balance");
@@ -132,38 +150,7 @@ export default function MinesPage() {
       toast.success("Game started!");
       await loadBalance();
     } catch (error: any) {
-      if (
-        error.response?.data?.error === "Active game exists. Cash out first."
-      ) {
-        // Try to cleanup and restart
-        try {
-          await minesAPI.cleanup();
-          toast.success("Cleaned up previous session, starting new game...");
-          // Retry starting the game
-          const response = await minesAPI.start({
-            minesCount: gameParams.minesCount,
-            betAmount: amount,
-            currency: "USD",
-            gridSize: 25,
-          });
-
-          setSessionId(response.data.sessionId);
-          setCurrentMultiplier(response.data.currentMultiplier);
-          setGameActive(true);
-          setRevealedTiles([]);
-          setMineTiles([]);
-          setGameOver(false);
-          toast.success("Game started!");
-          await loadBalance();
-        } catch (retryError: any) {
-          toast.error(
-            retryError.response?.data?.error ||
-            "Failed to start game after cleanup"
-          );
-        }
-      } else {
-        toast.error(error.response?.data?.error || "Failed to start game");
-      }
+      toast.error(error.response?.data?.error || "Failed to start game");
     } finally {
       setLoading(false);
     }
@@ -358,6 +345,9 @@ export default function MinesPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {isBlocked && blockedByGame && (
+          <ActiveGameBlocker gameType={blockedByGame.gameType} betAmount={blockedByGame.betAmount} />
+        )}
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="card">
@@ -436,7 +426,6 @@ export default function MinesPage() {
                   setBetMode(mode as BetMode);
                   resetGame();
                 }}
-                showStrategy={true}
               />
 
               {betMode === "manual" && !gameActive && (
@@ -463,17 +452,7 @@ export default function MinesPage() {
                 />
               )}
 
-              {betMode === 'strategy' && (
-                <StrategySelector
-                  amount={amount}
-                  balance={balance}
-                  onAmountChange={setAmount}
-                  onStart={handleStartAutoBet}
-                  onStop={handleStopAutoBet}
-                  isActive={autoBetActive}
-                  disabled={loading || amount <= 0 || amount > balance}
-                />
-              )}
+
             </div>
 
             {autoBetActive && (

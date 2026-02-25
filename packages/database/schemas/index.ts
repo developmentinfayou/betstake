@@ -28,3 +28,4 @@ export * from './crash-jackpot.schema';
 export * from './challenge.schema';
 export * from './admin-activity-log.schema';
 export * from './jackpot-player-progress.schema';
+export * from './coinflipsession.schema';

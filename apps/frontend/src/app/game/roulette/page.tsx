@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { betAPI, walletAPI } from "@/lib/api";
+import { useActiveGameGuard } from "@/hooks/useActiveGameGuard";
+import ActiveGameBlocker from "@/components/games/ActiveGameBlocker";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAutoBetSocket } from "@/hooks/useAutoBetSocket";
@@ -20,6 +22,7 @@ export default function RoulettePage() {
   const [betMode, setBetMode] = useState<BetMode>("manual");
   const [amount, setAmount] = useState(10);
   const [autoBetActive, setAutoBetActive] = useState(false);
+  const { isBlocked, blockedByGame } = useActiveGameGuard({ currentGameType: 'ROULETTE', autoBetActive });
   const [gameParams, setGameParams] = useState<RouletteGameParams>({
     bets: [],
   });
@@ -220,6 +223,9 @@ export default function RoulettePage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {isBlocked && blockedByGame && (
+          <ActiveGameBlocker gameType={blockedByGame.gameType} betAmount={blockedByGame.betAmount} />
+        )}
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="card">
@@ -228,16 +234,16 @@ export default function RoulettePage() {
               {result && (
                 <div
                   className={`mb-6 p-6 rounded-lg text-center ${result.totalPayout > 0
-                      ? "bg-green-900/20 border border-green-500"
-                      : "bg-red-900/20 border border-red-500"
+                    ? "bg-green-900/20 border border-green-500"
+                    : "bg-red-900/20 border border-red-500"
                     }`}
                 >
                   <div
                     className={`text-6xl font-bold mb-2 w-20 h-20 mx-auto rounded-full flex items-center justify-center ${getNumberColor(result.number) === "green"
-                        ? "bg-green-600"
-                        : getNumberColor(result.number) === "red"
-                          ? "bg-red-600"
-                          : "bg-gray-900"
+                      ? "bg-green-600"
+                      : getNumberColor(result.number) === "red"
+                        ? "bg-red-600"
+                        : "bg-gray-900"
                       } text-white`}
                   >
                     {result.number}

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { walletAPI, stairsAPI, betAPI } from "@/lib/api";
+import { useActiveGameGuard } from "@/hooks/useActiveGameGuard";
+import ActiveGameBlocker from "@/components/games/ActiveGameBlocker";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAutoBetSocket } from "@/hooks/useAutoBetSocket";
@@ -28,6 +30,7 @@ export default function StairsPage() {
     wagered: 0,
   });
   const [autoBetActive, setAutoBetActive] = useState(false);
+  const { isBlocked, blockedByGame } = useActiveGameGuard({ currentGameType: 'STAIRS', autoBetActive });
   const [fairnessModalOpen, setFairnessModalOpen] = useState(false);
   const [userId, setUserId] = useState<string>();
 
@@ -45,6 +48,7 @@ export default function StairsPage() {
       const payload = JSON.parse(atob(token.split(".")[1]));
       setUserId(payload.id);
     }
+    checkActiveSession();
   }, []);
 
   useAutoBetSocket(userId, (data) => {
@@ -79,6 +83,26 @@ export default function StairsPage() {
       console.error("Failed to load balance");
     }
   };
+
+  const checkActiveSession = async () => {
+    try {
+      const response = await stairsAPI.getActiveSession();
+      if (response.data.hasActiveSession) {
+        setSessionId(response.data.sessionId);
+        setRevealedTiles(response.data.revealedTiles || []);
+        setCurrentMultiplier(response.data.currentMultiplier || 1);
+        setGameActive(true);
+        setGameOver(false);
+        setDangerTiles([]);
+        setAmount(response.data.betAmount);
+        setGameParams(prev => ({ ...prev, steps: response.data.steps }));
+        toast.success("Resumed your active game");
+      }
+    } catch (error) {
+      // No active session — continue normally
+    }
+  };
+
 
   const startGame = async () => {
     if (amount > balance) {
@@ -236,6 +260,9 @@ export default function StairsPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {isBlocked && blockedByGame && (
+          <ActiveGameBlocker gameType={blockedByGame.gameType} betAmount={blockedByGame.betAmount} />
+        )}
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="card">

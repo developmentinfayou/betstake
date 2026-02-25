@@ -115,7 +115,7 @@ router.post('/reveal', authenticate, async (req: AuthRequest, res) => {
     const stairsGame = new StairsGame(gameConfig);
     const safeStepsCleared = session.revealedTiles.filter(t => !session.grid[t]).length;
     const multiplier = (stairsGame as any).calculateMultiplier(session.steps, safeStepsCleared);
-    
+
     session.currentMultiplier = multiplier;
     await session.save();
 
@@ -130,9 +130,54 @@ router.post('/reveal', authenticate, async (req: AuthRequest, res) => {
   }
 });
 
+// Get active session for recovery on page refresh
+router.get('/active-session', authenticate, async (req: AuthRequest, res) => {
+  try {
+    const session = await StairsSession.findOne({ userId: req.userId, active: true });
+    if (!session) {
+      return res.json({ hasActiveSession: false });
+    }
+
+    res.json({
+      hasActiveSession: true,
+      sessionId: session._id,
+      revealedTiles: session.revealedTiles,
+      currentMultiplier: session.currentMultiplier,
+      steps: session.steps,
+      betAmount: session.betAmount,
+      currency: session.currency,
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+// Legacy: clear session (now creates loss records)
 router.delete('/session', authenticate, async (req: AuthRequest, res) => {
   try {
-    await StairsSession.deleteMany({ userId: req.userId, active: true });
+    const sessions = await StairsSession.find({ userId: req.userId, active: true });
+    for (const session of sessions) {
+      session.active = false;
+      await session.save();
+
+      await Bet.create({
+        userId: req.userId,
+        gameType: 'STAIRS',
+        currency: session.currency,
+        amount: session.betAmount,
+        multiplier: 0,
+        payout: 0,
+        profit: -session.betAmount,
+        won: false,
+        seedPairId: session.seedPairId,
+        nonce: session.nonce,
+        gameData: { steps: session.steps, revealedTiles: session.revealedTiles },
+        result: { forfeited: true, cleanedUp: true },
+      });
+
+      await SeedManager.unlockSeedAfterGame(session._id.toString());
+    }
     res.json({ message: 'Active sessions cleared' });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -178,7 +223,7 @@ router.post('/cashout', authenticate, async (req: AuthRequest, res) => {
     });
 
     session.active = false;
-    session.betId = bet._id;
+    session.betId = bet._id.toString();
     await session.save();
 
     // Unlock seed when game ends

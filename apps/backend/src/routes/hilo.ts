@@ -140,7 +140,7 @@ router.post('/predict', authenticate, async (req: AuthRequest, res) => {
 
     const hiloGame = new HiLoGame(gameConfig);
     const multiplier = (hiloGame as any).calculateMultiplier(session.cardHistory.length, choice === 'skip');
-    
+
     session.currentCard = nextCard;
     session.currentMultiplier = multiplier;
     await session.save();
@@ -157,9 +157,54 @@ router.post('/predict', authenticate, async (req: AuthRequest, res) => {
   }
 });
 
+// Get active session for recovery on page refresh
+router.get('/active-session', authenticate, async (req: AuthRequest, res) => {
+  try {
+    const session = await HiLoSession.findOne({ userId: req.userId, active: true });
+    if (!session) {
+      return res.json({ hasActiveSession: false });
+    }
+
+    res.json({
+      hasActiveSession: true,
+      sessionId: session._id,
+      currentCard: session.currentCard,
+      cardHistory: session.cardHistory,
+      currentMultiplier: session.currentMultiplier,
+      betAmount: session.betAmount,
+      currency: session.currency,
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+// Legacy: clear session (now creates a loss record)
 router.delete('/session', authenticate, async (req: AuthRequest, res) => {
   try {
-    await HiLoSession.deleteMany({ userId: req.userId, active: true });
+    const sessions = await HiLoSession.find({ userId: req.userId, active: true });
+    for (const session of sessions) {
+      session.active = false;
+      await session.save();
+
+      await Bet.create({
+        userId: req.userId,
+        gameType: 'HILO',
+        currency: session.currency,
+        amount: session.betAmount,
+        multiplier: 0,
+        payout: 0,
+        profit: -session.betAmount,
+        won: false,
+        seedPairId: session.seedPairId,
+        nonce: session.nonce,
+        gameData: { cardHistory: session.cardHistory },
+        result: { forfeited: true, cleanedUp: true },
+      });
+
+      await SeedManager.unlockSeedAfterGame(session._id.toString());
+    }
     res.json({ message: 'Active sessions cleared' });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -204,7 +249,7 @@ router.post('/cashout', authenticate, async (req: AuthRequest, res) => {
     });
 
     session.active = false;
-    session.betId = bet._id;
+    session.betId = bet._id.toString();
     await session.save();
 
     // Unlock seed when game ends
@@ -226,38 +271,38 @@ router.get('/probabilities/:currentCard', authenticate, async (req: AuthRequest,
   try {
     const currentCard = parseInt(req.params.currentCard);
     const { cardHistory } = req.query;
-    
+
     if (currentCard < 1 || currentCard > 13) {
       return res.status(400).json({ error: 'Invalid card value' });
     }
 
     const history = cardHistory ? JSON.parse(cardHistory as string) : [];
-    
+
     // Calculate probabilities
     const totalCardsPerValue = 4;
     const cardCounts = Array(14).fill(totalCardsPerValue);
     cardCounts[0] = 0;
-    
+
     // Remove used cards
     history.forEach((card: number) => {
       if (card >= 1 && card <= 13) {
         cardCounts[card] = Math.max(0, cardCounts[card] - 1);
       }
     });
-    
+
     // Remove current card
     cardCounts[currentCard] = Math.max(0, cardCounts[currentCard] - 1);
-    
+
     const remainingCards = cardCounts.reduce((sum: number, count: number) => sum + count, 0);
-    
+
     if (remainingCards === 0) {
       return res.json({ higherPercent: 0, lowerPercent: 0, samePercent: 0 });
     }
-    
+
     let higherCount = 0;
     let lowerCount = 0;
     const sameCount = cardCounts[currentCard];
-    
+
     for (let i = 1; i <= 13; i++) {
       if (i > currentCard) {
         higherCount += cardCounts[i];
@@ -265,11 +310,11 @@ router.get('/probabilities/:currentCard', authenticate, async (req: AuthRequest,
         lowerCount += cardCounts[i];
       }
     }
-    
+
     const higherPercent = (higherCount / remainingCards) * 100;
     const lowerPercent = (lowerCount / remainingCards) * 100;
     const samePercent = (sameCount / remainingCards) * 100;
-    
+
     res.json({
       higherPercent: Math.round(higherPercent * 100) / 100,
       lowerPercent: Math.round(lowerPercent * 100) / 100,

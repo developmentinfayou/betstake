@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { betAPI, walletAPI } from "@/lib/api";
+import { useActiveGameGuard } from "@/hooks/useActiveGameGuard";
+import ActiveGameBlocker from "@/components/games/ActiveGameBlocker";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import BetModeSelector from "@/components/betting/BetModeSelector";
@@ -34,6 +36,7 @@ export default function LimboPage() {
     wagered: 0,
   });
   const [autoBetActive, setAutoBetActive] = useState(false);
+  const { isBlocked, blockedByGame } = useActiveGameGuard({ currentGameType: 'LIMBO', autoBetActive });
   const [fairnessModalOpen, setFairnessModalOpen] = useState(false);
   const [userId, setUserId] = useState<string>();
 
@@ -180,6 +183,9 @@ export default function LimboPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {isBlocked && blockedByGame && (
+          <ActiveGameBlocker gameType={blockedByGame.gameType} betAmount={blockedByGame.betAmount} />
+        )}
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Game Area */}
           <div className="lg:col-span-2">
@@ -190,8 +196,8 @@ export default function LimboPage() {
               {result && (
                 <div
                   className={`mb-6 p-6 rounded-lg text-center ${result.won
-                      ? "bg-green-900/20 border border-green-500"
-                      : "bg-red-900/20 border border-red-500"
+                    ? "bg-green-900/20 border border-green-500"
+                    : "bg-red-900/20 border border-red-500"
                     }`}
                 >
                   <div className="text-6xl font-bold mb-2">

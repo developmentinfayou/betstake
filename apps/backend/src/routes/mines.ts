@@ -117,7 +117,7 @@ router.post('/reveal', authenticate, async (req: AuthRequest, res) => {
     const minesGame = new MinesGame(gameConfig);
     const safeTilesRevealed = session.revealedTiles.filter(t => !session.grid[t]).length;
     const multiplier = (minesGame as any).calculateMultiplier(session.gridSize, session.minesCount, safeTilesRevealed);
-    
+
     session.currentMultiplier = multiplier;
     await session.save();
 
@@ -144,7 +144,7 @@ router.post('/random-reveal', authenticate, async (req: AuthRequest, res) => {
 
     const allTiles = Array.from({ length: session.gridSize }, (_, i) => i);
     const unopenedTiles = allTiles.filter(i => !session.revealedTiles.includes(i));
-    
+
     if (unopenedTiles.length === 0) {
       return res.status(400).json({ error: 'No tiles left to reveal' });
     }
@@ -191,7 +191,7 @@ router.post('/random-reveal', authenticate, async (req: AuthRequest, res) => {
     const minesGame = new MinesGame(gameConfig);
     const safeTilesRevealed = session.revealedTiles.filter(t => !session.grid[t]).length;
     const multiplier = (minesGame as any).calculateMultiplier(session.gridSize, session.minesCount, safeTilesRevealed);
-    
+
     session.currentMultiplier = multiplier;
     await session.save();
 
@@ -267,17 +267,60 @@ router.post('/cashout', authenticate, async (req: AuthRequest, res) => {
   }
 });
 
+// Get active session for recovery on page refresh
+router.get('/active-session', authenticate, async (req: AuthRequest, res) => {
+  try {
+    const session = await MinesSession.findOne({ userId: req.userId, active: true });
+    if (!session) {
+      return res.json({ hasActiveSession: false });
+    }
+
+    res.json({
+      hasActiveSession: true,
+      sessionId: session._id,
+      revealedTiles: session.revealedTiles,
+      currentMultiplier: session.currentMultiplier,
+      minesCount: session.minesCount,
+      gridSize: session.gridSize,
+      betAmount: session.betAmount,
+      currency: session.currency,
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+// Legacy cleanup — clears stale sessions
+
 router.post('/cleanup', authenticate, async (req: AuthRequest, res) => {
   try {
     const activeSession = await MinesSession.findOne({ userId: req.userId, active: true });
-    
+
     if (activeSession) {
       activeSession.active = false;
       await activeSession.save();
-      
-      // Unlock seed when session is cleaned up
+
+      const bet = await Bet.create({
+        userId: req.userId,
+        gameType: 'MINES',
+        currency: activeSession.currency,
+        amount: activeSession.betAmount,
+        multiplier: 0,
+        payout: 0,
+        profit: -activeSession.betAmount,
+        won: false,
+        seedPairId: activeSession.seedPairId,
+        nonce: activeSession.nonce,
+        gameData: { minesCount: activeSession.minesCount, revealedTiles: activeSession.revealedTiles },
+        result: { forfeited: true, cleanedUp: true },
+      });
+
+      activeSession.betId = bet._id;
+      await activeSession.save();
+
       await SeedManager.unlockSeedAfterGame(activeSession._id.toString());
-      
+
       res.json({ message: 'Active session cleaned up', sessionId: activeSession._id });
     } else {
       res.json({ message: 'No active session found' });

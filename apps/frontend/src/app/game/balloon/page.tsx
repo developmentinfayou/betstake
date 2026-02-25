@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { betAPI, walletAPI } from "@/lib/api";
+import { useActiveGameGuard } from "@/hooks/useActiveGameGuard";
+import ActiveGameBlocker from "@/components/games/ActiveGameBlocker";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAutoBetSocket } from "@/hooks/useAutoBetSocket";
@@ -35,6 +37,7 @@ export default function BalloonPage() {
     wagered: 0,
   });
   const [autoBetActive, setAutoBetActive] = useState(false);
+  const { isBlocked, blockedByGame } = useActiveGameGuard({ currentGameType: 'BALLOON', autoBetActive });
   const [fairnessModalOpen, setFairnessModalOpen] = useState(false);
   const [userId, setUserId] = useState<string>();
 
@@ -177,6 +180,9 @@ export default function BalloonPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {isBlocked && blockedByGame && (
+          <ActiveGameBlocker gameType={blockedByGame.gameType} betAmount={blockedByGame.betAmount} />
+        )}
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="card">
@@ -184,11 +190,10 @@ export default function BalloonPage() {
 
               {result && (
                 <div
-                  className={`mb-6 p-6 rounded-lg text-center ${
-                    result.won
+                  className={`mb-6 p-6 rounded-lg text-center ${result.won
                       ? "bg-green-900/20 border border-green-500"
                       : "bg-red-900/20 border border-red-500"
-                  }`}
+                    }`}
                 >
                   <div className="text-6xl font-bold mb-2">🎈</div>
                   <div className="text-2xl mb-2">
@@ -214,14 +219,14 @@ export default function BalloonPage() {
             <div className="card">
               <BetModeSelector mode={betMode} onChange={setBetMode} showStrategy={true} />
               {betMode === 'manual' && (
-                <ManualBetControls 
-                  amount={amount} 
-                  balance={balance} 
-                  onAmountChange={setAmount} 
-                  onBet={placeBet} 
-                  disabled={autoBetActive} 
-                  loading={loading} 
-                  multiplier={gameParams.pumpMode === 'custom' ? gameParams.targetMultiplier : gameParams.pumpMode === 'specific' ? 1 + (gameParams.targetPumps * 0.05) : 2.0} 
+                <ManualBetControls
+                  amount={amount}
+                  balance={balance}
+                  onAmountChange={setAmount}
+                  onBet={placeBet}
+                  disabled={autoBetActive}
+                  loading={loading}
+                  multiplier={gameParams.pumpMode === 'custom' ? gameParams.targetMultiplier : gameParams.pumpMode === 'specific' ? 1 + (gameParams.targetPumps * 0.05) : 2.0}
                 />
               )}
               {betMode === "auto" && (

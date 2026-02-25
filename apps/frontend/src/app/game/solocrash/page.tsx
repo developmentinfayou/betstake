@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { betAPI, walletAPI } from "@/lib/api";
+import { useActiveGameGuard } from "@/hooks/useActiveGameGuard";
+import ActiveGameBlocker from "@/components/games/ActiveGameBlocker";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAutoBetSocket } from "@/hooks/useAutoBetSocket";
@@ -33,6 +35,7 @@ export default function SoloCrashPage() {
     wagered: 0,
   });
   const [autoBetActive, setAutoBetActive] = useState(false);
+  const { isBlocked, blockedByGame } = useActiveGameGuard({ currentGameType: 'SOLO_CRASH', autoBetActive });
   const [fairnessModalOpen, setFairnessModalOpen] = useState(false);
   const [userId, setUserId] = useState<string>();
 
@@ -175,6 +178,9 @@ export default function SoloCrashPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {isBlocked && blockedByGame && (
+          <ActiveGameBlocker gameType={blockedByGame.gameType} betAmount={blockedByGame.betAmount} />
+        )}
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="card">
@@ -183,8 +189,8 @@ export default function SoloCrashPage() {
               {result && (
                 <div
                   className={`mb-6 p-6 rounded-lg text-center ${result.won
-                      ? "bg-green-900/20 border border-green-500"
-                      : "bg-red-900/20 border border-red-500"
+                    ? "bg-green-900/20 border border-green-500"
+                    : "bg-red-900/20 border border-red-500"
                     }`}
                 >
                   <div className="text-6xl font-bold mb-2">

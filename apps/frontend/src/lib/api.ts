@@ -121,16 +121,38 @@ export const minesAPI = {
     api.post('/mines/cashout', data),
   cleanup: () =>
     api.post('/mines/cleanup'),
+  getActiveSession: () =>
+    api.get('/mines/active-session'),
+};
+
+// CoinFlip API (session-based)
+export const coinflipAPI = {
+  start: (data: { betAmount: number; currency: string }) =>
+    api.post('/coinflip/start', data),
+  pick: (data: { sessionId: string; choice: 'heads' | 'tails' }) =>
+    api.post('/coinflip/pick', data),
+  cashout: (data: { sessionId: string }) =>
+    api.post('/coinflip/cashout', data),
+  getActiveSession: () =>
+    api.get('/coinflip/active-session'),
+  cleanup: () =>
+    api.post('/coinflip/cleanup'),
 };
 
 // Tower API
 export const towerAPI = {
-  start: (data: { floors: number; betAmount: number; currency: string }) =>
+  start: (data: { difficulty: string; betAmount: number; currency: string }) =>
     api.post('/tower/start', data),
   reveal: (data: { sessionId: string; tileIndex: number }) =>
     api.post('/tower/reveal', data),
   cashout: (data: { sessionId: string }) =>
     api.post('/tower/cashout', data),
+  getConfig: () =>
+    api.get('/tower/config'),
+  getMultipliers: (difficulty: string) =>
+    api.get(`/tower/multipliers/${difficulty}`),
+  getActiveSession: () =>
+    api.get('/tower/active-session'),
 };
 
 // Stairs API
@@ -141,6 +163,8 @@ export const stairsAPI = {
     api.post('/stairs/reveal', data),
   cashout: (data: { sessionId: string }) =>
     api.post('/stairs/cashout', data),
+  getActiveSession: () =>
+    api.get('/stairs/active-session'),
 };
 
 // HiLo API
@@ -155,6 +179,10 @@ export const hiloAPI = {
     api.get(`/hilo/probabilities/${currentCard}`, {
       params: { cardHistory: JSON.stringify(cardHistory) }
     }),
+  getActiveSession: () =>
+    api.get('/hilo/active-session'),
+  clearSession: () =>
+    api.delete('/hilo/session'),
 };
 
 // Blackjack API
@@ -167,6 +195,15 @@ export const blackjackAPI = {
     api.post('/blackjack/stand', data),
   double: (data: { sessionId: string }) =>
     api.post('/blackjack/double', data),
+  split: (data: { sessionId: string }) =>
+    api.post('/blackjack/split', data),
+  getActiveSession: () =>
+    api.get('/blackjack/active-session'),
+};
+
+// Active Sessions API (cross-game)
+export const activeSessionsAPI = {
+  check: () => api.get('/active-sessions'),
 };
 
 // Verification API (client-side only, no auth needed)

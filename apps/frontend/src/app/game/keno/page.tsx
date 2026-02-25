@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { betAPI, walletAPI } from "@/lib/api";
+import { useActiveGameGuard } from "@/hooks/useActiveGameGuard";
+import ActiveGameBlocker from "@/components/games/ActiveGameBlocker";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAutoBetSocket } from "@/hooks/useAutoBetSocket";
@@ -8,13 +10,13 @@ import ManualBetControls from "@/components/betting/ManualBetControls";
 import AutoBetControls, {
   AutoBetConfig,
 } from "@/components/betting/AutoBetControls";
-import StrategySelector from "@/components/betting/StrategySelector";
+
 import KenoGameControls, {
   KenoGameParams,
 } from "@/components/games/keno/KenoGameControls";
 import FairnessModal from "@/components/games/FairnessModal";
 
-type BetMode = "manual" | "auto" | "strategy";
+type BetMode = "manual" | "auto";
 
 export default function KenoPage() {
   const [betMode, setBetMode] = useState<BetMode>("manual");
@@ -33,6 +35,7 @@ export default function KenoPage() {
     wagered: 0,
   });
   const [autoBetActive, setAutoBetActive] = useState(false);
+  const { isBlocked, blockedByGame } = useActiveGameGuard({ currentGameType: 'KENO', autoBetActive });
   const [fairnessModalOpen, setFairnessModalOpen] = useState(false);
   const [userId, setUserId] = useState<string>();
 
@@ -215,6 +218,9 @@ export default function KenoPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {isBlocked && blockedByGame && (
+          <ActiveGameBlocker gameType={blockedByGame.gameType} betAmount={blockedByGame.betAmount} />
+        )}
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="card">
@@ -223,8 +229,8 @@ export default function KenoPage() {
               {result && (
                 <div
                   className={`mb-6 p-6 rounded-lg ${result.multiplier > 0
-                      ? "bg-green-900/20 border border-green-500"
-                      : "bg-red-900/20 border border-red-500"
+                    ? "bg-green-900/20 border border-green-500"
+                    : "bg-red-900/20 border border-red-500"
                     }`}
                 >
                   <div className="text-center mb-3">
@@ -251,8 +257,8 @@ export default function KenoPage() {
                       <div
                         key={num}
                         className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold ${result.matchedNumbers.includes(num)
-                            ? "bg-green-500 text-white"
-                            : "bg-gray-700"
+                          ? "bg-green-500 text-white"
+                          : "bg-gray-700"
                           }`}
                       >
                         {num}
@@ -273,8 +279,7 @@ export default function KenoPage() {
             <div className="card">
               <BetModeSelector
                 mode={betMode}
-                onChange={setBetMode}
-                showStrategy={true}
+                onChange={(m) => setBetMode(m as BetMode)}
               />
 
               {betMode === "manual" && (
@@ -301,17 +306,7 @@ export default function KenoPage() {
                 />
               )}
 
-              {betMode === "strategy" && (
-                <StrategySelector
-                  amount={amount}
-                  balance={balance}
-                  onAmountChange={setAmount}
-                  onStart={handleStartAutoBet}
-                  onStop={handleStopAutoBet}
-                  isActive={autoBetActive}
-                  disabled={loading || amount <= 0 || amount > balance}
-                />
-              )}
+
             </div>
 
             {autoBetActive && (
