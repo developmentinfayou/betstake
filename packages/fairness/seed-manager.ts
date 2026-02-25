@@ -79,7 +79,7 @@ export class SeedManager {
   static async lockSeedForGame(userId: string, gameSessionId: string) {
     const seedPair = await SeedPair.findOne({ userId, isActive: true });
     if (!seedPair) throw new Error('No active seed pair found');
-    
+
     seedPair.activeGameSession = gameSessionId;
     await seedPair.save();
     return seedPair;
@@ -99,12 +99,11 @@ export class SeedManager {
    * Check if user has active game session
    */
   static async hasActiveGameSession(userId: string): Promise<boolean> {
-    const seedPair = await SeedPair.findOne({ 
-      userId, 
-      isActive: true, 
-      activeGameSession: { $exists: true } 
+    const seedPair = await SeedPair.findOne({
+      userId,
+      isActive: true,
     });
-    return !!seedPair;
+    return !!(seedPair && seedPair.activeGameSession);
   }
 
   /**

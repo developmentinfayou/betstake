@@ -8,7 +8,7 @@ router.get('/active', authenticate, async (req: AuthRequest, res) => {
   try {
     const seedPair = await SeedManager.getActiveSeedPair(req.userId!);
     const hasActiveGame = await SeedManager.hasActiveGameSession(req.userId!);
-    
+
     res.json({
       serverSeedHash: seedPair.serverSeedHash,
       clientSeed: seedPair.clientSeed,
@@ -53,6 +53,7 @@ router.post('/rotate', authenticate, async (req: AuthRequest, res) => {
       },
     });
   } catch (error: any) {
+    console.error('[Seed Rotate Error]', error.message);
     res.status(500).json({ error: error.message });
   }
 });

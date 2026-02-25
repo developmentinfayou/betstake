@@ -3,6 +3,10 @@ import crypto from 'crypto';
 /**
  * Stake-Compatible Game Verifier
  * Reconstructs game results from seed data for all games
+ * 
+ * IMPORTANT: This verifier MUST exactly mirror the RNG calls made by each
+ * game engine in packages/game-engine/games/. Any divergence will cause
+ * verification mismatches.
  */
 
 export interface VerificationInput {
@@ -27,7 +31,7 @@ function generateHmac(serverSeed: string, clientSeed: string, nonce: number, rou
   return crypto.createHmac('sha256', serverSeed).update(message).digest('hex');
 }
 
-// Generate bytes using cursor system
+// Generate bytes using cursor system (matches rng.ts byteGenerator exactly)
 function generateBytes(serverSeed: string, clientSeed: string, nonce: number, count: number, cursor: number = 0): Buffer {
   const bytes: number[] = [];
   let currentCursor = cursor;
@@ -47,7 +51,7 @@ function generateBytes(serverSeed: string, clientSeed: string, nonce: number, co
   return Buffer.from(bytes);
 }
 
-// Generate floats from bytes
+// Generate floats from bytes (matches rng.ts generateFloats exactly)
 function generateFloats(serverSeed: string, clientSeed: string, nonce: number, count: number, cursor: number = 0): number[] {
   const bytes = generateBytes(serverSeed, clientSeed, nonce, count * 4, cursor);
   const floats: number[] = [];
@@ -60,21 +64,41 @@ function generateFloats(serverSeed: string, clientSeed: string, nonce: number, c
   return floats;
 }
 
-// Fisher-Yates shuffle
+// Generate a single float (matches rng.ts generateFloat)
+function generateFloat(serverSeed: string, clientSeed: string, nonce: number, cursor: number = 0): number {
+  return generateFloats(serverSeed, clientSeed, nonce, 1, cursor)[0];
+}
+
+// Generate random integer in range [min, max] inclusive (matches rng.ts generateInt)
+function generateInt(serverSeed: string, clientSeed: string, nonce: number, min: number, max: number, cursor: number = 0): number {
+  const float = generateFloat(serverSeed, clientSeed, nonce, cursor);
+  return Math.floor(float * (max - min + 1)) + min;
+}
+
+/**
+ * Fisher-Yates shuffle (matches rng.ts shuffle EXACTLY)
+ * Uses floats[i] indexing — NOT floats[length-1-i]
+ */
 function shuffle<T>(array: T[], floats: number[]): T[] {
   const result = [...array];
   for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(floats[result.length - 1 - i] * (i + 1));
+    const j = Math.floor(floats[i] * (i + 1));
     [result[i], result[j]] = [result[j], result[i]];
   }
   return result;
 }
 
-// DICE
+// ============================================================================
+// GAME VERIFIERS
+// Each verifier mirrors the exact RNG calls from its game engine counterpart
+// ============================================================================
+
+// DICE — matches games/dice/index.ts
+// Uses: generateFloat with cursor=0
 function verifyDice(input: VerificationInput): VerificationResult {
   const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, 1, 0);
   const roll = Math.floor(floats[0] * 10001) / 100;
-  
+
   return {
     gameType: 'DICE',
     result: { roll: parseFloat(roll.toFixed(2)) },
@@ -84,14 +108,15 @@ function verifyDice(input: VerificationInput): VerificationResult {
   };
 }
 
-// LIMBO
+// LIMBO — matches games/limbo/index.ts
+// Uses: generateFloat with cursor=0, Stake formula: (1/float) * houseEdge
 function verifyLimbo(input: VerificationInput): VerificationResult {
   const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, 1, 0);
   const houseEdge = 0.99;
   const floatPoint = (1 / floats[0]) * houseEdge;
   const crashPoint = Math.floor(floatPoint * 100) / 100;
   const result = Math.max(crashPoint, 1.00);
-  
+
   return {
     gameType: 'LIMBO',
     result: { crashPoint: parseFloat(result.toFixed(2)) },
@@ -101,66 +126,74 @@ function verifyLimbo(input: VerificationInput): VerificationResult {
   };
 }
 
-// MINES
+// MINES — matches games/mines/index.ts
+// Uses: shuffle with cursor=3, shuffles boolean array [true...false]
 function verifyMines(input: VerificationInput): VerificationResult {
   const gridSize = input.gameParams?.gridSize || 25;
   const minesCount = input.gameParams?.minesCount || 5;
-  
-  const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, gridSize, 0);
-  
-  const positions = Array.from({ length: gridSize }, (_, i) => i);
-  const shuffled = shuffle(positions, floats);
-  
-  const grid = Array(gridSize).fill(false);
+
+  // Game engine uses cursor: 3 for Mines
+  const cursor = 3;
+  const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, gridSize, cursor);
+
+  // Game engine shuffles a boolean array: [true, true, ..., false, false, ...]
+  const tiles: boolean[] = Array(gridSize).fill(false);
   for (let i = 0; i < minesCount; i++) {
-    grid[shuffled[i]] = true;
+    tiles[i] = true;
   }
-  
+
+  // Fisher-Yates shuffle (same as rng.ts shuffle)
+  const grid = shuffle(tiles, floats);
+
   const minePositions = grid.map((isMine, idx) => isMine ? idx : -1).filter(x => x >= 0);
-  
+
   return {
     gameType: 'MINES',
     result: { grid, minePositions, gridSize, minesCount },
     floats: floats.slice(0, 10),
     hmac: generateHmac(input.serverSeed, input.clientSeed, input.nonce, 0),
-    explanation: `Mine positions: [${minePositions.join(', ')}] (${minesCount} mines in ${gridSize} tiles)`
+    explanation: `Mine positions: [${minePositions.join(', ')}] (${minesCount} mines in ${gridSize} tiles, cursor=${cursor})`
   };
 }
 
-// KENO
+// KENO — matches games/keno/index.ts
+// Uses: shuffle with cursor=2
 function verifyKeno(input: VerificationInput): VerificationResult {
-  const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, 40, 0);
-  
-  const numbers = Array.from({ length: 40 }, (_, i) => i + 1);
-  const shuffled = shuffle(numbers, floats);
+  // Game engine uses cursor: 2 for Keno
+  const cursor = 2;
+  const allNumbers = Array.from({ length: 40 }, (_, i) => i + 1);
+  const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, 40, cursor);
+  const shuffled = shuffle(allNumbers, floats);
   const drawnNumbers = shuffled.slice(0, 10).sort((a, b) => a - b);
-  
+
   return {
     gameType: 'KENO',
     result: { drawnNumbers },
     floats: floats.slice(0, 10),
     hmac: generateHmac(input.serverSeed, input.clientSeed, input.nonce, 0),
-    explanation: `Drawn numbers: [${drawnNumbers.join(', ')}]`
+    explanation: `Drawn numbers: [${drawnNumbers.join(', ')}] (cursor=${cursor})`
   };
 }
 
-// PLINKO
+// PLINKO — matches games/plinko/index.ts
+// Uses: generateFloats with cursor=0, float < 0.5 = left, else right
 function verifyPlinko(input: VerificationInput): VerificationResult {
   const rows = input.gameParams?.rows || 12;
   const superMode = input.gameParams?.superMode || false;
   const payoutSeed = input.gameParams?.payoutSeed;
-  
+
+  // Game engine uses cursor: 0 for Plinko
   const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, rows, 0);
-  
+
   const path = floats.map(f => f < 0.5 ? 0 : 1);
   const finalSlot = path.reduce((sum, dir) => sum + dir, 0);
-  
+
   let explanation = `Path: ${path.map(d => d === 0 ? 'L' : 'R').join('')} → Slot ${finalSlot}`;
-  
+
   if (superMode && payoutSeed) {
     explanation += ` | Super Mode with payout seed: ${payoutSeed}`;
   }
-  
+
   return {
     gameType: 'PLINKO',
     result: { path, finalSlot, rows, superMode, payoutSeed },
@@ -170,11 +203,13 @@ function verifyPlinko(input: VerificationInput): VerificationResult {
   };
 }
 
-// ROULETTE
+// ROULETTE — matches games/roulette/index.ts
+// Uses: generateInt(seedData, 0, 36) with cursor=0
 function verifyRoulette(input: VerificationInput): VerificationResult {
   const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, 1, 0);
+  // generateInt(seedData, 0, 36) = floor(float * 37)
   const pocket = Math.floor(floats[0] * 37);
-  
+
   return {
     gameType: 'ROULETTE',
     result: { pocket },
@@ -184,12 +219,14 @@ function verifyRoulette(input: VerificationInput): VerificationResult {
   };
 }
 
-// WHEEL
+// WHEEL — matches games/wheel/index.ts
+// Uses: generateInt(seedData, 0, segments-1) with cursor=0
+// generateInt(seed, 0, segments-1) = floor(float * ((segments-1) - 0 + 1)) + 0 = floor(float * segments)
 function verifyWheel(input: VerificationInput): VerificationResult {
   const segments = input.gameParams?.segments || 10;
   const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, 1, 0);
   const segment = Math.floor(floats[0] * segments);
-  
+
   return {
     gameType: 'WHEEL',
     result: { segment, segments },
@@ -199,11 +236,12 @@ function verifyWheel(input: VerificationInput): VerificationResult {
   };
 }
 
-// COINFLIP
+// COINFLIP — matches games/coinflip/index.ts
+// Uses: generateFloat with cursor=0
 function verifyCoinFlip(input: VerificationInput): VerificationResult {
   const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, 1, 0);
   const result = floats[0] < 0.5 ? 'heads' : 'tails';
-  
+
   return {
     gameType: 'COINFLIP',
     result: { result },
@@ -213,12 +251,23 @@ function verifyCoinFlip(input: VerificationInput): VerificationResult {
   };
 }
 
-// FASTPARITY
+// FASTPARITY — matches games/fastparity/index.ts
+// Uses: generateInt(seedData, 0, 9) with cursor=0
 function verifyFastParity(input: VerificationInput): VerificationResult {
   const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, 1, 0);
+  // generateInt(seedData, 0, 9) = floor(float * 10)
   const number = Math.floor(floats[0] * 10);
-  const color = number === 0 ? 'green' : (number % 2 === 0 ? 'violet' : 'red');
-  
+
+  // Color mapping from game engine
+  let color: string;
+  if (number === 0 || number === 5) {
+    color = 'violet';
+  } else if ([1, 3, 7, 9].includes(number)) {
+    color = 'green';
+  } else {
+    color = 'red';
+  }
+
   return {
     gameType: 'FASTPARITY',
     result: { number, color },
@@ -228,13 +277,14 @@ function verifyFastParity(input: VerificationInput): VerificationResult {
   };
 }
 
-// CRASH / SOLOCRASH / RUSH
+// CRASH / SOLOCRASH / RUSH — matches games/crash/index.ts & games/solocrash/index.ts
+// Uses: generateFloat with cursor=0
 function verifyCrash(input: VerificationInput): VerificationResult {
   const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, 1, 0);
   const houseEdge = 0.99;
   const crashPoint = Math.max(1.01, (99 * houseEdge) / (100 * floats[0]));
   const result = Math.min(parseFloat(crashPoint.toFixed(2)), 10000);
-  
+
   return {
     gameType: input.gameType,
     result: { crashPoint: result },
@@ -244,12 +294,13 @@ function verifyCrash(input: VerificationInput): VerificationResult {
   };
 }
 
-// BALLOON
+// BALLOON — matches games/balloon/index.ts
+// Uses: generateFloat with cursor=0
 function verifyBalloon(input: VerificationInput): VerificationResult {
   const maxPumps = input.gameParams?.maxPumps || 100;
   const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, 1, 0);
   const burstAt = Math.floor(floats[0] * maxPumps) + 1;
-  
+
   return {
     gameType: 'BALLOON',
     result: { burstAt, maxPumps },
@@ -259,114 +310,140 @@ function verifyBalloon(input: VerificationInput): VerificationResult {
   };
 }
 
-// TOWER
+// TOWER — matches games/tower/index.ts
+// Uses: shuffle with cursor=3, nonce + floor for each floor
 function verifyTower(input: VerificationInput): VerificationResult {
   const floors = input.gameParams?.floors || 8;
+  const cursor = 3;
   const totalTiles = floors * 3;
-  
-  const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, totalTiles, 0);
   const grid = Array(totalTiles).fill(false);
-  
+  const allFloats: number[] = [];
+
+  // Game engine creates per-floor shuffle: shuffle([0,1,2], { cursor: 3, nonce: nonce + floor })
   for (let floor = 0; floor < floors; floor++) {
-    const floorFloats = floats.slice(floor * 3, (floor + 1) * 3);
+    const floorNonce = input.nonce + floor;
+    const floorFloats = generateFloats(input.serverSeed, input.clientSeed, floorNonce, 3, cursor);
+    allFloats.push(...floorFloats);
+
     const positions = [0, 1, 2];
     const shuffled = shuffle(positions, floorFloats);
-    
+
+    // First 2 positions in shuffled result are danger
     grid[floor * 3 + shuffled[0]] = true;
     grid[floor * 3 + shuffled[1]] = true;
   }
-  
+
   const dangerPositions = grid.map((isDanger, idx) => isDanger ? idx : -1).filter(x => x >= 0);
-  
+
   return {
     gameType: 'TOWER',
     result: { grid, dangerPositions, floors },
-    floats: floats.slice(0, 10),
+    floats: allFloats.slice(0, 10),
     hmac: generateHmac(input.serverSeed, input.clientSeed, input.nonce, 0),
-    explanation: `Danger positions: [${dangerPositions.join(', ')}] (${floors} floors, 2 dangers per floor)`
+    explanation: `Danger positions: [${dangerPositions.join(', ')}] (${floors} floors, 2 dangers per floor, cursor=${cursor})`
   };
 }
 
-// STAIRS
+// STAIRS — matches games/stairs/index.ts
+// Uses: shuffle with cursor=3, nonce + step for each step
 function verifyStairs(input: VerificationInput): VerificationResult {
   const steps = input.gameParams?.steps || 8;
+  const cursor = 3;
   const totalTiles = steps * 2;
-  
-  const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, totalTiles, 0);
   const grid = Array(totalTiles).fill(false);
-  
+  const allFloats: number[] = [];
+
+  // Game engine creates per-step shuffle: shuffle([0,1], { cursor: 3, nonce: nonce + step })
   for (let step = 0; step < steps; step++) {
-    const stepFloats = floats.slice(step * 2, (step + 1) * 2);
+    const stepNonce = input.nonce + step;
+    const stepFloats = generateFloats(input.serverSeed, input.clientSeed, stepNonce, 2, cursor);
+    allFloats.push(...stepFloats);
+
     const positions = [0, 1];
     const shuffled = shuffle(positions, stepFloats);
-    
+
+    // First position in shuffled result is danger
     grid[step * 2 + shuffled[0]] = true;
   }
-  
+
   const dangerPositions = grid.map((isDanger, idx) => isDanger ? idx : -1).filter(x => x >= 0);
-  
+
   return {
     gameType: 'STAIRS',
     result: { grid, dangerPositions, steps },
-    floats: floats.slice(0, 10),
+    floats: allFloats.slice(0, 10),
     hmac: generateHmac(input.serverSeed, input.clientSeed, input.nonce, 0),
-    explanation: `Danger positions: [${dangerPositions.join(', ')}] (${steps} steps, 1 danger per step)`
+    explanation: `Danger positions: [${dangerPositions.join(', ')}] (${steps} steps, 1 danger per step, cursor=${cursor})`
   };
 }
 
-// HILO
+// HILO — matches games/hilo/index.ts
+// Uses: generateInt with cursor=13, nonce offsets for current card and suit
 function verifyHiLo(input: VerificationInput): VerificationResult {
-  const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, 2, 0);
-  const currentCard = Math.floor(floats[0] * 13) + 1;
-  const nextCard = Math.floor(floats[1] * 13) + 1;
-  
+  const cursor = 13;
+
+  // Game engine: nextCard = generateInt(hiloSeedData, 1, 13) with cursor=13
+  // generateInt(seed, 1, 13) = floor(float * 13) + 1
+  const nextCardFloat = generateFloat(input.serverSeed, input.clientSeed, input.nonce, cursor);
+  const nextCard = Math.floor(nextCardFloat * 13) + 1;
+
+  // currentCard = generateInt({ nonce: nonce + 1 }, 1, 13) with cursor=13
+  const currentCardFloat = generateFloat(input.serverSeed, input.clientSeed, input.nonce + 1, cursor);
+  const currentCard = Math.floor(currentCardFloat * 13) + 1;
+
   return {
     gameType: 'HILO',
     result: { currentCard, nextCard },
-    floats,
+    floats: [nextCardFloat, currentCardFloat],
     hmac: generateHmac(input.serverSeed, input.clientSeed, input.nonce, 0),
-    explanation: `Current: ${currentCard}, Next: ${nextCard}`
+    explanation: `Current: ${currentCard}, Next: ${nextCard} (cursor=${cursor})`
   };
 }
 
-// BLACKJACK
+// BLACKJACK — matches games/blackjack/index.ts
+// Uses: shuffle with cursor=13 on 6-deck (312 cards)
 function verifyBlackjack(input: VerificationInput): VerificationResult {
-  const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, 52, 0);
-  
-  const cards = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+  const cursor = 13;
+
   const suits = ['♠', '♥', '♦', '♣'];
+  const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
   const deck: string[] = [];
-  
+
+  // Game engine builds 6-deck shoe
   for (let i = 0; i < 6; i++) {
     for (const suit of suits) {
-      for (const card of cards) {
-        deck.push(`${card}${suit}`);
+      for (const rank of ranks) {
+        deck.push(`${rank}${suit}`);
       }
     }
   }
-  
-  const positions = Array.from({ length: deck.length }, (_, i) => i);
-  const shuffled = shuffle(positions, floats);
-  
-  const dealtCards = shuffled.slice(0, 4).map(idx => deck[idx]);
-  
+
+  // Game engine: shuffle(deck, { ...seedData, cursor: 13 })
+  // rng.ts shuffle generates deck.length floats internally
+  const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, deck.length, cursor);
+  const shuffledDeck = shuffle(deck, floats);
+
+  // Deal: player gets [0], [2]; dealer gets [1], [3]
+  const playerCards = [shuffledDeck[0], shuffledDeck[2]];
+  const dealerCards = [shuffledDeck[1], shuffledDeck[3]];
+
   return {
     gameType: 'BLACKJACK',
-    result: { 
-      playerCards: [dealtCards[0], dealtCards[2]], 
-      dealerCards: [dealtCards[1], dealtCards[3]],
-      deck: dealtCards
+    result: {
+      playerCards,
+      dealerCards,
+      deck: [shuffledDeck[0], shuffledDeck[1], shuffledDeck[2], shuffledDeck[3]]
     },
     floats: floats.slice(0, 10),
     hmac: generateHmac(input.serverSeed, input.clientSeed, input.nonce, 0),
-    explanation: `Player: [${dealtCards[0]}, ${dealtCards[2]}], Dealer: [${dealtCards[1]}, ${dealtCards[3]}]`
+    explanation: `Player: [${playerCards.join(', ')}], Dealer: [${dealerCards.join(', ')}] (cursor=${cursor})`
   };
 }
 
 // Main verifier function
 export function verifyGame(input: VerificationInput): VerificationResult {
   const gameType = input.gameType.toUpperCase();
-  
+
   switch (gameType) {
     case 'DICE':
       return verifyDice(input);
