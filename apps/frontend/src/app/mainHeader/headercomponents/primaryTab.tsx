@@ -116,46 +116,48 @@ const PrimaryTab = () => {
   const { pathname } = useLocation();
   return (
     <nav
-      className="inline-flex  items-start p-[6px] gap-[12px] bg-[#73ffd70f] h-[41px] w-[326px] rounded overflow-hidden"
-      role="navigation"
-      aria-label="Main navigation"
-    >
-      <div
-        className="absolute top-[6px] left-[234px] h-[29px] w-[102px] 
+    className="inline-flex  items-start p-[6px] gap-[12px] bg-[#73ffd70f] h-[41px] w-[326px] rounded overflow-hidden"
+    role="navigation"
+    aria-label="Main navigation"
+  >
+    <div
+      className="absolute top-[6px] left-[234px] h-[29px] w-[102px] 
 bg-[#ffffff0f] rounded transition-all duration-500 ease-in-out"
-        style={{
-          transform: `translateX(${activeTab == "dashboard" ? 0 : activeTab == "casino" ? 104 : 210
-            }px)`,
-        }}
-      />
+      style={{
+        transform: `translateX(${
+          activeTab == "dashboard" ? 0 : activeTab == "casino" ? 104 : 210
+        }px)`,
+      }}
+    />
 
-      {navItems?.map((item, i) => {
-        const isActive = activeTab === item.id;
-        return (
-          <button
-            onMouseEnter={() => !isActive && setHover(item.id)}
-            onMouseLeave={() => setHover("")}
-            key={item.id}
-            onClick={() => setActiveTab(item.id)}
-            className={` inline-flex group items-center w-[102px] h-[29px] gap-1.5 px-3 py-1.5 rounded`}
-            aria-current={isActive ? "page" : undefined}
-            type="button"
+    {navItems?.map((item, i) => {
+      const isActive = activeTab === item.id;
+      return (
+        <button
+          onMouseEnter={() => !isActive && setHover(item.id)}
+          onMouseLeave={() => setHover("")}
+          key={item.id}
+          onClick={() => setActiveTab(item.id)}
+          className={` inline-flex group items-center w-[102px] h-[29px] gap-1.5 px-3 py-1.5 rounded`}
+          aria-current={isActive ? "page" : undefined}
+          type="button"
+        >
+          {hover === item.id && !isActive && (
+            <div className="absolute w-10 h-10 bg-[#73FFD7] rounded-full blur-xl opacity-50" />
+          )}
+
+          {renderNavIcon(item.id, isActive, item.icon)}
+          <span
+            className={` text-sm tracking-[1.12px] ${
+              isActive ? "text-white" : "text-[#828282]"
+            }`}
           >
-            {hover === item.id && !isActive && (
-              <div className="absolute w-10 h-10 bg-[#73FFD7] rounded-full blur-xl opacity-50" />
-            )}
-
-            {renderNavIcon(item.id, isActive, item.icon)}
-            <span
-              className={` text-sm tracking-[1.12px] ${isActive ? "text-white" : "text-[#828282]"
-                }`}
-            >
-              {item.label}
-            </span>
-          </button>
-        );
-      })}
-    </nav>
+            {item.label}
+          </span>
+        </button>
+      );
+    })}
+  </nav>
   );
 };
 

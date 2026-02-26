@@ -71,13 +71,17 @@ const Maingames = () => {
       ];
 
   return (
-    <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_385px]">
+    <section className="mt-8 grid gap-6 lg:grid-cols-[1fr_385px] mx-[32px]">
     {/* LEFT: games */}
     <div className="mt-8">
       {/* search/filter row */}
-      <div className="flex flex-wrapk items-center justify-between gap-4">
-        <div className="flex flex-wrapk items-center gap-4">
-          <div className="flex w-[291.57px] h-[26px] items-center gap-3 rounded border border-[#31313F] px-3">
+      <div className="flex flex-wrapk items-center gap-[295px] w-[1008px]">
+        <div className="flex flex-wrapk items-center gap-4 ">
+        
+       
+
+
+          <div className="flex w-[291.57px] h-[26px] flex-row items-center gap-3 rounded border border-[#31313F] px-[12px] py-[6px]">
             <img src="/images/search.svg" />
             <input
               placeholder="Search games..."
@@ -91,7 +95,7 @@ const Maingames = () => {
 
           <span className="text-xs text-[#AEAEAE]">
             Sort by:{" "}
-            <span className="text-[#FF4500] underline">
+            <span className="text-[#FF7643] underline">
               {" "}
               Players Count
             </span>
@@ -103,33 +107,37 @@ const Maingames = () => {
           </div>
 
           <div className="flex gap-1">
-            <button className=" py-1.5 px-2 w-[19px] h-[18px] bg-[#1a1c2e] text-white rounded hover:bg-white/50 transition">
+            <button className=" py-1.5 px-2 w-[19px] group h-[18px] bg-[#1a1c2e] text-white rounded hover:bg-white transition">
               <svg
                 width="4"
                 height="7"
                 viewBox="0 0 4 7"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                className="stroke-white group-hover:stroke-black transition-colors duration-300"
+
               >
                 <path
                   d="M3.5 6.5L0.5 3.5L3.5 0.5"
-                  stroke="#FEFEFE"
+                  strokeWidth="1.2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
                 />
               </svg>
             </button>
-            <button className="py-1.5 px-2 w-[19px] h-[18px] bg-[#1a1c2e] text-white hover:bg-white/50  rounded transition">
+            <button className=" py-1.5 px-2 w-[19px] group h-[18px] bg-[#1a1c2e] text-white rounded hover:bg-white transition">
               <svg
                 width="4"
                 height="7"
                 viewBox="0 0 4 7"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                className="stroke-white group-hover:stroke-black transition-colors duration-300"
+
               >
                 <path
                   d="M0.5 6.5L3.5 3.5L0.5 0.5"
-                  stroke="#FEFEFE"
+                  strokeWidth="1.2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
                 />
@@ -140,14 +148,14 @@ const Maingames = () => {
       </div>
 
       {/* games grid */}
-      <div className="mt-6 flex gap-1">
+      <div className="mt-6 flex gap-0 relative -left-3">
         {games?.map((g) => {
           const isLive = g.status === "live";
 
           return (
             <div key={g.id} className="relative w-[110px] h-[152px]">
               <Link
-                href={isLive ? `/game/${g.id}` : "#"}
+                to={isLive ? `/game/${g.id}` : "#"}
                 className="group absolute bottom-0 left-1/2 -translate-x-1/2
                w-[86px] h-[152px]"
               >
@@ -175,17 +183,56 @@ const Maingames = () => {
                       alt=""
                       className="
             h-full w-full object-cover
-            transition-all duration-100
-            group-hover:blur-[1px]
+            
           "
                     />
+
+
+  {/* TOP - 1px Blur */}
+  <img
+    src={g.image}
+    alt=""
+    className="
+      absolute inset-0 h-full w-full object-cover
+      opacity-0 group-hover:opacity-100
+      transition-all duration-100
+      blur-[1px]
+      [mask-image:linear-gradient(to_bottom,black_0%,black_33%,transparent_33%)]
+    "
+  />
+
+  {/* MIDDLE - 2px Blur */}
+  <img
+    src={g.image}
+    alt=""
+    className="
+      absolute inset-0 h-full w-full object-cover
+      opacity-0 group-hover:opacity-100
+      transition-all duration-100
+      blur-[2px]
+      [mask-image:linear-gradient(to_bottom,transparent_33%,black_33%,black_66%,transparent_66%)]
+    "
+  />
+
+  {/* BOTTOM - 3px Blur */}
+  <img
+    src={g.image}
+    alt=""
+    className="
+      absolute inset-0 h-full w-full object-cover
+      opacity-0 group-hover:opacity-100
+      transition-all duration-100
+      blur-[3px]
+      [mask-image:linear-gradient(to_bottom,transparent_66%,black_66%,black_100%)]
+    "
+  />
 
                     {/* DARK OVERLAY */}
                     <div
                       className="
             absolute inset-0 bg-black/20
             opacity-0 group-hover:opacity-100
-            transition-all duration-100
+            transition-all duration-300
           "
                     />
 
@@ -237,7 +284,7 @@ transition-all duration-100
                     >
                       <path
                         d="M10.3778 0.5C12.8433 0.5 14.5 2.735 14.5 4.82C14.5 9.0425 7.62444 12.5 7.5 12.5C7.37556 12.5 0.5 9.0425 0.5 4.82C0.5 2.735 2.15667 0.5 4.62222 0.5C6.03778 0.5 6.96333 1.1825 7.5 1.7825C8.03667 1.1825 8.96222 0.5 10.3778 0.5Z"
-                        stroke="#828282"
+                        stroke="#CECECE"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
@@ -344,10 +391,8 @@ transition-all duration-100
     <div className="">
       <TrendingText />
 
-      <p className=" text-xs text-[#B5B5C9] h-[70px]">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-        enim ad minim veniam, quis n...
+      <p className=" text-xs text-[#828282] h-[70px] w-[339px]">
+      ed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, atae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequun...
         <span className="ml-1 cursor-pointer text-[#FF9169] underline">
           see more
         </span>

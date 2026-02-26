@@ -38,17 +38,12 @@
   font-style: normal;
 }
 
-
 @font-face {
   font-family: "Barlow";
   src: url("/fonts/BarlowCondensed-ExtraBold.ttf") format("truetype");
   font-weight: 800;
   font-style: normal;
 }
-
-
-
-
 
 :root {
   --primary: #FF0DB7;
@@ -57,17 +52,12 @@
   --alt: #9D73FF;
 }
 
-
-
-
-
 body {
   @apply bg-gray-900 text-white;
   font-family: "Barlow", sans-serif;
   font-weight: 300;
   letter-spacing: 0.06em;
 }
-
 
 /* Retro glow effects */
 .glow-primary {

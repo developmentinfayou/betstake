@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { Chess } from 'chess.js';
+import  {Chess}  from "chess.js";
 import './chess.css';
 
 interface ChessBoardProps {
@@ -31,7 +31,7 @@ export default function ChessBoard({ fen, playerColor, isMyTurn, lastMove, onMov
         return chess.moves({ square: selectedSquare as any, verbose: true });
     }, [selectedSquare, fen, isMyTurn, disabled]);
 
-    const legalSquares = useMemo(() => new Set(legalMoves.map(m => m.to)), [legalMoves]);
+    const legalSquares = useMemo(() => new Set(legalMoves.map((m:any) => m.to)), [legalMoves]);
 
     // Determine display order based on player color
     const displayRanks = playerColor === 'black' ? [...RANKS].reverse() : RANKS;

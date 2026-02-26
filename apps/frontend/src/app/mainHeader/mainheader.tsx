@@ -108,9 +108,11 @@ const MainHeader = () => {
               </span>
             </button>
 
-            {/* Winner Notification */}
-            <div className="flex h-[41px] w-[181px] items-center gap-1.5 rounded border border-[#31313F] px-3 py-3 overflow-hidden">
+             {/* Winner Notification */}
+             <div className="flex group relative h-[41px] w-[181px] items-center gap-1.5 rounded border border-[#31313F] px-3 py-3">
               <img src="/images/winner.svg" />
+
+              <div className="absolute w-[28px] h-[28px] left-[10px] bg-[#73FFD7] rounded-full blur-xl border-2 p-2 opacity-0 group-hover:opacity-100 "></div>
 
               <p className=" flex text-sm  gap-[2px]">
                 <span className="text-white">Winner </span>

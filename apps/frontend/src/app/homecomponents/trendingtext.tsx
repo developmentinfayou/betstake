@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 
 export default function TrendingText() {
   const letters = ["T", "R", "E", "N", "D", "I", "N", "G"];
-  const hasFilledRef = useRef(false);
+  const hasFilledRef = React.useRef(false);
 
-  const [letterIndex, setLetterIndex] = useState(0); // kaunsa letter chal raha
-  const [beamIndex, setBeamIndex] = useState(0); // us letter ka position
-  const [filledCount, setFilledCount] = useState(0); // kitne letters fill ho chuke
+  const [letterIndex, setLetterIndex] = React.useState(0); // kaunsa letter chal raha
+  const [beamIndex, setBeamIndex] = React.useState(0); // us letter ka position
+  const [filledCount, setFilledCount] = React.useState(0); // kitne letters fill ho chuke
 
   const positionsT = [
     { top: "63%", left: "25.25px", width: "1px", height: "16px" },
@@ -230,7 +230,7 @@ export default function TrendingText() {
 
       setBeamIndex((prev) => {
         // beam move
-        if (prev < currentPositions.length - 1) {
+        if (prev < currentPositions?.length - 1) {
           hasFilledRef.current = false; // reset guard while animating
           return prev + 1;
         }
@@ -287,7 +287,6 @@ export default function TrendingText() {
         <span
           className="beam-dot absolute"
           style={positionsMap[letterIndex][beamIndex]}
-          // style={positionsMap[7][0]}
         />
       </div>
  

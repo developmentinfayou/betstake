@@ -121,7 +121,7 @@ const GameTab = () => {
   };
 
   return (
-    <div className="group relative hover:cursor-pointer"   onPointerEnter={() => setShowTrack(true)}
+     <div className="group relative hover:cursor-pointer"   onPointerEnter={() => setShowTrack(true)}
 onPointerLeave={(e) => {
   const next = e.relatedTarget as Node;
   if (!e.currentTarget.contains(next)) {
@@ -153,7 +153,7 @@ style={
                 >
                   {renderGameIcon(tab.id, isActive)}
                   <span
-                    className={`text-sm tracking-[1.12px] ${
+                    className={`text-sm tracking-[1.12px] hover:text-[#B3B3B3] text-[#828282] ${
                       isActive ? "text-white" : "text-[#B3B3B3]"
                     }`}
                   >

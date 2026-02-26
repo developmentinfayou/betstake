@@ -277,13 +277,13 @@ export default function HomePage() {
 
   return (
     <div
-      className="min-h-screen text-white"
+      className="min-h-screen text-white mt-[64px] "
       
     >
    
 
       {/* ✅ PAGE CONTAINER */}
-      <main className=" pb-10 pt-10">
+      <main>
         {/* ✅ TOP CARDS ROW */}
 
         <TopCards />
