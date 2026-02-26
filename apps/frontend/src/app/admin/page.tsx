@@ -3,6 +3,9 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import GameSettingsTab from './components/GameSettingsTab';
+import GameInfoTab from './components/GameInfoTab';
+import HighRollerSettingsTab from './components/HighRollerSettingsTab';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
@@ -816,7 +819,10 @@ export default function AdminPanel() {
                   { id: 'challenges', label: '🏆 Challenges', icon: '🏆' },
                   { id: 'contests', label: '🎯 Contests', icon: '🎯' },
                   { id: 'logs', label: '📋 Activity Logs', icon: '📋' },
-                  { id: 'settings', label: '⚙️ Settings', icon: '⚙️' }
+                  { id: 'settings', label: '⚙️ Settings', icon: '⚙️' },
+                  { id: 'game-settings', label: '🎮 Game Settings', icon: '🎮' },
+                  { id: 'game-info', label: '📋 Game Info', icon: '📋' },
+                  { id: 'high-roller', label: '🏆 High Roller/Win', icon: '🏆' }
                 ].map(tab => (
                   <button
                     key={tab.id}
@@ -2753,6 +2759,21 @@ export default function AdminPanel() {
               </div>
             )}
           </div>
+
+          {/* Game Settings Tab (NEW) */}
+          {activeTab === 'game-settings' && (
+            <GameSettingsTab />
+          )}
+
+          {/* Game Info Tab (NEW) */}
+          {activeTab === 'game-info' && (
+            <GameInfoTab />
+          )}
+
+          {/* High Roller/Win Settings Tab (NEW) */}
+          {activeTab === 'high-roller' && (
+            <HighRollerSettingsTab />
+          )}
         </div>
       </div>
     </div>
