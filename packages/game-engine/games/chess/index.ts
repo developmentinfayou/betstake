@@ -1,4 +1,5 @@
 import { BaseGame, BetInput, BetResult } from '../../base-game';
+// @ts-ignore - chess.js has no type declarations
 import { Chess } from 'chess.js';
 
 /**
@@ -243,7 +244,7 @@ export class ChessEngine {
      */
     static getLegalMoves(fen: string): Array<{ from: string; to: string; promotion?: string }> {
         const chess = new Chess(fen);
-        return chess.moves({ verbose: true }).map(m => ({
+        return chess.moves({ verbose: true }).map((m: any) => ({
             from: m.from,
             to: m.to,
             promotion: m.promotion || undefined,
@@ -303,14 +304,14 @@ export class ChessEngine {
         const chess = new Chess(fen);
         const moves = chess.moves({ verbose: true });
 
-        const evaluated = moves.map(move => {
+        const evaluated = moves.map((move: any) => {
             const testChess = new Chess(fen);
             testChess.move(move);
             const score = -this.evaluatePosition(testChess.fen()); // Negate for opponent's perspective
             return { move: move.san, from: move.from, to: move.to, score };
         });
 
-        evaluated.sort((a, b) => b.score - a.score);
+        evaluated.sort((a: any, b: any) => b.score - a.score);
         return evaluated.slice(0, n);
     }
 }

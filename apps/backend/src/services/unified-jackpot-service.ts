@@ -482,7 +482,7 @@ export class UnifiedJackpotService {
                 // Credit winner's wallet
                 await WalletService.creditBalanceWithSession(
                     userId,
-                    currency,
+                    currency as any,
                     awardAmount,
                     session
                 );

@@ -186,7 +186,7 @@ function verifyPlinko(input: VerificationInput): VerificationResult {
   const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, rows, 0);
 
   const path = floats.map(f => f < 0.5 ? 0 : 1);
-  const finalSlot = path.reduce((sum, dir) => sum + dir, 0);
+  const finalSlot = (path as number[]).reduce((sum, dir) => sum + dir, 0);
 
   let explanation = `Path: ${path.map(d => d === 0 ? 'L' : 'R').join('')} → Slot ${finalSlot}`;
 
