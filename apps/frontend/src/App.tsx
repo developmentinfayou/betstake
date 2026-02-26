@@ -36,6 +36,7 @@ import StairsPage from '@/app/game/stairs/page';
 import LudoLobbyPage from '@/app/game/ludo/page';
 import LudoGamePage from '@/app/game/ludo/LudoGamePage';
 import JoinLudoPage from '@/app/game/ludo/JoinLudoPage';
+import ChessPage from '@/app/game/chess/page';
 
 // Root Layout wraps everything
 function RootLayout() {
@@ -107,6 +108,7 @@ export default function App() {
                     <Route path="ludo" element={<LudoLobbyPage />} />
                     <Route path="ludo/:gameId" element={<LudoGamePage />} />
                     <Route path="ludo/join/:gameId" element={<JoinLudoPage />} />
+                    <Route path="chess" element={<ChessPage />} />
                 </Route>
             </Route>
         </Routes>

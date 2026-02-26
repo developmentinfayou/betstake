@@ -29,3 +29,6 @@ export * from './challenge.schema';
 export * from './admin-activity-log.schema';
 export * from './jackpot-player-progress.schema';
 export * from './coinflipsession.schema';
+export * from './game-settings.schema';
+export * from './game-info.schema';
+export * from './win-categories.schema';

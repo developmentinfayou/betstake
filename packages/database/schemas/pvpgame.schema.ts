@@ -26,6 +26,16 @@ export interface IPVPGame extends Document {
   finishedAt?: Date;
   shareableLink: string;
   antiCheatData: any;
+  // Chess-specific fields
+  timeControl?: {
+    baseTime: number;    // seconds (e.g. 900 for 15 min)
+    increment: number;   // seconds per move (e.g. 10)
+    whiteTime: number;   // remaining time in ms
+    blackTime: number;   // remaining time in ms
+  };
+  pgn?: string;          // Full PGN for shareable replays
+  drawOffer?: string;    // userId who offered draw (null = no offer)
+  endReason?: string;    // checkmate, stalemate, timeout, resign, draw, etc.
   createdAt: Date;
   updatedAt: Date;
 }
@@ -43,7 +53,17 @@ const pvpGameSchema = new Schema<IPVPGame>({
   startedAt: { type: Date },
   finishedAt: { type: Date },
   shareableLink: { type: String, required: true, unique: true },
-  antiCheatData: { type: Schema.Types.Mixed, default: {} }
+  antiCheatData: { type: Schema.Types.Mixed, default: {} },
+  // Chess-specific fields
+  timeControl: {
+    baseTime: { type: Number },
+    increment: { type: Number },
+    whiteTime: { type: Number },
+    blackTime: { type: Number },
+  },
+  pgn: { type: String, default: '' },
+  drawOffer: { type: String, default: null },
+  endReason: { type: String },
 }, { timestamps: true });
 
 pvpGameSchema.index({ status: 1, gameType: 1 });
