@@ -1,4 +1,4 @@
-import { Rakeback, User, Bet, UserSettings, RakebackConfig, IRakebackTier, UserStats } from '@casino/database';
+import { Rakeback, User, Bet, UserSettings, RakebackConfig, IRakebackTier, UserStats, Currency } from '@casino/database';
 import { WalletService } from './wallet-service';
 import mongoose from 'mongoose';
 
@@ -179,7 +179,7 @@ export class RakebackService {
         }
 
         // Credit wallet
-        await WalletService.creditBalanceWithSession(userId, currency, totalAmount, session);
+        await WalletService.creditBalanceWithSession(userId, currency as Currency, totalAmount, session);
 
         // Mark as claimed
         await Rakeback.updateMany(

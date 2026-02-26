@@ -14,7 +14,7 @@ export class LudoGame {
   ): LudoGameState {
     const seed = serverSeed || generateServerSeed();
     const colors = this.assignColors(mode);
-    
+
     const ludoPlayers: LudoPlayer[] = players.map((p, i) => {
       const teamId = mode === LudoMode.TWO_V_TWO ? Math.floor(i / 2) : undefined;
       return LudoBoard.initializePlayer(p.userId, p.username, colors[i], teamId);
@@ -136,7 +136,7 @@ export class LudoGame {
       to: newPos,
       diceRoll: diceResult,
       nonce: gameState.nonce - 1,
-      captured: captureTarget,
+      captured: captureTarget || undefined,
       timestamp: Date.now()
     };
     gameState.moveHistory.push(move);
@@ -156,7 +156,7 @@ export class LudoGame {
 
     gameState.diceResult = null;
 
-    return { success: true, captured: captureTarget };
+    return { success: true, captured: captureTarget || undefined };
   }
 
   /**
@@ -190,7 +190,7 @@ export class LudoGame {
     totalPlayers: number
   ): { winnerPayout: number; houseEdge: number } {
     const totalPot = betAmount * totalPlayers;
-    
+
     const houseEdgePercent = mode === LudoMode.FOUR_PLAYER ? 3 : 2;
     const houseEdge = totalPot * (houseEdgePercent / 100);
     const winnerPayout = totalPot - houseEdge;
@@ -209,7 +209,7 @@ export class LudoGame {
     const captureMove = validMoves.find(m => m.canCapture);
     if (captureMove) return captureMove.tokenId;
 
-    const advanceMove = validMoves.reduce((best, current) => 
+    const advanceMove = validMoves.reduce((best, current) =>
       current.to > best.to ? current : best
     );
     return advanceMove.tokenId;

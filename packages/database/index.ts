@@ -54,7 +54,7 @@ export const connectDB = async () => {
       isConnected = false;
     });
 
-    await mongoose.connect(MONGODB_URI, mongoOptions);
+    await mongoose.connect(MONGODB_URI, mongoOptions as any);
 
     // Create optimized indexes
     console.log('🔧 Creating optimized MongoDB indexes...');
@@ -78,9 +78,9 @@ export const disconnectDB = async () => {
 // Health check
 export const checkDBHealth = async () => {
   try {
-    await mongoose.connection.db.admin().ping();
+    await mongoose.connection.db!.admin().ping();
     return { status: 'healthy', connected: isConnected };
-  } catch (error) {
+  } catch (error: any) {
     return { status: 'unhealthy', error: error.message };
   }
 };

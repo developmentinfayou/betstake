@@ -5,8 +5,8 @@ import mongoose from 'mongoose';
  * Focuses on high-frequency queries and real-time operations
  */
 export const createOptimizedIndexes = async () => {
-  const db = mongoose.connection.db;
-  
+  const db = mongoose.connection.db!;
+
   try {
     // Users collection - Authentication & Profile
     await db.collection('users').createIndexes([

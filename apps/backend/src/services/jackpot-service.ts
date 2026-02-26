@@ -38,7 +38,7 @@ export class JackpotService {
    */
   static async addToPool(gameType: string, currency: string, betAmount: number) {
     const jackpot = await this.getJackpot(gameType, currency);
-    
+
     const contribution = betAmount * (jackpot.houseEdgePercent / 100) * 0.1;
 
     const updated = await Jackpot.findByIdAndUpdate(
@@ -77,13 +77,13 @@ export class JackpotService {
    */
   static async checkJackpotConditions(betId: string, gameType: string, currency: string, betAmount: number, gameResult: any) {
     const jackpot = await this.getJackpot(gameType, currency);
-    
+
     if (jackpot.status === JackpotStatus.REFILLING) return false;
     if (betAmount < (jackpot.conditions?.minBet || 0)) return false;
 
     // Game-specific jackpot conditions
     const won = await this.evaluateGameConditions(gameType, gameResult, jackpot.conditions);
-    
+
     if (won) {
       await this.awardJackpot(jackpot._id.toString(), betId);
       return true;
@@ -150,7 +150,7 @@ export class JackpotService {
    */
   private static async awardJackpot(jackpotId: string, betId: string) {
     const session = await mongoose.startSession();
-    
+
     try {
       await session.withTransaction(async () => {
         const jackpot = await Jackpot.findById(jackpotId).session(session);
@@ -166,7 +166,7 @@ export class JackpotService {
 
         await WalletService.creditBalanceWithSession(
           bet.userId.toString(),
-          bet.currency,
+          bet.currency as Currency,
           jackpot.currentAmount,
           session
         );
