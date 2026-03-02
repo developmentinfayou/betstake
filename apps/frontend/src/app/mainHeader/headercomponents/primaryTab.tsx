@@ -4,6 +4,7 @@ import DashBoard from "@/icons/DashBoard";
 import MultiPlayer from "@/icons/MultiPlayer";
 import { useLocation } from "react-router-dom";
 import React from "react";
+import "./primaryTab.css";
 
 const PrimaryTab = () => {
   const [activeTab, setActiveTab] = React.useState<string>("dashboard");
@@ -45,7 +46,7 @@ const PrimaryTab = () => {
       case "dashboard":
         return (
           <>
-            <div className="relative flex items-center justify-center">
+            <div className="primary_icon_wrapper">
               {/* Glow effect */}
 
               {/* <svg
@@ -68,7 +69,7 @@ const PrimaryTab = () => {
               <DashBoard color={finalColor} />
             </div>
             {isActive && (
-              <div className="absolute w-[28px] h-[28px] bg-[#73FFD7] rounded-full blur-xl border-2 p-2 opacity-100 "></div>
+              <div className="primary_active_glow_9214"></div>
             )}
           </>
         );
@@ -86,7 +87,7 @@ const PrimaryTab = () => {
               <Casino color={finalColor} />
             </div>{" "}
             {isActive && (
-              <div className="absolute w-[28px] h-[28px] bg-[#73FFD7] rounded-full blur-xl border-4 p-2 opacity-100 "></div>
+              <div className="primary_active_glow_9214"></div>
             )}
           </>
         );
@@ -105,7 +106,7 @@ const PrimaryTab = () => {
               <MultiPlayer color={finalColor} />
             </div>
             {isActive && (
-              <div className="absolute w-[28px] h-[28px] bg-[#73FFD7] rounded-full blur-xl border-2 p-2 opacity-100 "></div>
+              <div className="primary_active_glow_9214"></div>
             )}
           </>
         );
@@ -115,18 +116,20 @@ const PrimaryTab = () => {
   };
   const { pathname } = useLocation();
   return (
+    <>
     <nav
-    className="inline-flex  items-start p-[6px] gap-[12px] bg-[#73ffd70f] h-[41px] w-[326px] rounded overflow-hidden"
+    className="primary_nav_4821"
     role="navigation"
     aria-label="Main navigation"
   >
     <div
-      className="absolute top-[6px] left-[234px] h-[29px] w-[102px] 
-bg-[#ffffff0f] rounded transition-all duration-500 ease-in-out"
+      className="primary_slider_1942"
       style={{
-        transform: `translateX(${
-          activeTab == "dashboard" ? 0 : activeTab == "casino" ? 104 : 210
-        }px)`,
+       transform: `translateX(${
+    activeTab === "dashboard" ? 0 :
+    activeTab === "casino" ? 104 :
+    210
+  }px)`,
       }}
     />
 
@@ -138,19 +141,17 @@ bg-[#ffffff0f] rounded transition-all duration-500 ease-in-out"
           onMouseLeave={() => setHover("")}
           key={item.id}
           onClick={() => setActiveTab(item.id)}
-          className={` inline-flex group items-center w-[102px] h-[29px] gap-1.5 px-3 py-1.5 rounded`}
+          className={`primary_btn_7732`}
           aria-current={isActive ? "page" : undefined}
           type="button"
         >
           {hover === item.id && !isActive && (
-            <div className="absolute w-10 h-10 bg-[#73FFD7] rounded-full blur-xl opacity-50" />
+            <div className="primary_hover_glow_6621" />
           )}
 
           {renderNavIcon(item.id, isActive, item.icon)}
           <span
-            className={` text-sm tracking-[1.12px] ${
-              isActive ? "text-white" : "text-[#828282]"
-            }`}
+           className={`primary_label_3351 ${isActive ? "active" : ""}`}
           >
             {item.label}
           </span>
@@ -158,6 +159,7 @@ bg-[#ffffff0f] rounded transition-all duration-500 ease-in-out"
       );
     })}
   </nav>
+  </>
   );
 };
 

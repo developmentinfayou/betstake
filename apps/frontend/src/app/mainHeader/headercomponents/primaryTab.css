@@ -1,0 +1,114 @@
+/* ============================= */
+/* PRIMARY NAVIGATION CONTAINER */
+/* ============================= */
+
+.primary_nav_4821 {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+  padding: 6px;
+  gap: 12px;
+  background: #73ffd70f;
+  height: 41px;
+  width: 326px;
+  border-radius: 4px;
+}
+
+/* ============================= */
+/* SLIDING ACTIVE BACKGROUND */
+/* ============================= */
+
+.primary_slider_1942 {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  height: 29px;
+  width: 102px;
+  background: #ffffff0f;
+  border-radius: 4px;
+  transition: transform 0.5s ease-in-out;
+}
+
+/* ============================= */
+/* NAV BUTTON */
+/* ============================= */
+
+.primary_btn_7732 {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 102px;
+  height: 29px;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* ============================= */
+/* LABEL */
+/* ============================= */
+
+.primary_label_3351 {
+  font-size: 14px;
+  letter-spacing: 1.12px;
+  color: #828282;
+  transition: color 0.3s ease;
+}
+
+.primary_label_3351.active {
+  color: #ffffff;
+}
+
+/* ============================= */
+/* HOVER GLOW */
+/* ============================= */
+
+.primary_hover_glow_6621 {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: #73ffd7;
+  border-radius: 50%;
+  filter: blur(20px);
+  opacity: 0.5;
+  z-index: 0;
+}
+
+/* ============================= */
+/* ACTIVE ICON GLOW */
+/* ============================= */
+
+.primary_active_glow_9214 {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  background: #73ffd7;
+  border-radius: 50%;
+  filter: blur(20px);
+  border: 2px solid;
+  padding: 8px;
+  opacity: 1;
+}
+
+/* ============================= */
+/* ICON WRAPPER */
+/* ============================= */
+
+.primary_icon_wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================= */
+/* OPTIONAL ACTIVE DROP SHADOW */
+/* ============================= */
+
+.primary_icon_active {
+  filter: drop-shadow(0 0 6px #73FFD7);
+}

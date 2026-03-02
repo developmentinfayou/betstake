@@ -1,0 +1,207 @@
+/* ============================= */
+/* WRAPPER */
+/* ============================= */
+
+.game_wrapper_4821 {
+  position: relative;
+  cursor: pointer;
+}
+
+/* ============================= */
+/* NAVIGATION BAR */
+/* ============================= */
+
+.game_nav_7392 {
+  position: relative;
+  height: 41px;
+  width: 462px;
+  padding: 12px;
+  border-radius: 4px;
+  overflow-x: auto;
+  border: 1px solid #31313F;
+  scrollbar-width: none;
+}
+
+.game_nav_7392::-webkit-scrollbar {
+  display: none;
+}
+
+/* ============================= */
+/* INNER FLEX */
+/* ============================= */
+
+.game_nav_inner_1847 {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: 16px;
+  position: relative;
+}
+
+/* ============================= */
+/* TAB ITEM */
+/* ============================= */
+
+.game_tab_item_6621 {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ============================= */
+/* TAB BUTTON */
+/* ============================= */
+
+.game_tab_btn_9214 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+/* ============================= */
+/* TAB LABEL */
+/* ============================= */
+
+.game_tab_label_3351 {
+  font-size: 14px;
+  letter-spacing: 1.12px;
+  color: #828282;
+  transition: color 0.2s ease;
+}
+
+.game_tab_label_3351.active {
+  color: #ffffff;
+}
+
+
+.game_tab_btn_9214:hover .game_tab_label_3351 {
+  color: #B3B3B3;
+}
+
+/* ============================= */
+/* SEPARATOR */
+/* ============================= */
+
+.game_separator_5521 {
+  width: 1px;
+  height: 16px;
+  background: #31313F;
+}
+
+/* ============================= */
+/* UNDERLINE INDICATOR */
+/* ============================= */
+
+.game_underline_7731 {
+  position: absolute;
+  bottom: 0;
+  left: 12px;
+  width: 73px;
+  height: 1px;
+  background: #73FFD7;
+  transition: transform 0.3s ease;
+  box-shadow: 0px 0px 16px 2px rgba(115, 255, 215, 0.64);
+}
+
+/* ============================= */
+/* TRACK CONTAINER */
+/* ============================= */
+
+.game_track_9182 {
+  position: absolute;
+  right: 0;
+  top: 50.5px;
+  z-index: 50;
+  width: 221px;
+  opacity: 0;
+  transform: translateY(-12px);
+  transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.game_track_9182.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================= */
+/* TRACK LINE */
+/* ============================= */
+
+.game_track_line_1112 {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 1px;
+  background: #31313F;
+}
+
+/* ============================= */
+/* DOT WRAPPER */
+/* ============================= */
+
+.game_dot_wrapper_4421 {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: left 0.3s ease;
+}
+
+/* Click areas */
+
+.game_dot_left_1122,
+.game_dot_right_1123 {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.game_dot_left_1122 {
+  left: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.game_dot_right_1123 {
+  right: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* ============================= */
+/* DOT CORE */
+/* ============================= */
+
+.game_dot_core_5532 {
+  position: relative;
+  display: flex;
+  width: 8px;
+  height: 8px;
+}
+
+.game_dot_core_5532::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
+  background: #73FFD7;
+  opacity: 0.75;
+  box-shadow: 0px 0px 12px 3px rgba(115, 255, 215, 0.64);
+}
+
+.game_dot_core_5532::after {
+  content: "";
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 100%;
+  background: #73FFD7;
+}

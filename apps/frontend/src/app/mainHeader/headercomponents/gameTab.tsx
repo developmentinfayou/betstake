@@ -7,6 +7,7 @@ import Poker from "@/icons/Poker";
 import Roulette from "@/icons/Roulette";
 import Slots from "@/icons/Slots";
 import React from "react";
+import "./gameTab.css";
 
 const GameTab = () => {
 
@@ -121,7 +122,7 @@ const GameTab = () => {
   };
 
   return (
-     <div className="group relative hover:cursor-pointer"   onPointerEnter={() => setShowTrack(true)}
+     <div className="game_wrapper_4821"   onPointerEnter={() => setShowTrack(true)}
 onPointerLeave={(e) => {
   const next = e.relatedTarget as Node;
   if (!e.currentTarget.contains(next)) {
@@ -130,20 +131,20 @@ onPointerLeave={(e) => {
 }}>
       <nav
         ref={navRef}
-        className="relative hover:cursor-pointer  h-[41px] w-[462px] p-[12px] rounded overflow-x-auto scrollbar-hidden border border-[#31313F]"
+        className="game_nav_7392"
         role="navigation"
         aria-label="Casino games navigation"
       >
-        <div className="flex relative  items-center h-full gap-[16px] ">
+        <div className="game_nav_inner_1847 ">
           {gameTabs?.map((tab, index) => {
             const isActive = activeGameTab === tab.id;
             return (
-              <div key={tab.id} className="flex  items-center gap-[16px]">
+              <div key={tab.id} className="game_tab_item_6621">
                 <button
                   onClick={() => setActiveGameTab(tab.id)}
                   onMouseEnter={() => !isActive && setHover(tab.id)}
                   onMouseLeave={() => setHover("")}
-                  className="flex items-center gap-1.5  cursor-pointer transition-colors duration-200 "
+                  className="game_tab_btn_9214"
 style={
   gameTabs.length - 1 === index
     ? { paddingRight: "12px" }
@@ -152,17 +153,13 @@ style={
                   aria-current={isActive ? "page" : undefined}
                 >
                   {renderGameIcon(tab.id, isActive)}
-                  <span
-                    className={`text-sm tracking-[1.12px] hover:text-[#B3B3B3] text-[#828282] ${
-                      isActive ? "text-white" : "text-[#B3B3B3]"
-                    }`}
-                  >
+                  <span className={`game_tab_label_3351 ${isActive ? "active" : ""}`}>
                     {tab.name}
                   </span>
                 </button>
                 {/* Separator - don't show after last item */}
                 {index < gameTabs.length - 1 && (
-                  <div className="w-px h-4 bg-[#31313F]" />
+                  <div className="game_separator_5521" />
                 )}
               </div>
             );
@@ -171,7 +168,7 @@ style={
 
         {/* Animated glowing underline indicator */}
         <div
-          className="absolute hover:cursor-pointer bottom-0 left-3 w-[73px] h-px bg-[#73FFD7] transition-all duration-300"
+          className="game_underline_7731"
           style={{
             transform: `translateX(${getUnderlinePosition()}px)`,
             boxShadow: "0px 0px 16px 2px rgba(115, 255, 215, 0.64)",
@@ -181,20 +178,14 @@ style={
       </nav>
       <div
         ref={trackRef}
-       className={`
-    absolute right-[0px] top-[50.5px] z-50 w-[221px]
-    transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]
-    ${showTrack
-      ? "opacity-100 -translate-y-0"
-      : "opacity-0 -translate-y-3"}
-  `}
+       className={`game_track_9182 ${showTrack ? "show" : ""}`}
       >
         {/* Line */}
-        <div className="absolute top-1/2 -translate-y-1/2 w-full h-px bg-[#31313F]" />
+        <div className="game_track_line_1112" />
 
         {/* Dot */}
         <div
-          className="absolute top-1/2 -translate-y-1/2 transition-all duration-300"
+          className="game_dot_wrapper_4421"
           style={{
             left: `${(dotPosition / maxSteps) * 100}%`,
             transform: "translate(-50%, -50%)",
@@ -202,21 +193,21 @@ style={
         >
           <button
             onClick={() => handleDotMove("left")}
-            className="absolute -left-4 top-1/2 -translate-y-1/2 w-3 h-3"
+            className="game_dot_left_1122"
           />
           <button
             onClick={() => handleDotMove("right")}
-            className="absolute -right-4 top-1/2 -translate-y-1/2 w-3 h-3"
+            className="game_dot_right_1123"
           />
 
-          <span className="relative flex h-2 w-2">
+          <span className="game_dot_core_5532">
             <span
               style={{
                 boxShadow: "0px 0px 12px 3px rgba(115, 255, 215, 0.64)",
               }}
-              className="absolute inline-flex h-full w-full rounded-full bg-[#73FFD7] opacity-75 "
+              className=""
             ></span>
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#73FFD7]"></span>
+            <span className=""></span>
           </span>
         </div>
       </div>

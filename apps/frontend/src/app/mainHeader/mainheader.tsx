@@ -5,6 +5,7 @@ import Spin from "@/icons/Spin";
 import { useLocation } from "react-router-dom";
 import PrimaryTab from "./headercomponents/primaryTab";
 import GameTab from "./headercomponents/gameTab";
+import "./mainHeader.css";
 
 const MainHeader = () => {
   const [themes, showThemes] = React.useState<any>(false);
@@ -28,13 +29,13 @@ const MainHeader = () => {
   return (
     <div className={`${pathname.includes("game") ? "bg-gray-900" : ""}`}>
       {/* ✅ HEADER */}
-      <header className="mx-[32px] mt-[28px] flex h-[41px] min-w-[1376px] items-center   ">
-        <div className="flex items-center gap-[38.5px]">
-          <div className="flex items-center gap-[16px]">
-            <div className=" relative lg:flex items-center gap-[64px]">
+      <header className="header_3452 ">
+        <div className="div_7812">
+          <div className="div_4926">
+            <div className="div_9034">
               {/* Logo */}
-              <div className=" relative group  flex items-center gap-8 w-[163px] h-[32px] after:absolute after:top-0 after:left-full after:w-[30px] after:h-full after:content-['']">
-                <div className="flex flex-col relative items-end">
+              <div className="relative group  flex items-center gap-8 w-[163px] h-[32px] after:absolute after:top-0 after:left-full after:w-[30px] after:h-full after:content-['']">
+                <div className="custom_4581">
                   <Logo color={"#73FFD7"} />
                   <span className=" text-[#73FFD7] text-[14px] tracking-[0.08em] -top-[9px] relative ">
                     ~Play
@@ -52,11 +53,9 @@ const MainHeader = () => {
 
                 <div className="hidden group-hover:block  absolute   backdrop-blur-xl rounded w-[321px] h-[178.5px] -top-[11.5px] left-full ml-[28px] bg-[#73FFD70F] px-[16px] pt-[16px] z-50 group/menu ">
                   <div className=" group/item relative flex w-[289px] h-[41.5] items-center justify-between opacity-[0.24] transition-opacity duration-200 hover:opacity-100 group-hover/menu:opacity-[0.24] hover:!opacity-100 ">
-                    <div className="flex flex-col relative items-end">
+                    <div className="div_6147">
                       <Logo color={"#FFC100"} />
-                      <span className=" text-[#FFC100] text-[12px] tracking-[0.08em] -top-[9px] relative">
-                        ~Wallet
-                      </span>
+                      <span className="span_8293 text-[#FFC100]">~Wallet</span>
                     </div>
 
                     <span className="transition-all duration-200 group-hover/item:underline">
@@ -65,20 +64,18 @@ const MainHeader = () => {
                   </div>
 
                   <div className="relative flex w-[289px] h-[41.5] items-center justify-between opacity-100 transition-opacity duration-200 group-hover/menu:opacity-[0.24] hover:!opacity-100 ">
-                    <div className="flex flex-col relative items-end">
+                    <div className="div_6147">
                       <Logo color={"#73FFD7"} />
-                      <span className=" text-[#73FFD7] text-[12px] tracking-[0.08em] -top-[9px] relative">
-                        ~Play
-                      </span>
+                      <span className=" text-[#73FFD7] span_8293">~Play</span>
                     </div>
 
                     <span>Current</span>
                   </div>
 
                   <div className=" group/item relative flex w-[289px] h-[41.5] items-center justify-between opacity-[0.24] transition-opacity duration-200 hover:opacity-100 group-hover/menu:opacity-[0.24] hover:!opacity-100 ">
-                    <div className="flex flex-col relative items-end">
+                    <div className="div_6147">
                       <Logo color={"#73B7FF"} />
-                      <span className=" text-[#73B7FF] text-[12px] tracking-[0.08em] -top-[9px] relative ">
+                      <span className=" text-[#73B7FF] span_8293 ">
                         ~Connect
                       </span>
                     </div>
@@ -90,7 +87,9 @@ const MainHeader = () => {
                 </div>
               </div>
 
-              <PrimaryTab />
+              <div className="group">
+                <PrimaryTab />
+              </div>
             </div>
 
             <GameTab />
@@ -99,25 +98,24 @@ const MainHeader = () => {
           {/* Right Actions */}
           <div className="flex items-center gap-[24px]">
             {/* Spin Button */}
-            <button className="flex group relative items-center gap-1.5 rounded border border-[#31313F] h-[41px] px-3">
+            <button className="spin_5392">
               <Spin />
-              <div className="absolute w-[28px] h-[28px] left-[2px] bg-[#73FFD7] rounded-full blur-xl border-2 p-2 opacity-0 group-hover:opacity-100 "></div>
 
-              <span className=" text-sm tracking-[1.12px] text-white">
-                Spin
-              </span>
+              <div className="spin_glow_1847"></div>
+
+              <span className="spin_text_7721">Spin</span>
             </button>
 
-             {/* Winner Notification */}
-             <div className="flex group relative h-[41px] w-[181px] items-center gap-1.5 rounded border border-[#31313F] px-3 py-3">
-              <img src="/images/winner.svg" />
+            {/* Winner Notification */}
+            <div className="winner_4821">
+              <img src="/images/winner.svg" className="winner_icon_7391" />
 
-              <div className="absolute w-[28px] h-[28px] left-[10px] bg-[#73FFD7] rounded-full blur-xl border-2 p-2 opacity-0 group-hover:opacity-100 "></div>
+              <div className="winner_glow_1843"></div>
 
-              <p className=" flex text-sm  gap-[2px]">
-                <span className="text-white">Winner </span>
-                <span className="text-[#73FFD7]">CrispyPotato</span>
-                <span className="text-white"> 🎉</span>
+              <p className="winner_text_5927">
+                <span className="winner_white">Winner </span>
+                <span className="winner_green">CrispyPotato</span>
+                <span className="winner_white"> 🎉 </span>
               </p>
             </div>
 
