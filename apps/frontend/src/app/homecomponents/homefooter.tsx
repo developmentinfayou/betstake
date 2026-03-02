@@ -919,18 +919,15 @@ const PlayCard = () => (
             6:26 PM
           </span>
 
-          <div className="absolute top-[48px]">
-            <div className="inline-flex items-center gap-2">
-              <span className="relative flex h-1 w-1">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex h-1 w-1 rounded-full bg-emerald-400"></span>
-              </span>
-
-              <span className="text-xs font-normal tracking-wider text-gray-200">
-                Live
-              </span>
-            </div>
-          </div>
+          <div className="absolute -bottom-6 left-6 flex items-center gap-2">
+    <span className="relative flex h-2 w-2">
+      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#6EF0C2] opacity-75"></span>
+      <span className="relative inline-flex h-2 w-2 rounded-full bg-[#6EF0C2]"></span>
+    </span>
+    <span className="text-[13px] tracking-wide text-[#8A94A6]">
+      Live
+    </span>
+  </div>
 
           <div className="absolute right-[7px] top-[50px] ">
             <span className="text-xs font-normal tracking-wide text-gray-500">
