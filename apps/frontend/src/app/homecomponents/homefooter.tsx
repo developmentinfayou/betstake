@@ -796,11 +796,11 @@ const PlayCard = () => (
           </div>
         </div>
 
-        <div className={`hidden relative group xl:flex items-center justify-between p-3 border-[#31313F] border hover:rounded-t-none hover:bg-[#000000f6] bg-[#FFFFFF08] rounded ${transferAll ?  "min-w-[600px]" :" min-w-[706.79px]" } h-[41px]`}>
+        <div className={`hidden relative group xl:flex items-center justify-between p-3 border-[#31313F] border hover:rounded-t-none hover:bg-[#000000f6] bg-[#FFFFFF08] rounded ${transferAll ?  "min-w-[700px]" :" min-w-[1000.79px]" } h-[41px]`}>
           {/* 🔥 Hover List */}
           <div
             className={`
-  absolute top- bottom-full -left-[1.2px] mt-1 ${transferAll ?  "min-w-[600px]" :" min-w-[706.79px]" }
+  absolute top- bottom-full -left-[1.2px] mt-1 ${transferAll ?  "min-w-[600px]" :" min-w-[606.79px]" }
   bg-[#000000f6]
   border border-[#31313F] border-b-0
   rounded
@@ -821,7 +821,10 @@ const PlayCard = () => (
                 className="flex items-center group/row relative justify-between p-3 hover:bg-[#FFFFFF0F] cursor-pointer"
               >
                 <div className="flex items-center space-x-3">
-                  <img src="/images/avatar1.jpg" className="w-6 h-6 rounded" />
+                  <img
+  src="/images/avatar1.jpg"
+  className="!w-3 !h-3 shrink-0 rounded-full object-cover"
+/>
                   <span className="text-sm tracking-wider text-white font-light">
                     RealBob
                   </span>
@@ -908,16 +911,23 @@ const PlayCard = () => (
             </div>
           </div>
 
-          <div className="flex group-hover:hidden items-center space-x-3 text-gray-500  pr-4">
-            <img src="/images/profile-bars.svg" />
-
-            <img src="/images/profile-headphone.svg" />
-            <img src="/images/profile-chip.svg" />
-          </div>
+         
 
           <span className="text-xs text-nowrap group-hover:block hidden  text-gray-500">
             6:26 PM
           </span>
+           <div className="flex items-center">
+    <svg
+      className="w-4 h-4 text-gray-500 cursor-pointer hover:text-white transition"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+    </svg>
+  </div>
 
           <div className="absolute -bottom-6 left-6 flex items-center gap-2">
     <span className="relative flex h-2 w-2">
@@ -929,25 +939,94 @@ const PlayCard = () => (
     </span>
   </div>
 
-          <div className="absolute right-[7px] top-[50px] ">
-            <span className="text-xs font-normal tracking-wide text-gray-500">
-              v0.1.23
-            </span>
-          </div>
+        
         </div>
+ <div
+  className="
+    flex items-center gap-5
+    backdrop-blur-md
+    rounded-md
+    px-4 py-3
+    transition-all duration-300
+  "
+>
+  {/* Message */}
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    className="w-6 h-6 text-white opacity-90 hover:opacity-100 transition cursor-pointer"
+    fill="currentColor"
+  >
+    <path d="M4 5a3 3 0 013-3h6a3 3 0 013 3v6a3 3 0 01-3 3H9l-4 4V5z" />
+    <circle cx="18" cy="6" r="3" fill="#22C55E" />
+  </svg>
 
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <img src="/images/notice-bell.svg" />
+  {/* Bell */}
+  <img
+    src="/images/notice-bell.svg"
+    className="w-4 h-4 opacity-80 hover:opacity-100 cursor-pointer transition"
+  />
 
-              {/* <span className="absolute top-0 right-0 w-2 h-2 bg-emerald-500 rounded-full"></span> */}
-            </div>
-            <img src="/images/profile-web.svg" />
-          </div>
-        </div>
-      </div>
+  {/* Network / Globe */}
+  <img
+    src="/images/profile-web.svg"
+    className="w-4 h-4 opacity-80 hover:opacity-100 cursor-pointer transition"
+  />
+</div>
+
+
+{/* Right Section Wrapper */}
+<div className="relative flex items-center ml-4">
+
+  {/* Right Icon Box */}
+  <div
+    className="
+      flex items-center gap-3
+      bg-[#0B0F1A]/80
+      border border-white/10
+      backdrop-blur-md
+      rounded-md
+      px-3 py-1.5
+      transition-all duration-300
+      hover:border-white/20
+    "
+  >
+    <img
+      src="/images/profile-bars.svg"
+      className="w-4 h-4 opacity-80 hover:opacity-100 cursor-pointer transition"
+    />
+
+    <img
+      src="/images/profile-headphone.svg"
+      className="w-4 h-4 opacity-80 hover:opacity-100 cursor-pointer transition"
+    />
+
+    <img
+      src="/images/profile-chip.svg"
+      className="w-4 h-4 opacity-80 hover:opacity-100 cursor-pointer transition"
+    />
+  </div>
+
+  {/* Version Text */}
+  <span className="
+      absolute
+      top-full
+      right-0
+      mt-2
+      text-xs
+      tracking-wide
+      text-gray-500
+    "
+  >
+    v0.1.23
+  </span>
+
+</div>
+
     </div>
+    </div>
+
+    
   );
 };
 
