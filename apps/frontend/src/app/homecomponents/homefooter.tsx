@@ -308,7 +308,7 @@ const PlayCard = () => (
         </div>
       )}
       {transferShow && (
-        <div className="left-[187px] w-[428px] h-[307px] overflow-hidden absolute bottom-14 z-50 max-w-md p-3 rounded bg-[#73FFD70F] border border-[#31313F] shadow-2xl backdrop-blur-3xl text-gray-400 ">
+        <div className="absolute left-1/2 -translate-x-1/2 w-[428px] max-w-[95vw] h-[307px] overflow-hidden bottom-14 ...">
           <div className="flex items-center justify-between mb-6 space-x-3">
             <div className="flex w-[155px] h-[31px] p-1 bg-[#73FFD70F] rounded ">
               <button className="flex gap-1.5 items-center px-3 py-1.5 text-sm text-white bg-[#FFFFFF0F] rounded shadow-sm">
@@ -447,7 +447,7 @@ const PlayCard = () => (
 </div>
 
 
-         {!confredend && <div className="space-y-1 w-[404px] h-[178px] overflow-y-auto scrollbar-hidden bg-[#73FFD70F]">
+         {!confredend && <div className="space-y-1 w-full max-w-[404px] h-[178px] overflow-y-auto scrollbar-hidden bg-[#73FFD70F]">
             <div className="flex items-center justify-between px-2 py-1 rounded hover:bg-gray-800/30 cursor-pointer group">
               <div className="flex items-center space-x-2">
                 <img src="/images/dogecoin.svg" />
@@ -634,7 +634,7 @@ const PlayCard = () => (
       <div className="flex  items-center justify-between w-full px-4 py-2  text-gray-400">
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-4">
-            <div className="relative">
+            <div className="relative w-full overflow-x-hidden">
               <img
                 src="/images/footer-men.png"
                 alt="Avatar"
@@ -670,7 +670,7 @@ const PlayCard = () => (
             </svg>
           </div>
 
-        <div className="flex items-center gap-[12px] min-w-[233px] h-[41px]">
+        <div className="flex items-center gap-[12px] min-w-0 h-[41px]">
              { !transferAll &&  <div
               onClick={() => depositCoin()}
               className="flex w-[146px] h-[41px] items-center gap-1.5 px-3 py-1.5 bg-[#1a1c2e] border border-gray-800 rounded cursor-pointer hover:bg-[#252841] text-nowrap"
@@ -800,7 +800,7 @@ const PlayCard = () => (
           {/* 🔥 Hover List */}
           <div
             className={`
-  absolute top- bottom-full -left-[1.2px] mt-1 ${transferAll ?  "min-w-[600px]" :" min-w-[606.79px]" }
+  absolute top- bottom-full -left-[1.2px] mt-1 w-full" }
   bg-[#000000f6]
   border border-[#31313F] border-b-0
   rounded

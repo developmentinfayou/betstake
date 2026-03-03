@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+  overflow-x: hidden;
+}
 @font-face {
   font-family: "Barlow";
   src: url("/fonts/BarlowCondensed-Light.ttf") format("truetype");
