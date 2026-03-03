@@ -11,7 +11,7 @@ const TopCards = () => {
   );
 
   return (
-    <section className="grid gap-[32px] lg:grid-cols-[592px_335px_385px] mx-[32px]">
+    <section className="grid gap-[32px] lg:grid-cols-[592px_335px_385px] ml-[80px] mr-[40px]">
       {/* Jackpot card */}
       <div className="flex flex-col gap-1.5">
         <div className="relative h-[86px] w-full rounded overflow-hidden border border-[#31313F]">

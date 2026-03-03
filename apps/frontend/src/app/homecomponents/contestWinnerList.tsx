@@ -140,7 +140,7 @@ const ContestWinnerList = () => {
         </div>
       </div>
 
-      <div className="px-4 mt-6 grid gap-6 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
+      <div className="mt-6 px-[80px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[1, 2, 3, 4].map((i, idx) => (
 
           <div

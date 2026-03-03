@@ -134,7 +134,7 @@ const activeGame = games[activeIndex];
 
   return (
     <div className="mt-2">
-      <div className="w-full px-6 py-20 text-gray-300 ">
+      <div className="w-full px-[80px] py-20 text-gray-300">
         <div className="flex items-center justify-between mb-6">
           <div className="flex relative items-center space-x-4  left-[110px]">
           <div className="absolute top-[45px] left-[450px] blureddimage flex items-center justify-center gap-6">
