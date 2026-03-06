@@ -7,11 +7,11 @@ const ContestWinnerList = () => {
   const scrollRef = React.useRef(null);
 
   React.useEffect(() => {
-    const container:any = scrollRef.current;
+    const container: any = scrollRef.current;
     if (!container) return;
 
     let direction = "right";
-    let intervalId:any;
+    let intervalId: any;
 
     const startScrolling = () => {
       intervalId = setInterval(() => {
@@ -140,7 +140,7 @@ const ContestWinnerList = () => {
         </div>
       </div>
 
-      <div className="mt-6 px-[80px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[1, 2, 3, 4].map((i, idx) => (
 
           <div
@@ -169,27 +169,27 @@ const ContestWinnerList = () => {
                     Samboxer
                   </p>
                   <div className="flex items-center space-x-1.5 mt-0.5">
-                  {idx <= 2 && <img src="/images/verified.svg" />}
-                  {idx <= 0 && <img src="/images/color-star.svg" />}
+                    {idx <= 2 && <img src="/images/verified.svg" />}
+                    {idx <= 0 && <img src="/images/color-star.svg" />}
                     {idx <= 0 && (
-    <span className="px-1 text-[8px] font-black bg-yellow-400 rounded text-black uppercase leading-tight tracking-wider">
-      Vip
-    </span>
-  )}
+                      <span className="px-1 text-[8px] font-black bg-yellow-400 rounded text-black uppercase leading-tight tracking-wider">
+                        Vip
+                      </span>
+                    )}
                   </div>
                 </div>
 
                 <div className="flex items-baseline space-x-1">
-                  <span  style={{
-   color: idx === 3 ? "#fff" : TEXT_COLORS[idx],
-    borderColor:  idx === 3 ? "#fff" : TEXT_COLORS[idx],
-  }} className={`text-[14px] font-semibold  border-b  leading-none`}>
+                  <span style={{
+                    color: idx === 3 ? "#fff" : TEXT_COLORS[idx],
+                    borderColor: idx === 3 ? "#fff" : TEXT_COLORS[idx],
+                  }} className={`text-[14px] font-semibold  border-b  leading-none`}>
                     202
                   </span>
                   <span style={{
-  color: idx === 3 ? "#fff" : TEXT_COLORS[idx],
-}}
-  className="text-[14px] font-semibold   tracking-widest">
+                    color: idx === 3 ? "#fff" : TEXT_COLORS[idx],
+                  }}
+                    className="text-[14px] font-semibold   tracking-widest">
                     Wins
                   </span>
                 </div>
@@ -197,11 +197,11 @@ const ContestWinnerList = () => {
 
               <div className="flex items-center pt-2.5 justify-between">
                 <div className="flex items-center space-x-1.5 text-gray-500">
-        
-<WinTag1 color={STRIP_COLORS[idx]} />
-<WinTag2 color={STRIP_COLORS[idx]} />
 
-<WinTag3 color={STRIP_COLORS[idx]} />
+                  <WinTag1 color={STRIP_COLORS[idx]} />
+                  <WinTag2 color={STRIP_COLORS[idx]} />
+
+                  <WinTag3 color={STRIP_COLORS[idx]} />
 
 
 
@@ -230,7 +230,7 @@ const ContestWinnerList = () => {
         ))}
       </div>
 
-      <div      ref={scrollRef} className="w-100 overflow-x-auto scrollbar-hidden bg-rfed-400">
+      <div ref={scrollRef} className="w-100 overflow-x-auto scrollbar-hidden bg-rfed-400">
         <div className="mt-6 flex gap-6 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
           {Array.from({ length: 95 }, (_, i) => i + 5).map((i, idx) => (
             <div
@@ -281,12 +281,12 @@ const ContestWinnerList = () => {
                 <div className="flex items-center pt-2.5 justify-between">
                   <div className="flex items-center space-x-1.5 text-gray-500">
 
-                            
-<WinTag1 color={STRIP_COLORS[3]} />
-<WinTag2 color={STRIP_COLORS[3]} />
 
-<WinTag3 color={STRIP_COLORS[3]} />
-                 
+                    <WinTag1 color={STRIP_COLORS[3]} />
+                    <WinTag2 color={STRIP_COLORS[3]} />
+
+                    <WinTag3 color={STRIP_COLORS[3]} />
+
 
                     <span className="text-[14px] font-normal tracking-widest">
                       +4 more

@@ -795,7 +795,7 @@ const HomeFooter = () => {
         </div>
 
         <div className={`relative group xl:flex items-center justify-between p-3 border-[#31313F] border bg-[#FFFFFF08] rounded ${transferAll ? "min-w-[700px]" : " min-w-[1000.79px]"} h-[41px]`}>
-          
+
           {/* Hover List (Figma Design) */}
           <div className="absolute bottom-full -left-[1.2px] w-[calc(100%+2.4px)] bg-[#0A0B14] border border-[#31313F] border-b-0 rounded-t-lg opacity-0 scale-95 pointer-events-none transition-all duration-200 group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto z-50 h-[280px] overflow-y-auto scrollbar-hidden">
             {[...Array(12)].map((_, i) => (
@@ -845,7 +845,7 @@ const HomeFooter = () => {
             </div>
             <span className="text-gray-700">|</span>
             <div className="flex items-center space-x-1.5">
-              <img src="/images/poker-card.svg" className="w-3.5" /> 
+              <img src="/images/poker-card.svg" className="w-3.5" />
               <span className="text-[10px] font-medium text-gray-400">Poker</span>
             </div>
             <span className="text-gray-700">|</span>
@@ -858,7 +858,7 @@ const HomeFooter = () => {
 
           <div className="flex items-center ml-2">
             <svg width="10" height="6" viewBox="0 0 10 6" fill="none" className="text-gray-500 group-hover:rotate-180 transition-transform">
-              <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
 

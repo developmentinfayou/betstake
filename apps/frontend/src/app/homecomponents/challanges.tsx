@@ -111,47 +111,47 @@ const Challenge = () => {
       reward: "0.00350000 BTC",
       description: "Pump before it bursts."
     },
-   
-    
+
+
 
   ];
 
   const [activeIndex, setActiveIndex] = React.useState(1);
 
-const prevSlide = () => {
-  setActiveIndex((prev) =>
-    prev === 0 ? games.length - 1 : prev - 1
-  );
-};
+  const prevSlide = () => {
+    setActiveIndex((prev) =>
+      prev === 0 ? games.length - 1 : prev - 1
+    );
+  };
 
-const nextSlide = () => {
-  setActiveIndex((prev) =>
-    prev === games.length - 1 ? 0 : prev + 1
-  );
-};
+  const nextSlide = () => {
+    setActiveIndex((prev) =>
+      prev === games.length - 1 ? 0 : prev + 1
+    );
+  };
 
-const activeGame = games[activeIndex];
+  const activeGame = games[activeIndex];
 
   return (
     <div className="mt-2">
-      <div className="w-full px-[80px] py-20 text-gray-300">
+      <div className="w-full py-20 text-gray-300">
         <div className="flex items-center justify-between mb-6">
           <div className="flex relative items-center space-x-4  left-[110px]">
-          <div className="absolute top-[45px] left-[450px] blureddimage flex items-center justify-center gap-6">
-        {games.map((game, index) => (
-          <img
-            key={game.id}
-            src={game.image}
-            alt={game.title}
-            className={`w-[86px] h-[114px] rounded transition-all duration-500
+            <div className="absolute top-[45px] left-[450px] blureddimage flex items-center justify-center gap-6">
+              {games.map((game, index) => (
+                <img
+                  key={game.id}
+                  src={game.image}
+                  alt={game.title}
+                  className={`w-[86px] h-[114px] rounded transition-all duration-500
               ${index === activeIndex
-                ? "blur-md scale-95 opacity-30"
-                : "blur-md scale-95 opacity-30"}
+                      ? "blur-md scale-95 opacity-30"
+                      : "blur-md scale-95 opacity-30"}
             `}
-          />
-        ))}
-      </div>
-            
+                />
+              ))}
+            </div>
+
             <div className="flex space-x-1 relative -left-[14px] items-center">
               <button onClick={prevSlide} className=" py-1.5 px-2 w-[19px] h-[18px] bg-[#1a1c2e] text-white rounded hover:bg-white/50 transition">
                 <svg
@@ -169,7 +169,7 @@ const activeGame = games[activeIndex];
                   />
                 </svg>
               </button>
-              <button onClick={nextSlide}  className="py-1.5 px-2 w-[19px] h-[18px] bg-[#1a1c2e] text-white hover:bg-white/50  rounded transition">
+              <button onClick={nextSlide} className="py-1.5 px-2 w-[19px] h-[18px] bg-[#1a1c2e] text-white hover:bg-white/50  rounded transition">
                 <svg
                   width="4"
                   height="7"
@@ -214,7 +214,7 @@ const activeGame = games[activeIndex];
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-3">
                   <p className="text-sm font-semibold text-white tracking-widest">
-                  {activeGame.title}
+                    {activeGame.title}
                   </p>
                   <span className="px-2 py-0.5 text-[10px] font-semibold tracking-widest  text-gray-400 bg-[#FFFFFF0F] border border-gray-700 rounded flex items-center">
                     <span className="text-orange-500 mr-1 ">✦</span> ORBEiT
@@ -255,7 +255,7 @@ const activeGame = games[activeIndex];
                 <div className="flex items-center space-x-2">
                   <img src="/images/gift.svg" />
                   <span className="text-sm tracking-widest text-gray-200">
-                  {activeGame.reward}
+                    {activeGame.reward}
                   </span>
                 </div>
               </div>

@@ -10,119 +10,99 @@ import "./mainHeader.css";
 const MainHeader = () => {
   const [themes, showThemes] = React.useState<any>(false);
   const [hover, setHover] = React.useState<any>("");
-
-  // Navigation items configuration
-
-  // State for game category tabs
-  const [activeGameTab, setActiveGameTab] = React.useState<string>("blackjack");
-
-  const [dotPosition, setDotPosition] = React.useState(0);
-
-  // Game category tabs configuration
-
-  // Get underline position based on active game tab
-
-  // Render game icon based on id and active state
-
-  // Render icon based on id and active state
   const { pathname } = useLocation();
+
   return (
-    <div className={`${pathname.includes("game") ? "bg-gray-900" : ""}`}>
-      {/* ✅ HEADER */}
-      <header className="header_3452 ">
-        <div className="div_7812">
-          <div className="div_4926">
-            <div className="div_9034">
-              {/* Logo */}
-              <div className="relative group  flex items-center gap-8 w-[163px] h-[32px] after:absolute after:top-0 after:left-full after:w-[30px] after:h-full after:content-['']">
-                <div className="custom_4581">
-                  <Logo color={"#73FFD7"} />
-                  <span className=" text-[#73FFD7] text-[14px] tracking-[0.08em] -top-[9px] relative ">
-                    ~Play
-                  </span>
-                </div>
-                <button
-                // onClick={() => {
-                //   showThemes(!themes);
-                // }}
-                // onMouseEnter={() => showThemes(true)}
-                // onMouseLeave={() => showThemes(false)}
-                >
-                  <LogoToggle />
-                </button>
+    <div className={`w-full ${pathname.includes("game")}`}>
+      {/* ✅ HEADER - Expanded to full width with specific Figma padding */}
+      <header className="header_3452 w-full h-[64px] flex items-center px-6 py-12">
 
-                <div className="hidden group-hover:block  absolute   backdrop-blur-xl rounded w-[321px] h-[178.5px] -top-[11.5px] left-full ml-[28px] bg-[#73FFD70F] px-[16px] pt-[16px] z-50 group/menu ">
-                  <div className=" group/item relative flex w-[289px] h-[41.5] items-center justify-between opacity-[0.24] transition-opacity duration-200 hover:opacity-100 group-hover/menu:opacity-[0.24] hover:!opacity-100 ">
-                    <div className="div_6147">
-                      <Logo color={"#FFC100"} />
-                      <span className="span_8293 text-[#FFC100]">~Wallet</span>
-                    </div>
+        <div className="w-full flex items-center justify-between">
 
-                    <span className="transition-all duration-200 group-hover/item:underline">
-                      Select
-                    </span>
-                  </div>
+          {/* LEFT & CENTER CONTENT WRAPPER */}
+          <div className="flex items-center flex-1 gap-10">
 
-                  <div className="relative flex w-[289px] h-[41.5] items-center justify-between opacity-100 transition-opacity duration-200 group-hover/menu:opacity-[0.24] hover:!opacity-100 ">
-                    <div className="div_6147">
-                      <Logo color={"#73FFD7"} />
-                      <span className=" text-[#73FFD7] span_8293">~Play</span>
-                    </div>
-
-                    <span>Current</span>
-                  </div>
-
-                  <div className=" group/item relative flex w-[289px] h-[41.5] items-center justify-between opacity-[0.24] transition-opacity duration-200 hover:opacity-100 group-hover/menu:opacity-[0.24] hover:!opacity-100 ">
-                    <div className="div_6147">
-                      <Logo color={"#73B7FF"} />
-                      <span className=" text-[#73B7FF] span_8293 ">
-                        ~Connect
-                      </span>
-                    </div>
-
-                    <span className="transition-all duration-200 group-hover/item:underline">
-                      Select
-                    </span>
-                  </div>
-                </div>
+            {/* Logo Section */}
+            <div className="relative group flex items-center gap-6 h-[32px]">
+              <div className="flex items-center gap-1 cursor-pointer">
+                <Logo color={"#73FFD7"} />
+                <span className="text-[#73FFD7] text-[14px] font-bold tracking-[0.08em] relative top-[2px]">
+                  ~Play
+                </span>
               </div>
 
-              <div className="group">
-                <PrimaryTab />
+              <button className="hover:opacity-80 transition-opacity">
+                <LogoToggle />
+              </button>
+
+              {/* Dropdown Menu - Glassmorphism matched to Figma */}
+              <div className="hidden group-hover:block absolute top-full left-0 mt-2 backdrop-blur-2xl rounded-xl w-[320px] bg-[#0A0B14]/90 border border-white/10 p-4 z-50 shadow-2xl">
+                {/* Wallet Item */}
+                <div className="group/item flex items-center justify-between p-3 rounded-lg opacity-40 hover:opacity-100 hover:bg-white/5 transition-all cursor-pointer">
+                  <div className="flex items-center gap-3">
+                    <Logo color={"#FFC100"} />
+                    <span className="text-[#FFC100] text-sm font-bold tracking-wider">~Wallet</span>
+                  </div>
+                  <span className="text-xs text-white/50 group-hover/item:underline">Select</span>
+                </div>
+
+                {/* Current Play Item */}
+                <div className="flex items-center justify-between p-3 rounded-lg bg-[#73FFD70A] border border-[#73FFD726] my-1">
+                  <div className="flex items-center gap-3">
+                    <Logo color={"#73FFD7"} />
+                    <span className="text-[#73FFD7] text-sm font-bold tracking-wider">~Play</span>
+                  </div>
+                  <span className="text-xs text-[#73FFD7] font-medium">Current</span>
+                </div>
+
+                {/* Connect Item */}
+                <div className="group/item flex items-center justify-between p-3 rounded-lg opacity-40 hover:opacity-100 hover:bg-white/5 transition-all cursor-pointer">
+                  <div className="flex items-center gap-3">
+                    <Logo color={"#73B7FF"} />
+                    <span className="text-[#73B7FF] text-sm font-bold tracking-wider">~Connect</span>
+                  </div>
+                  <span className="text-xs text-white/50 group-hover/item:underline">Select</span>
+                </div>
               </div>
             </div>
 
-            <GameTab />
+            {/* Navigation Tabs - Spacing expanded to fill gap */}
+            <div className="flex items-center gap-8 flex-1">
+
+              <PrimaryTab />
+              {/* Vertical Divider matching Figma */}
+              <div className="w-[1px] h-4 bg-white/10"></div>
+              <GameTab />
+            </div>
           </div>
 
-          {/* Right Actions */}
-          <div className="flex items-center gap-[24px]">
+          {/* RIGHT ACTIONS - Fixed alignment and exact Figma spacing */}
+          <div className="flex items-center gap-6">
             {/* Spin Button */}
-            <button className="spin_5392">
-              <Spin />
+            <button className="spin_5392 group relative flex items-center gap-2 bg-[#73FFD70F] border border-[#73FFD726] px-4 py-2 rounded-lg hover:bg-[#73FFD71A] transition-all">
 
-              <div className="spin_glow_1847"></div>
-
-              <span className="spin_text_7721">Spin</span>
+              <span className="spin_text_7721 text-[#73FFD7] text-sm tracking-widest">Spin</span>
+              <div className="spin_glow_1847 absolute inset-0 bg-[#73FFD7] opacity-0 group-hover:opacity-5 blur-md rounded-lg"></div>
             </button>
 
-            {/* Winner Notification */}
-            <div className="winner_4821">
-              <img src="/images/winner.svg" className="winner_icon_7391" />
-
-              <div className="winner_glow_1843"></div>
-
-              <p className="winner_text_5927">
-                <span className="winner_white">Winner </span>
-                <span className="winner_green">CrispyPotato</span>
-                <span className="winner_white"> 🎉 </span>
+            {/* Winner Notification - Responsive width */}
+            <div className="winner_4821 hidden lg:flex items-center gap-3 bg-[#ffffff05] border border-white/5 px-4 py-2 rounded-lg h-[40px]">
+              <img src="/images/winner.svg" className="w-4 h-4" alt="winner" />
+              <p className="text-[13px] font-medium whitespace-nowrap">
+                <span className="text-gray-400">Winner </span>
+                <span className="text-[#73FFD7]">CrispyPotato</span>
+                <span className="ml-1 text-white">🎉</span>
               </p>
             </div>
 
-            {/* Bell Notification */}
-            <button className="relative">
-              <img src="/images/blub.svg" />
-            </button>
+            {/* Utility Buttons */}
+            <div className="flex items-center gap-4">
+              <button className="relative p-2 hover:bg-white/5 rounded-full transition-colors">
+                <img src="/images/blub.svg" className="w-5 h-5 opacity-70 hover:opacity-100" alt="notification" />
+                {/* Active Indicator */}
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-[#73FFD7] rounded-full shadow-[0_0_8px_#73FFD7]"></span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
