@@ -71,19 +71,19 @@ const ContestWinnerList = () => {
 
   return (
     <div className="mt-2 mb-2">
-      <div className="px-4 flex mb-2 mt-12 flex-wrap items-center justify-between w-full h-[29px] gap-4 text-gray-400 ">
+      <div className="px-4 flex mb-2 mt-12 flex-wrap items-center justify-between w-full h-[34px] gap-4 text-gray-400 ">
         <div className="flex items-center space-x-4 overflow-x-auto ">
-          <div className="flex items-center w-[154px] h-[29px]   rounded border border-gray-800">
-            <button className=" h-[26px] w-[86px] text-xs  tracking-wider rounded transition hover:text-white">
+          <div className="flex items-center w-[174px] h-[34px]   rounded border border-gray-800">
+            <button className=" h-[30px] w-[95px] text-[14px]  tracking-wider rounded transition hover:text-white">
               Leaderboard
             </button>
-            <button className=" w-[68px] h-[29px] text-sm  tracking-wider bg-[#ff4d00] text-white rounded ">
+            <button className=" w-[78px] h-[34px] text-[16px]  tracking-wider bg-[#ff4d00] text-white rounded ">
               Contest
             </button>
           </div>
 
-          <button className="flex w-[79px] h-[29px] items-center space-x-2 px-4 py-2 text-xs tracking-widest border border-gray-800 rounded  hover:border-gray-600 transition">
-            <span className="text-sm">Wins</span>
+          <button className="flex w-[90px] h-[34px] items-center space-x-2 px-4 py-2 text-[14px] tracking-widest border border-gray-800 rounded  hover:border-gray-600 transition">
+            <span className="text-[16px]">Wins</span>
             <svg
               width="6"
               height="4"
@@ -99,41 +99,41 @@ const ContestWinnerList = () => {
           </button>
 
           <div className="flex items-center space-x-2 ml-2">
-            <div className="flex w-[114px] px-3 gap-2 py-1.5 text-nowrap items-center h-[29px] bg-orange-900/20 rounded">
+            <div className="flex w-[134px] px-3 gap-2 py-1.5 text-nowrap items-center h-[34px] bg-orange-900/20 rounded">
               <img src="/images/gift.svg" />
-              <span className="text-sm text-white tracking-widest">
+              <span className="text-[16px] text-white tracking-widest">
                 4h: 32m: 21s
               </span>
             </div>
-            <span className="text-[12px] text-[#5B5B79] font-normal  tracking-widest">
+            <span className="text-[14px] text-[#5B5B79] font-normal  tracking-widest">
               ~Prize Distribution
             </span>
           </div>
         </div>
 
         <div className="flex items-center space-x-4">
-          <div className="flex items-center w-[120px] h-[29px]   rounded border border-gray-800">
-            <button className=" w-[60px] h-[29px] text-sm  tracking-wider bg-[#ff4d00] text-white rounded ">
+          <div className="flex items-center w-[140px] h-[34px]   rounded border border-gray-800">
+            <button className=" w-[70px] h-[34px] text-[16px]  tracking-wider bg-[#ff4d00] text-white rounded ">
               Global
             </button>
-            <button className=" h-[26px] w-[60px] text-xs  tracking-wider rounded transition hover:text-white">
+            <button className=" h-[30px] w-[70px] text-[14px]  tracking-wider rounded transition hover:text-white">
               Friends
             </button>
           </div>
 
-          <div className="flex items-center w-[123px] h-[29px]   rounded border border-gray-800">
-            <button className=" h-[26px] w-[29.6px]  text-xs  tracking-wider rounded transition hover:text-white">
+          <div className="flex items-center w-[150px] h-[34px]   rounded border border-gray-800">
+            <button className=" h-[30px] w-[37.5px]  text-[14px]  tracking-wider rounded transition hover:text-white">
               D
             </button>
 
-            <button className=" w-[34px] h-[29px] text-sm  tracking-wider bg-[#ff4d00] text-white rounded ">
+            <button className=" w-[37.5px] h-[34px] text-[16px]  tracking-wider bg-[#ff4d00] text-white rounded ">
               W
             </button>
-            <button className=" relative h-[26px]   w-[29.6px] text-xs  tracking-wider transition hover:text-white">
+            <button className=" relative h-[30px]   w-[37.5px] text-[14px]  tracking-wider transition hover:text-white">
               M
               <span className="absolute right-0 top-1/2 -translate-y-1/2 h-[10px] w-[1px] bg-gray-600 opacity-60"></span>
             </button>
-            <button className=" h-[26px] w-[29.6px] text-xs  tracking-wider rounded transition hover:text-white">
+            <button className=" h-[30px] w-[37.5px] text-[14px]  tracking-wider rounded transition hover:text-white">
               Y
             </button>
           </div>
@@ -145,12 +145,12 @@ const ContestWinnerList = () => {
 
           <div
             key={i}
-            className="flex w-[326px] h-[74px] max-w-md overflow-hidden bg-[#0a0b14] bordedrrr border-gray-800ddd rounded group"
+            className="flex w-full h-[80px] max-w-md overflow-hidden bg-[#0a0b14] bordedrrr border-gray-800ddd rounded group"
           >
             <div
-              className={`flex items-center justify-center w-[26px] h-[74px] ${STRIP_BACKGROUNDS[idx]} border-r border-gray-800`}
+              className={`flex items-center justify-center w-[30px] h-[80px] ${STRIP_BACKGROUNDS[idx]} border-r border-gray-800`}
             >
-              <span className="font-medium text-sm text-white uppercase transform -rotate-90">
+              <span className="font-medium text-[16px] text-white uppercase transform -rotate-90">
                 {String(idx + 1).padStart(2, "0")}
               </span>
             </div>
@@ -165,7 +165,7 @@ const ContestWinnerList = () => {
                       className="object-cover w-full h-full"
                     />
                   </div>
-                  <p className="text-[14px] font-normal tracking-wider text-white ">
+                  <p className="text-[16px] font-normal tracking-wider text-white ">
                     Samboxer
                   </p>
                   <div className="flex items-center space-x-1.5 mt-0.5">
@@ -183,13 +183,13 @@ const ContestWinnerList = () => {
                   <span style={{
                     color: idx === 3 ? "#fff" : TEXT_COLORS[idx],
                     borderColor: idx === 3 ? "#fff" : TEXT_COLORS[idx],
-                  }} className={`text-[14px] font-semibold  border-b  leading-none`}>
+                  }} className={`text-[16px] font-semibold  border-b  leading-none`}>
                     202
                   </span>
                   <span style={{
                     color: idx === 3 ? "#fff" : TEXT_COLORS[idx],
                   }}
-                    className="text-[14px] font-semibold   tracking-widest">
+                    className="text-[16px] font-semibold   tracking-widest">
                     Wins
                   </span>
                 </div>
@@ -207,7 +207,7 @@ const ContestWinnerList = () => {
 
 
 
-                  <span className="text-[14px] font-normal tracking-widest">
+                  <span className="text-[16px] font-normal tracking-widest">
                     +4 more
                   </span>
                 </div>
@@ -220,7 +220,7 @@ const ContestWinnerList = () => {
                       className="object-cover w-full h-full"
                     />
                   </div>
-                  <span className=" text-[14px] text-gray-400 font text-nowrap">
+                  <span className=" text-[16px] text-gray-400 font text-nowrap">
                     Rare Avatar
                   </span>
                 </div>
@@ -230,18 +230,18 @@ const ContestWinnerList = () => {
         ))}
       </div>
 
-      <div ref={scrollRef} className="w-100 overflow-x-auto scrollbar-hidden bg-rfed-400">
+      <div ref={scrollRef} className="w-full overflow-x-auto scrollbar-hidden">
         <div className="mt-6 flex gap-6 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
           {Array.from({ length: 95 }, (_, i) => i + 5).map((i, idx) => (
             <div
               key={i}
-              className="flex min-w-[326px] h-[74px] max-w-md overflow-hidden bg-[#0a0b14] bordedrrr border-gray-800ddd rounded group"
+              className="flex min-w-[340px] h-[80px] max-w-md overflow-hidden bg-[#0a0b14] bordedrrr border-gray-800ddd rounded group"
             >
               <div
-                className={`flex items-center justify-center w-[26px] h-[74px] bg-[linear-gradient(180deg,#5B5B5B_0%,#5B5B5B_100%)]
+                className={`flex items-center justify-center w-[30px] h-[80px] bg-[linear-gradient(180deg,#5B5B5B_0%,#5B5B5B_100%)]
                  border-r border-gray-800`}
               >
-                <span className="font-medium text-sm text-white uppercase transform -rotate-90">
+                <span className="font-medium text-[16px] text-white uppercase transform -rotate-90">
                   {String(idx + 5).padStart(2, "0")}
                 </span>
               </div>
@@ -256,7 +256,7 @@ const ContestWinnerList = () => {
                         className="object-cover w-full h-full"
                       />
                     </div>
-                    <p className="text-[14px] font-normal tracking-wider text-white ">
+                    <p className="text-[16px] font-normal tracking-wider text-white ">
                       Samboxer
                     </p>
                     {/* <div className="flex items-center space-x-1.5 mt-0.5">
@@ -269,10 +269,10 @@ const ContestWinnerList = () => {
                   </div>
 
                   <div className="flex items-baseline space-x-1">
-                    <span className="text-[14px] font-semibold  border-b  leading-none">
+                    <span className="text-[16px] font-semibold  border-b  leading-none">
                       202
                     </span>
-                    <span className="text-[14px] font-semibold   tracking-widest">
+                    <span className="text-[16px] font-semibold   tracking-widest">
                       Wins
                     </span>
                   </div>
@@ -288,7 +288,7 @@ const ContestWinnerList = () => {
                     <WinTag3 color={STRIP_COLORS[3]} />
 
 
-                    <span className="text-[14px] font-normal tracking-widest">
+                    <span className="text-[16px] font-normal tracking-widest">
                       +4 more
                     </span>
                   </div>
@@ -301,7 +301,7 @@ const ContestWinnerList = () => {
                         className="object-cover w-full h-full"
                       />
                     </div>
-                    <span className=" text-[14px] text-gray-400 font text-nowrap">
+                    <span className=" text-[16px] text-gray-400 font text-nowrap">
                       Rare Avatar
                     </span>
                   </div>

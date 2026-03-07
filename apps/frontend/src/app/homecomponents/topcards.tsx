@@ -11,20 +11,20 @@ const TopCards = () => {
   );
 
   return (
-    <section className="w-full flex justify-between gap-[32px] lg:grid lg:grid-cols-[592px_335px_385px]">
+    <section className="w-full flex justify-between gap-[32px] lg:grid lg:grid-cols-[1.5fr_1fr_1fr]">
       {/* Jackpot card */}
-      <div className="flex flex-col gap-1.5">
-        <div className="relative h-[86px] w-full rounded overflow-hidden border border-[#31313F]">
+      <div className="flex flex-col gap-1.5 w-full">
+        <div className="relative h-[106px] w-[100%] rounded overflow-hidden border border-[#31313F]">
           {/* Glow effect */}
           <div
-            className="absolute top-[47px] left-[490px] w-[3px] h-[3px] rounded"
+            className="absolute top-[57px] right-[80px] w-[3px] h-[3px] rounded"
             style={{ boxShadow: "0px 0px 48px 14px #DB5506" }}
             aria-hidden="true"
           />
 
           {/* Game cards row - left side */}
           {/* Game cards row - left side */}
-          <div className="absolute top-3 pl-[13.44px] inline-flex h-[62px] items-center gap-3">
+          <div className="absolute top-[22px] pl-[13.44px] inline-flex h-[62px] items-center gap-3">
             {[
               "/images/dice.png",
               "/images/plinko.png",
@@ -33,7 +33,7 @@ const TopCards = () => {
             ].map((img, i) => (
               <div
                 key={i}
-                className="relative w-[48.22px] h-[62px] rounded overflow-hidden"
+                className="relative w-[64px] h-[62px] rounded overflow-hidden"
               >
                 <img
                   src={img}
@@ -52,7 +52,7 @@ const TopCards = () => {
               /> */}
 
           {/* Crypto tabs */}
-          <nav className="absolute top-[18px] left-[267px] flex w-[307px] h-[14px] items-center gap-[16px] overflow-x-auto scrollbar-hidden">
+          <nav className="absolute top-[18px] left-[384px] flex w-[307px] h-[14px] items-center gap-[16px] overflow-x-auto scrollbar-hidden">
             {[
               "Bitcoin",
               "Tron",
@@ -66,7 +66,7 @@ const TopCards = () => {
                 key={index}
                 className={`
     relative w-fit mt-[-1px] 
-    text-[12px] leading-[14px] tracking-[0.08em]
+    text-[16px] leading-[16px] tracking-[0.08em]
     transition-all duration-200
 
     ${index === 0
@@ -87,14 +87,14 @@ const TopCards = () => {
 
           {/* Jackpot amount */}
           <div
-            className="absolute top-[38px] left-[266px] w-[146px] h-[33px] flex "
+            className="absolute top-[48px] left-[382px] w-[146px] h-[33px] flex "
             style={{
               borderBottom: "1px solid",
               borderImage:
                 "repeating-linear-gradient(to right, #818181 0 6px, transparent 6px 12px) 1",
             }}
           >
-            <span className="w-36 h-[29px] text-nowrap  font-semibold text-white text-2xl leading-normal tracking-[2.5px]  ">
+            <span className="w-36 h-[33px] text-nowrap  font-semibold text-white text-[28px] leading-normal tracking-[2.5px]  ">
               0.0021780 BTC
             </span>
           </div>
@@ -102,21 +102,21 @@ const TopCards = () => {
           {/* Treasure illustration - stylized with gradient */}
           <img
             src="/images/gems.svg"
-            className="absolute  top-[63.84px] left-[400px] -translate-y-1/2"
+            className="absolute  top-[73.84px] right-[40px] -translate-y-1/2"
           />
         </div>
 
         {/* Jackpot label */}
-        <p className=" text-xs tracking-[0.96px] leading-normal text-[#5b5b79]">
+        <p className=" text-[16px] tracking-[0.96px] leading-normal text-[#5b5b79]">
           Jackpot!
         </p>
       </div>
 
       {/* Rakeback card */}
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1.5 w-full">
         <div
-          className={`relative w-[335px]  rounded border border-[#2A2A3C] p-3  ${boosts
+          className={`relative w-full h-[106px] flex flex-col justify-center rounded border border-[#2A2A3C] p-3  ${boosts
             ? "border-b-0 rounded-b-none bg-[#FF7873]/[6%]  backdrop-blur-[64px] backdrop-saturate-150 shadow-lg z-50 "
             : ""
             }`}
@@ -127,14 +127,14 @@ const TopCards = () => {
               <div className="flex items-center gap-1.5">
                 <img src="/images/percent.svg" alt="percent" />
 
-                <span className="relative text-sm font-semibold text-white tracking-widest">
+                <span className="relative text-[18px] font-semibold text-white tracking-widest">
                   14.18%
                   <span className="pointer-events-none absolute left-0 bottom-[1px] w-full h-px bg-[repeating-linear-gradient(to_right,#818181_0_2px,transparent_2px_4px)]" />
                 </span>
               </div>
 
-              <span className="flex w-[50px] h-[17px] items-center gap-1 px-[3px] rounded-[3px] bg-[#1F8F55] w-[50px] h-[17px] text-sm tracking-widest text-white">
-                <span className="text-[6px]">▲</span> 23.1%
+              <span className="flex w-[55px] h-[19px] items-center gap-1 px-[3px] rounded-[3px] bg-[#1F8F55] text-[18px] tracking-widest text-white">
+                <span className="text-[10px]">▲</span> 23.1%
               </span>
             </div>
             <div
@@ -143,7 +143,7 @@ const TopCards = () => {
               }}
             >
               {!boosts ? (
-                <div className="flex items-center gap-1 text-xs text-[#828282] cursor-pointer">
+                <div className="flex items-center gap-1 text-[16px] text-[#828282] cursor-pointer">
                   <img src="/images/booster.svg" alt="boosts" />
                   <span>See Boosts</span>
                   <svg
@@ -162,7 +162,7 @@ const TopCards = () => {
                   </svg>
                 </div>
               ) : (
-                <span className="text-[#A1A1B3] flex items-center gap-[6px] text-xs cursor-pointer">
+                <span className="text-[#A1A1B3] flex items-center gap-[6px] text-[14px] cursor-pointer">
                   Close{" "}
                   <svg
                     width="5"
@@ -184,11 +184,11 @@ const TopCards = () => {
           </div>
 
           {/* Bottom Row */}
-          <div className="mt-3 flex items-center gap-3 ">
-            <div className="flex items-center justify-between gap-2 rounded bg-[#FFFFFF0F] px-3 py-1.5 w-[243px] h-[29px]">
+          <div className="mt-4 flex items-center justify-between gap-3 ">
+            <div className="flex items-center justify-between gap-2 rounded bg-[#FFFFFF0F] px-3 py-1.5 flex-1 h-[33px]">
               <div className="flex items-center gap-2">
                 <img src="/images/inr.svg" alt="inr" />
-                <span className="text-sm text-[#C1C1C1]">5412.81 INR</span>
+                <span className="text-[18px] text-[#C1C1C1]">5412.81 INR</span>
               </div>
 
               <img
@@ -198,7 +198,7 @@ const TopCards = () => {
               />
             </div>
 
-            <button className="rounded bg-[#FF4500] opacity-[84%] hover:opacity-[100%] text-sm font-medium text-white  w-[56px] h-[29px] tracking-wide  ">
+            <button className="rounded bg-[#FF4500] opacity-[84%] hover:opacity-[100%] text-[18px] font-medium text-white px-3 h-[33px] tracking-wide  ">
               Claim
             </button>
           </div>
@@ -209,16 +209,16 @@ const TopCards = () => {
           {boosts && (
             // <div className="absolute w-[335px]  bg-[#FF7873]/[0.06] z-50 backdrop:blur-3xl grid top-[219px] p-3 rounded border border-t-0 rounded-t-none  border-[#2A2A3C]">
             <div
-              className="absolute w-[335px] z-50 top-[85px] left-[-1px] px-3 pb-[12px]
+              className="absolute w-[100.5%] z-50 top-[105px] left-[-1px] px-3 pb-[12px]
   rounded rounded-t-none border border-t-0 border-white/10
  bg-[#FF7873]/[6%]
  "
             >
-              <div className="inline-flex mt-[2px] w-[311px] items-center gap-3 px-3 py-2 bg-white/[0.06] rounded rounded-b-none">
+              <div className="inline-flex mt-[2px] w-full items-center justify-between gap-3 px-3 py-2 bg-white/[0.06] rounded rounded-b-none">
                 {/* LEFT SIDE */}
                 <div className="flex items-center gap-[7px] shrink-0">
                   <Premium />
-                  <span className="text-sm tracking-[1.12px] text-white">
+                  <span className="text-[16px] tracking-[1.12px] text-white">
                     Premium
                   </span>
                 </div>
@@ -231,12 +231,12 @@ const TopCards = () => {
                   {/* Sparkle SVG */}
                   <Sparkle color={"#FF6A00"} />
 
-                  <span className="text-white text-sm tracking-[1.12px]">
+                  <span className="text-white text-[16px] tracking-[1.12px]">
                     16%
                   </span>
                 </div>
               </div>
-              <div className="inline-flex  w-[311px] items-center gap-3 px-3 py-2 bg-white/[0.06] rounded rounded-t-none">
+              <div className="inline-flex  w-full items-center justify-between gap-3 px-3 py-2 bg-white/[0.06] rounded rounded-t-none">
                 {/* LEFT SIDE */}
                 <div className="flex items-center gap-[7px] shrink-0">
                   <svg
@@ -265,7 +265,7 @@ const TopCards = () => {
                     </defs>
                   </svg>
 
-                  <span className="text-sm tracking-[1.12px] text-white">
+                  <span className="text-[16px] tracking-[1.12px] text-white">
                     VIP
                   </span>
                 </div>
@@ -278,7 +278,7 @@ const TopCards = () => {
                   {/* Sparkle SVG */}
                   <Sparkle color={"#13AEF0"} />
 
-                  <span className="text-white text-sm tracking-[1.12px]">
+                  <span className="text-white text-[16px] tracking-[1.12px]">
                     16%
                   </span>
                 </div>
@@ -287,19 +287,19 @@ const TopCards = () => {
           )}
         </div>
         {!boosts && (
-          <p className="text-xs tracking-[0.96px] text-[#5B5B79]">Rakeback</p>
+          <p className="text-[16px] tracking-[0.96px] text-[#5B5B79]">Rakeback</p>
         )}{" "}
       </div>
 
       {/* House Edge card */}
-      <div className="flex flex-col gap-1.5">
-        <div className="relative h-[86px] w-[385px]">
-          <div className="flex flex-col w-full items-start h-[86px] gap-1.5 p-[12px] rounded overflow-hfidden border border-[#31313F]">
+      <div className="flex flex-col gap-1.5 w-full">
+        <div className="relative h-[106px] w-full border border-[#31313F] rounded">
+          <div className="flex flex-col justify-center w-full h-[106px] gap-2.5 p-[14px] overflow-hidden">
             {/* Header with badges and stats */}
             <div className="flex items-center justify-between w-full">
               {/* Premium/VIP badge tabs */}
               <div
-                className="inline-flex items-center w-[182px] h-[41px]  gap-3 p-1.5 rounded overflow-hidcden"
+                className="inline-flex items-center h-[41px]  gap-3 p-1.5 rounded"
                 style={{
                   background:
                     activeEdge === "premium" ? "linear-gradient(148deg, rgba(255, 229, 0, 0.06) 0%, rgba(255, 106, 0, 0.06) 100%)"
@@ -331,7 +331,7 @@ const TopCards = () => {
                         }`}
                     />
                   </div>
-                  <span className={`text-sm tracking-[1.12px] ${activeEdge == "premium" ? "text-white" : "text-[#828282]"}`}>
+                  <span className={`text-[18px] tracking-[1.12px] ${activeEdge == "premium" ? "text-white" : "text-[#828282]"}`}>
                     Premium
                   </span>
                 </button>
@@ -339,7 +339,7 @@ const TopCards = () => {
                 {/* VIP badge - inactive */}
                 <button
                   onClick={() => setActiveEdge("vip")}
-                  className={`inline-flex group items-center w-[62.07px] h-[29px] gap-[7px] px-3 py-1.5 rounded transition-all duration-300 ${activeEdge === "vip"
+                  className={`inline-flex group items-center h-[29px] gap-[7px] px-3 py-1.5 rounded transition-all duration-300 ${activeEdge === "vip"
                     ? "bg-white/[0.06] text-white scale-100"
                     : "bg-transparent text-[#818181]"
                     }`}
@@ -381,7 +381,7 @@ const TopCards = () => {
                       }`}
                   />
 
-                  <span className={`text-sm tracking-[1.12px] ${activeEdge == "vip" ? "text-white" : "text-[#828282]"}`}>
+                  <span className={`text-[18px] tracking-[1.12px] ${activeEdge == "vip" ? "text-white" : "text-[#828282]"}`}>
                     VIP
                   </span>
                 </button>
@@ -403,14 +403,14 @@ const TopCards = () => {
                   }
 
                   <div className="inline-flex items-center border-b border-dashed border-[#818181]">
-                    <span className=" font-semibold text-white text-sm tracking-[1.12px]">
+                    <span className=" font-semibold text-white text-[18px] tracking-[1.12px]">
                       9.01%
                     </span>
                   </div>
                 </div>
 
                 {/* Growth badge */}
-                <div className="inline-flex w-[50px] h-[17px] items-center gap-1 px-[3px] bg-[#24a654] rounded-[3px]">
+                <div className="inline-flex h-[19px] items-center gap-1.5 px-[5px] bg-[#24a654] rounded-[3px]">
                   <svg
                     width="6"
                     height="5"
@@ -420,7 +420,7 @@ const TopCards = () => {
                   >
                     <path d="M3 5L0 0H6L3 5Z" fill="white" />
                   </svg>
-                  <span className=" text-white text-sm tracking-[1.12px]">
+                  <span className=" text-white text-[18px] tracking-[1.12px]">
                     18.6%
                   </span>
                 </div>
@@ -429,15 +429,15 @@ const TopCards = () => {
 
             {/* Description */}
             {activeEdge == "premium" ? (
-              <p className=" font-light text-[#818181] text-xs tracking-[0.96px] text-nowrap">
+              <p className=" font-light text-[#818181] text-[16px] tracking-[0.96px] text-nowrap mt-1">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod.{" "}
               </p>
             ) : (
               <div className="flex w-full items-center justify-between gap-4">
-                <div className="flex w-[174] h-[14px] items-center gap-[12px]">
+                <div className="flex w-[174] h-[14px] items-center gap-[12px] mt-1">
                   {/* LEFT - LEVEL */}
-                  <span className="text-white text-xs tracking-[2px] uppercase">
+                  <span className="text-white text-[16px] tracking-[2px] uppercase">
                     LVL 4
                   </span>
 
@@ -456,7 +456,7 @@ const TopCards = () => {
                 </div>
 
                 {/* RIGHT - TEXT */}
-                <span className="text-xs text-[#828282] whitespace-nowrap">
+                <span className="text-[16px] text-[#828282] whitespace-nowrap mt-2">
                   Wager{" "}
                   <span className="text-[#25A655] font-medium">$34.02</span>{" "}
                   more reach <span className="underline text-[#CACACA]">lvl 5</span>
@@ -464,7 +464,7 @@ const TopCards = () => {
               </div>
             )}
           </div>
-          <span className=" text-xs tracking-[0.96px] text-[#5b5b79]">
+          <span className=" absolute -bottom-[24px] text-[16px] tracking-[0.96px] text-[#5b5b79]">
             House Edge
           </span>
         </div>

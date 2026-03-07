@@ -22,8 +22,6 @@ const GameTab = () => {
     { id: "poker", name: "Poker" },
     { id: "baccarat", name: "Baccarat" },
     { id: "roulette", name: "Roulette" },
-    { id: "racks", name: "Racks" },
-    { id: "goals", name: "Goals" },
   ];
 
   const totalItems = gameTabs.length;
@@ -35,22 +33,18 @@ const GameTab = () => {
   const getUnderlinePosition = () => {
     switch (activeGameTab) {
       case "blackjack":
-        return 0;
+        return 32;
       case "slots":
-        return 101;
+        return 187; // 155 * 1 + 32
       case "poker":
-        return 182;
+        return 342; // 155 * 2 + 32
       case "baccarat":
-        return 275;
+        return 497; // 155 * 3 + 32
       case "roulette":
-        return 373;
-      case "racks":
-        return 462;
-      case "goals":
-        return 550;
+        return 652; // 155 * 4 + 32
 
       default:
-        return 0;
+        return 32;
     }
   };
 

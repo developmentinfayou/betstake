@@ -126,8 +126,8 @@ const PrimaryTab = () => {
           className="primary_slider_1942"
           style={{
             transform: `translateX(${activeTab === "dashboard" ? 0 :
-                activeTab === "casino" ? 104 :
-                  210
+              activeTab === "casino" ? 130 :
+                260
               }px)`,
           }}
         />

@@ -71,29 +71,29 @@ const Maingames = () => {
   ];
 
   return (
-    <section className="mt-8 grid gap-[32px] lg:grid-cols-[1fr_385px]">
+    <section className="mt-8 grid gap-[48px] lg:grid-cols-[1fr_480px]">
       {/* LEFT: games */}
       <div className="mt-8">
         {/* search/filter row */}
-        <div className="flex flex-wrapk items-center gap-[295px] w-[1008px]">
-          <div className="flex flex-wrapk items-center gap-4 ">
+        <div className="flex flex-wrap items-center justify-between w-full">
+          <div className="flex flex-wrap items-center gap-4">
 
 
 
 
-            <div className="flex w-[291.57px] h-[26px] flex-row items-center gap-3 rounded border border-[#31313F] px-[12px] py-[6px]">
+            <div className="flex w-[320px] h-[36px] flex-row items-center gap-3 rounded border border-[#31313F] px-[12px] py-[6px]">
               <img src="/images/search.svg" />
               <input
                 placeholder="Search games..."
-                className="h-[26px] bg-transparent text-xs tracking-[0.08em] text-[#424252] outline-none"
+                className="h-[36px] bg-transparent text-[17px] tracking-[0.08em] text-[#424252] outline-none"
               />
             </div>
 
-            <button className="h-[26px] flex items-center gap-1.5 rounded border border-[#31313F] px-4 text-xs text-[#424252]">
+            <button className="h-[36px] flex items-center gap-1.5 rounded border border-[#31313F] px-4 text-[17px] text-[#424252]">
               <img src="/images/filter.svg" /> Filter
             </button>
 
-            <span className="text-xs text-[#AEAEAE]">
+            <span className="text-[17px] text-[#AEAEAE]">
               Sort by:{" "}
               <span className="text-[#FF7643] underline">
                 {" "}
@@ -148,33 +148,29 @@ const Maingames = () => {
         </div>
 
         {/* games grid */}
-        <div className="mt-6 flex gap-0 relative -left-3">
+        <div className="mt-6 flex flex-wrap gap-[28px] relative">
           {games?.map((g) => {
             const isLive = g.status === "live";
 
             return (
-              <div key={g.id} className="relative w-[110px] h-[152px]">
+              <div key={g.id} className="relative w-[160px] h-[207px]">
                 <Link
                   to={isLive ? `/game/${g.id}` : "#"}
                   className="group absolute bottom-0 left-1/2 -translate-x-1/2
-               w-[86px] h-[152px]"
+               w-[160px] h-[207px]"
                 >
                   {/* HOVER CARD */}
                   <div
                     className="
         relative h-full rounded
         transition-all duration-100
-        group-hover:w-[110px]
-        group-hover:translate-x-[-12px]
       "
                   >
                     {/* IMAGE */}
                     <div
                       className="
            absolute bottom-[38px] left-0 overflow-hidden rounded
-          w-[86.02px] h-[114px]
-          group-hover:w-[110px]
-          group-hover:h-[126px]
+          w-[136px] h-[171px]
           transition-all duration-100
         "
                     >
@@ -239,11 +235,11 @@ const Maingames = () => {
                       {/* PLAY BUTTON */}
                       <button
                         className="
-            absolute left-1/2 top-[85px] -translate-x-1/2
-            w-[61px] h-[29px]
+            absolute left-1/2 top-[108px] -translate-x-1/2
+            w-[72px] h-[34px]
             flex items-center justify-center gap-[6px]
             rounded bg-[#FF4500]
-            text-xs text-white
+            text-[17px] text-white
             opacity-0 group-hover:opacity-100
             transition-all duration-100
             tracking-widest
@@ -270,7 +266,7 @@ const Maingames = () => {
                     {/* HEART ICON */}
                     <div
                       className="
-absolute top-[3px] right-[12px]
+absolute top-[12px] right-[12px]
 opacity-0 group-hover:opacity-100
 transition-all duration-100
 "
@@ -294,15 +290,14 @@ transition-all duration-100
                     {/* BOTTOM USERS */}
                     <div
                       className="
-        absolute bottom-[7.2px] left-0 h-[31.1px]
-         w-[86px] h-[38
+        absolute bottom-[0px] left-0 h-[38px]
+          w-[160px]
           border border-[#31313F] border-t-0 group-hover:border-0
           rounded-b
           flex items-center justify-center
           gap-[8px]
           mt-0
           transition-all duration-100
-          group-hover:w-[110px]
           group-hover:bg-[#FFFFFF0F]
           group-hover:duration-100
         "
@@ -375,8 +370,8 @@ transition-all duration-100
                         />
                       </svg>
 
-                      <span className="text-xs font-normal tracking-widest text-gray-400">
-                        58.8K
+                      <span className="text-[17px] font-normal tracking-widest text-gray-400">
+                        {g.players}
                       </span>
                     </div>
                   </div>
@@ -391,15 +386,15 @@ transition-all duration-100
       <div className="">
         <TrendingText />
 
-        <p className=" text-xs text-[#828282] h-[70px] w-[339px]">
+        <p className=" text-[17px] text-[#828282] h-auto w-full leading-[20px]">
           ed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, atae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequun...
           <span className="ml-1 cursor-pointer text-[#FF9169] underline">
             see more
           </span>
         </p>
-        <button className="mt-3 flex items-center gap-2 rounded-[3px] bg-[#FF45001F] px-1 py-1 text-xs">
+        <button className="mt-6 flex items-center gap-2 rounded-[3px] bg-[#FF45001F] px-4 py-3 text-[17px]">
           <img src="/images/star.svg" />
-          ORBEit Originals
+          ORBEIT Originals
         </button>
       </div>
     </section>

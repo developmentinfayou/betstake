@@ -26,7 +26,7 @@ const MainHeader = () => {
             <div className="relative group flex items-center gap-6 h-[32px]">
               <div className="flex items-center gap-1 cursor-pointer">
                 <Logo color={"#73FFD7"} />
-                <span className="text-[#73FFD7] text-[14px] font-bold tracking-[0.08em] relative top-[2px]">
+                <span className="text-[#73FFD7] text-[17px] font-bold tracking-[0.08em] relative top-[2px]">
                   ~Play
                 </span>
               </div>
@@ -77,28 +77,28 @@ const MainHeader = () => {
           </div>
 
           {/* RIGHT ACTIONS - Fixed alignment and exact Figma spacing */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-[80px]">
             {/* Spin Button */}
-            <button className="spin_5392 group relative flex items-center gap-2 bg-[#73FFD70F] border border-[#73FFD726] px-4 py-2 rounded-lg hover:bg-[#73FFD71A] transition-all">
+            <button className="spin_5392 group relative flex items-center gap-2 bg-[#73FFD70F] border border-[#73FFD726] px-[32px] py-[12px] rounded-lg hover:bg-[#73FFD71A] transition-all">
 
-              <span className="spin_text_7721 text-[#73FFD7] text-sm tracking-widest">Spin</span>
+              <span className="spin_text_7721 text-[#73FFD7] text-[17px] tracking-widest">Spin</span>
               <div className="spin_glow_1847 absolute inset-0 bg-[#73FFD7] opacity-0 group-hover:opacity-5 blur-md rounded-lg"></div>
             </button>
 
             {/* Winner Notification - Responsive width */}
-            <div className="winner_4821 hidden lg:flex items-center gap-3 bg-[#ffffff05] border border-white/5 px-4 py-2 rounded-lg h-[40px]">
-              <img src="/images/winner.svg" className="w-4 h-4" alt="winner" />
-              <p className="text-[13px] font-medium whitespace-nowrap">
+            <div className="winner_5100 hidden lg:flex items-center gap-[20px] bg-[#ffffff05] border border-white/5 px-[6px] py-3 rounded-lg h-[46px]">
+              <img src="/images/winner.svg" className="w-[18px] h-[18px]" alt="winner" />
+              <p className="text-[17px] font-medium whitespace-nowrap">
                 <span className="text-gray-400">Winner </span>
                 <span className="text-[#73FFD7]">CrispyPotato</span>
-                <span className="ml-1 text-white">🎉</span>
+                <span className="ml-2 text-white">🎉</span>
               </p>
             </div>
 
             {/* Utility Buttons */}
             <div className="flex items-center gap-4">
               <button className="relative p-2 hover:bg-white/5 rounded-full transition-colors">
-                <img src="/images/blub.svg" className="w-5 h-5 opacity-70 hover:opacity-100" alt="notification" />
+                <img src="/images/blub.svg" className="w-6 h-6 opacity-70 hover:opacity-100" alt="notification" />
                 {/* Active Indicator */}
                 <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-[#73FFD7] rounded-full shadow-[0_0_8px_#73FFD7]"></span>
               </button>

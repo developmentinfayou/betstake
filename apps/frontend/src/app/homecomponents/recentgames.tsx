@@ -69,12 +69,12 @@ const Recentgames = () => {
 
   return (
     <section className="mt-[64px]">
-      <div className=" flex items-center gap-[32px]">
-        <div className=" flex items-center  overflow-x-auto scrollbar-hidden">
+      <div className=" flex items-center justify-between gap-[28px] w-full">
+        <div className=" flex-1 flex items-center gap-[28px] overflow-x-auto scrollbar-hidden">
           {games?.slice(0, 7)?.map((g, i) => (
             <div
               key={i}
-              className="group relative w-[147px] h-[187px] flex-shrink-0 p-[12px]"
+              className="group relative w-[172px] h-[220px] flex-shrink-0 p-[12px]"
             >
               {/* HOVER FRAME */}
               <div
@@ -89,7 +89,7 @@ const Recentgames = () => {
 
 
               {/* IMAGE WRAPPER */}
-              <div className="absolute left-[12px] top-[12px] w-[123px] h-[163px] overflow-hidden rounded">
+              <div className="absolute left-[12px] top-[12px] w-[148px] h-[196px] overflow-hidden rounded">
                 {/* IMAGE */}
                 <img
                   src={g.image}
@@ -145,14 +145,14 @@ const Recentgames = () => {
               {/* CONTINUE BUTTON */}
               <button
                 className="
-    absolute left-[29px] top-[118px]
+    absolute left-[42px] top-[128px]
     w-[88px] h-[29px]
     flex items-center justify-center gap-[6px]
     rounded bg-[#FF4500]
      text-white
     opacity-0 group-hover:opacity-100
     transition-all duration-300
-    font-normal text-sm
+    font-normal text-[16px]
   "
               >
                 <svg width="7" height="9" viewBox="0 0 7 9" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -165,7 +165,7 @@ const Recentgames = () => {
               {/* HEART ICON */}
               <div
                 className="
-    absolute left-[109px] top-[24px]
+    absolute left-[144px] top-[24px]
     opacity-0 group-hover:opacity-100
     transition-all duration-300
   "
@@ -179,10 +179,10 @@ const Recentgames = () => {
           ))}
         </div>
 
-        <div className="w-[339px] h-[163px] rounded bg-[#FFFFFF0F] px-[24px] py-[18px] shadow-lg">
+        <div className="w-[480px] h-[196px] rounded bg-[#FFFFFF0F] px-[24px] py-[18px] shadow-lg">
           {/* Header */}
-          <div className="flex items-center justify-between flex-row p-0 gap-[16px] w-[291px] h-[17px]">
-            <span className="text-sm font-medium text-white">
+          <div className="flex items-center justify-between flex-row p-0 gap-[16px] w-full">
+            <span className="text-[19px] font-medium text-white">
               Boom Balloon
             </span>
 
@@ -191,7 +191,7 @@ const Recentgames = () => {
 
             <div className="flex items-center gap-2 text-[#CFCFE6]">
               <img src="/images/users.svg" alt="users" />
-              <span className="text-xs underline underline-offset-1">
+              <span className="text-[17px] underline underline-offset-1">
                 58.8K
               </span>
             </div>
@@ -201,7 +201,7 @@ const Recentgames = () => {
 
 
 
-          <p className="mt-[24px] text-xs text-[#B8B8B8] font-thin w-[291px] h-[42px]" style={{ lineHeight: "14px", letterSpacing: "0.08em" }}>
+          <p className="mt-[24px] text-[17px] text-[#B8B8B8] font-thin w-full h-[60px]" style={{ lineHeight: "20px", letterSpacing: "0.08em" }}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
             enim ad minim veniam, quis n...
@@ -214,7 +214,7 @@ const Recentgames = () => {
 
 
 
-          <button className="flex mt-[24px] w-[109px] h-[20px] text-xs items-center gap-[6px] rounded-[3px] bg-[#FF4500] px-[3px] py-[6px] font-semibold text-white hover:opacity-90">
+          <button className="flex mt-[24px] w-[155px] h-[28px] text-[17px] items-center gap-[6px] rounded-[3px] bg-[#FF4500] px-[3px] py-[6px] font-semibold text-white hover:opacity-90">
             <img src="/images/whitestar.svg" alt="star" />
             ORBEIT Originals
           </button>
@@ -224,7 +224,7 @@ const Recentgames = () => {
         </div>
       </div>
 
-      <div className="text-xs relative left-[12px] top-[6px] tracking-[0.08em] text-[#5B5B79]">
+      <div className="text-[14px] relative left-[12px] top-[6px] tracking-[0.08em] text-[#5B5B79]">
         Recently Played
       </div>
     </section>

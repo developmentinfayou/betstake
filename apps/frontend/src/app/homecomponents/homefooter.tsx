@@ -43,17 +43,14 @@ const HomeFooter = () => {
 
   const WalletCard = () => (
     <div>
-      <p className="text-xs text-[#7c8799] mb-1">Wallet Balance</p>
+      <p className="text-[16px] text-[#7c8799] mb-1">Wallet Balance</p>
 
-      <div className="flex items-center justify-between gap-2 bg-[#04040A] border border-[#1e293b] py-1.5 px-3 rounded w-[187px] h-[29px]">
-
-
-
-        <span className="text-white flex items-center gap-1 font-medium text-xs text-nowrap">
+      <div className="flex items-center justify-between gap-2 bg-[#04040A] border border-[#1e293b] py-1.5 px-3 rounded w-[197px] h-[34px]">
+        <span className="text-white flex items-center gap-1 text-[16px] text-nowrap">
           <Bitcoin /> 0.0066012 BTC
         </span>
 
-        <span className="text-[10px] bg-emerald-400 text-black px-[5px] rounded text-right font-semibold">
+        <span className="text-[14px] bg-emerald-400 text-black px-[5px] rounded text-right">
           MAX
         </span>
       </div>
@@ -62,17 +59,17 @@ const HomeFooter = () => {
 
   const PlayCard = () => (
     <div>
-      <p className="text-xs text-[#7c8799] mb-1 text-left">Play Balance</p>
+      <p className="text-[16px] text-[#7c8799] mb-1 text-left">Play Balance</p>
 
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span className="text-white flex items-center gap-1 font-medium text-xs text-nowrap">
+          <span className="text-white flex items-center gap-1 text-[16px] text-nowrap">
             <Bitcoin /> 0.0066012 BTC
           </span>
 
         </div>
 
-        <button className="bg-[#73FFD7] text-black px-[6px] text-[12px] w-[55px] h-[29px] rounded font-medium hover:opacity-90 transition">
+        <button className="bg-[#73FFD7] text-black px-[8px] text-[16px] min-w-[75px] h-[34px] rounded hover:opacity-90 transition">
           Transfer
         </button>
       </div>
@@ -88,10 +85,10 @@ const HomeFooter = () => {
         <div className="w-full absolute bottom-14 z-50 max-w-md p-3 rounded bg-[#000000D1] border border-gray-800 shadow-2xl backdrop-blur-xl text-gray-400 ">
           <div className="flex items-center justify-between mb-6 space-x-3">
             <div className="flex w-[155px] h-[31px] p-1 bg-[#73FFD70F] rounded ">
-              <button className="flex gap-1.5 items-center px-3 py-1.5 text-sm text-white bg-[#FFFFFF0F] rounded shadow-sm">
+              <button className="flex gap-1.5 items-center px-3 py-1.5 text-[16px] text-white bg-[#FFFFFF0F] rounded shadow-sm">
                 <img src="/images/crypto.svg" /> Crypto
               </button>
-              <button className="flex gap-1.5 items-center px-3 py-1.5 text-sm tracking-wider hover:text-gray-200 transition">
+              <button className="flex gap-1.5 items-center px-3 py-1.5 text-[16px] tracking-wider hover:text-gray-200 transition">
                 <img src="/images/fiat.svg" /> Fiat
               </button>
             </div>
@@ -122,7 +119,7 @@ const HomeFooter = () => {
               <input
                 type="text"
                 placeholder="Search here..."
-                className="w-full bg-[#04040A] border border-gray-800 rounded py-1.5 pl-9 pr-3 text-xs focus:outline-none focus:border-emerald-500/50 transition"
+                className="w-full bg-[#04040A] border border-gray-800 rounded py-1.5 pl-9 pr-3 text-[16px] focus:outline-none focus:border-emerald-500/50 transition"
               />
             </div>
 
@@ -174,83 +171,83 @@ const HomeFooter = () => {
           </div>
 
           <div className="space-y-1 mb-6">
-            <div className="flex items-center justify-between px-2 py-1 rounded hover:bg-gray-800/30 cursor-pointer group">
+            <div className="flex items-center justify-between px-2 py-2 rounded hover:bg-[#1a1c2e]/50 border-l-4 border-transparent hover:border-emerald-500 hover:shadow-[0_0_15px_-3px_rgba(16,185,129,0.2)] cursor-pointer group/row transition-all duration-200">
               <div className="flex items-center space-x-2">
-                <img src="/images/dogecoin.svg" />
-                <span className="text-sm font-normal group-hover:text-white">
+                <img src="/images/dogecoin.svg" className="w-5 h-5" />
+                <span className="text-[18px] font-normal group-hover/row:text-white transition-colors">
                   Dogecoin
                 </span>
               </div>
-              <div className="text-right flex items-center gap-2">
-                <div className="text-[12px] text-gray-500">3819.75 INR ~</div>
-                <div className="text-sm  text-gray-300">266.00000 DOGE</div>
-              </div>
-            </div>
-
-            <div className="relative flex items-center justify-between px-2 py-1 bg-[#1a1c2e]/50 border-l-2 border-emerald-500 rounded-r cursor-pointer">
-              <div className="flex items-center space-x-2">
-                <img src="/images/fiat.svg" />
-                <span className="text-sm font-normal text-white">Bitcoin</span>
-              </div>
-              <div className="text-right flex items-center gap-2">
-                <div className="text-[12px] text-gray-500">17319.47 INR ~</div>
-                <div className="text-sm  font-medium text-white">
-                  0.0021780 BTC
+              <div className="flex items-center gap-4">
+                <div className="text-right flex items-center gap-2">
+                  <div className="text-[16px] text-gray-500">3819.75 INR ~</div>
+                  <div className="text-[18px] text-gray-300 group-hover/row:text-white transition-colors">266.00000 DOGE</div>
                 </div>
+                <div className="w-1 h-8 bg-white/90 rounded-sm opacity-0 group-hover/row:opacity-100 transition-opacity"></div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between px-2 py-1 rounded hover:bg-gray-800/30 cursor-pointer group">
+            <div className="relative flex items-center justify-between px-2 py-2 bg-[#1a1c2e]/50 border-l-4 border-emerald-500 rounded-r cursor-pointer shadow-[0_0_15px_-3px_rgba(16,185,129,0.3)] group/active">
               <div className="flex items-center space-x-2">
-                <img src="/images/tether.svg" />
-                <span className="text-sm font-normal group-hover:text-white">
+                <img src="/images/fiat.svg" className="w-5 h-5" />
+                <span className="text-[18px] font-normal text-white">Bitcoin</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-right flex items-center gap-2">
+                  <div className="text-[16px] text-gray-500">17319.47 INR ~</div>
+                  <div className="text-[18px] text-white">
+                    0.0021780 BTC
+                  </div>
+                </div>
+                <div className="w-1 h-8 bg-white/90 rounded-sm"></div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between px-2 py-2 rounded hover:bg-[#1a1c2e]/50 border-l-4 border-transparent hover:border-emerald-500 hover:shadow-[0_0_15px_-3px_rgba(16,185,129,0.2)] cursor-pointer group/row transition-all duration-200">
+              <div className="flex items-center space-x-2">
+                <img src="/images/tether.svg" className="w-5 h-5" />
+                <span className="text-[18px] font-normal group-hover/row:text-white transition-colors">
                   Tether
                 </span>
               </div>
-              <div className="text-right flex items-center gap-2">
-                <div className="text-[12px] text-gray-500">3819.75 INR ~</div>
-                <div className="text-sm  text-gray-300">266.00000 DOGE</div>
+              <div className="flex items-center gap-4">
+                <div className="text-right flex items-center gap-2">
+                  <div className="text-[16px] text-gray-500">3819.75 INR ~</div>
+                  <div className="text-[18px] text-gray-300 group-hover/row:text-white transition-colors">266.00000 DOGE</div>
+                </div>
+                <div className="w-1 h-8 bg-white/90 rounded-sm opacity-0 group-hover/row:opacity-100 transition-opacity"></div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between px-2 py-1 rounded hover:bg-gray-800/30 cursor-pointer group">
+            <div className="flex items-center justify-between px-2 py-2 rounded hover:bg-[#1a1c2e]/50 border-l-4 border-transparent hover:border-emerald-500 hover:shadow-[0_0_15px_-3px_rgba(16,185,129,0.2)] cursor-pointer group/row transition-all duration-200">
               <div className="flex items-center space-x-2">
-                <img src="/images/binance.svg" />
-                <span className="text-sm font-normal group-hover:text-white">
+                <img src="/images/binance.svg" className="w-5 h-5" />
+                <span className="text-[18px] font-normal group-hover/row:text-white transition-colors">
                   Binance Coin
                 </span>
-                <svg
-                  className="cursor-pointer text-emerald-400"
-                  width="15"
-                  height="13"
-                  viewBox="0 0 15 13"
-                  fill="currentColor"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M10.3778 0.5C12.8433 0.5 14.5 2.735 14.5 4.82C14.5 9.0425 7.62444 12.5 7.5 12.5C7.37556 12.5 0.5 9.0425 0.5 4.82C0.5 2.735 2.15667 0.5 4.62222 0.5C6.03778 0.5 6.96333 1.1825 7.5 1.7825C8.03667 1.1825 8.96222 0.5 10.3778 0.5Z"
-                    stroke="#13222A"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
               </div>
-              <div className="text-right flex items-center gap-2">
-                <div className="text-[12px] text-gray-500">27288.61 INR ~</div>
-                <div className="text-sm  text-gray-300">0.5 BNB</div>
+              <div className="flex items-center gap-4">
+                <div className="text-right flex items-center gap-2">
+                  <div className="text-[16px] text-gray-500">27288.61 INR ~</div>
+                  <div className="text-[18px] text-gray-300 group-hover/row:text-white transition-colors">0.5 BNB</div>
+                </div>
+                <div className="w-1 h-8 bg-white/90 rounded-sm opacity-0 group-hover/row:opacity-100 transition-opacity"></div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between px-2 py-1 rounded hover:bg-gray-800/30 cursor-pointer group">
+            <div className="flex items-center justify-between px-2 py-2 rounded hover:bg-[#1a1c2e]/50 border-l-4 border-transparent hover:border-emerald-500 hover:shadow-[0_0_15px_-3px_rgba(16,185,129,0.2)] cursor-pointer group/row transition-all duration-200">
               <div className="flex items-center space-x-2">
-                <img src="/images/litecoin.svg" />
-                <span className="text-sm font-normal group-hover:text-white">
+                <img src="/images/litecoin.svg" className="w-5 h-5" />
+                <span className="text-[18px] font-normal group-hover/row:text-white transition-colors">
                   Litecoin
                 </span>
               </div>
-              <div className="text-right flex items-center gap-2">
-                <div className="text-[10px] text-gray-500">3819.75 INR ~</div>
-                <div className="text-sm  text-gray-300">266.00000 DOGE</div>
+              <div className="flex items-center gap-4">
+                <div className="text-right flex items-center gap-2">
+                  <div className="text-[16px] text-gray-500">3819.75 INR ~</div>
+                  <div className="text-[18px] text-gray-300 group-hover/row:text-white transition-colors">266.00000 DOGE</div>
+                </div>
+                <div className="w-1 h-8 bg-white/90 rounded-sm opacity-0 group-hover/row:opacity-100 transition-opacity"></div>
               </div>
             </div>
           </div>
@@ -295,14 +292,14 @@ const HomeFooter = () => {
               {vaultShow && (
                 <div className="flex items-center space-x-2 cursor-pointer text-gray-400 hover:text-white transition">
                   <img src="/images/refresh-balance.svg" />
-                  <span className="text-sm ">Play Balance</span>
+                  <span className="text-[16px] ">Play Balance</span>
                 </div>
               )}
             </div>
 
             <div className="flex items-center space-x-2 text-gray-500 cursor-pointer hover:text-gray-300">
               <img src="/images/close-eye.svg" />
-              <span className="text-xs">Less Amount</span>
+              <span className="text-[16px]">Less Amount</span>
             </div>
           </div>
         </div>
@@ -311,10 +308,10 @@ const HomeFooter = () => {
         <div className="absolute left-1/2 -translate-x-1/2 w-[428px] max-w-[95vw] h-[307px] overflow-hidden bottom-14 ...">
           <div className="flex items-center justify-between mb-6 space-x-3">
             <div className="flex w-[155px] h-[31px] p-1 bg-[#73FFD70F] rounded ">
-              <button className="flex gap-1.5 items-center px-3 py-1.5 text-sm text-white bg-[#FFFFFF0F] rounded shadow-sm">
+              <button className="flex gap-1.5 items-center px-3 py-1.5 text-[16px] text-white bg-[#FFFFFF0F] rounded shadow-sm">
                 <img src="/images/crypto.svg" /> Crypto
               </button>
-              <button className="flex gap-1.5 items-center px-3 py-1.5 text-sm tracking-wider hover:text-gray-200 transition">
+              <button className="flex gap-1.5 items-center px-3 py-1.5 text-[16px] tracking-wider hover:text-gray-200 transition">
                 <img src="/images/fiat.svg" /> Fiat
               </button>
             </div>
@@ -345,7 +342,7 @@ const HomeFooter = () => {
               <input
                 type="text"
                 placeholder="Search here..."
-                className="w-full bg-[#04040A] border border-gray-800 rounded py-1.5 pl-9 pr-3 text-xs focus:outline-none focus:border-emerald-500/50 transition"
+                className="w-full bg-[#04040A] border border-gray-800 rounded py-1.5 pl-9 pr-3 text-[14px] focus:outline-none focus:border-emerald-500/50 transition"
               />
             </div>
 
@@ -447,83 +444,83 @@ const HomeFooter = () => {
 
 
           {!confredend && <div className="space-y-1 w-full max-w-[404px] h-[178px] overflow-y-auto scrollbar-hidden bg-[#73FFD70F]">
-            <div className="flex items-center justify-between px-2 py-1 rounded hover:bg-gray-800/30 cursor-pointer group">
+            <div className="flex items-center justify-between px-2 py-2 rounded hover:bg-[#1a1c2e]/50 border-l-4 border-transparent hover:border-emerald-500 hover:shadow-[0_0_15px_-3px_rgba(16,185,129,0.2)] cursor-pointer group/row transition-all duration-200">
               <div className="flex items-center space-x-2">
-                <img src="/images/dogecoin.svg" />
-                <span className="text-sm font-normal group-hover:text-white">
+                <img src="/images/dogecoin.svg" className="w-5 h-5" />
+                <span className="text-[18px] font-normal group-hover/row:text-white transition-colors">
                   Dogecoin
                 </span>
               </div>
-              <div className="text-right flex items-center gap-2">
-                <div className="text-[12px] text-gray-500">3819.75 INR ~</div>
-                <div className="text-sm  text-gray-300">266.00000 DOGE</div>
-              </div>
-            </div>
-
-            <div className="relative flex items-center justify-between px-2 py-1 bg-[#1a1c2e]/50 border-l-2 border-emerald-500 rounded-r cursor-pointer">
-              <div className="flex items-center space-x-2">
-                <img src="/images/fiat.svg" />
-                <span className="text-sm font-normal text-white">Bitcoin</span>
-              </div>
-              <div className="text-right flex items-center gap-2">
-                <div className="text-[12px] text-gray-500">17319.47 INR ~</div>
-                <div className="text-sm  font-medium text-white">
-                  0.0021780 BTC
+              <div className="flex items-center gap-4">
+                <div className="text-right flex items-center gap-2">
+                  <div className="text-[16px] text-gray-500">3819.75 INR ~</div>
+                  <div className="text-[18px] text-gray-300 group-hover/row:text-white transition-colors">266.00000 DOGE</div>
                 </div>
+                <div className="w-1 h-8 bg-white/90 rounded-sm opacity-0 group-hover/row:opacity-100 transition-opacity"></div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between px-2 py-1 rounded hover:bg-gray-800/30 cursor-pointer group">
+            <div className="relative flex items-center justify-between px-2 py-2 bg-[#1a1c2e]/50 border-l-4 border-emerald-500 rounded-r cursor-pointer shadow-[0_0_15px_-3px_rgba(16,185,129,0.3)] group/active">
               <div className="flex items-center space-x-2">
-                <img src="/images/tether.svg" />
-                <span className="text-sm font-normal group-hover:text-white">
+                <img src="/images/fiat.svg" className="w-5 h-5" />
+                <span className="text-[18px] font-normal text-white">Bitcoin</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-right flex items-center gap-2">
+                  <div className="text-[16px] text-gray-500">17319.47 INR ~</div>
+                  <div className="text-[18px] text-white">
+                    0.0021780 BTC
+                  </div>
+                </div>
+                <div className="w-1 h-8 bg-white/90 rounded-sm"></div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between px-2 py-2 rounded hover:bg-[#1a1c2e]/50 border-l-4 border-transparent hover:border-emerald-500 hover:shadow-[0_0_15px_-3px_rgba(16,185,129,0.2)] cursor-pointer group/row transition-all duration-200">
+              <div className="flex items-center space-x-2">
+                <img src="/images/tether.svg" className="w-5 h-5" />
+                <span className="text-[18px] font-normal group-hover/row:text-white transition-colors">
                   Tether
                 </span>
               </div>
-              <div className="text-right flex items-center gap-2">
-                <div className="text-[12px] text-gray-500">3819.75 INR ~</div>
-                <div className="text-sm  text-gray-300">266.00000 DOGE</div>
+              <div className="flex items-center gap-4">
+                <div className="text-right flex items-center gap-2">
+                  <div className="text-[16px] text-gray-500">3819.75 INR ~</div>
+                  <div className="text-[18px] text-gray-300 group-hover/row:text-white transition-colors">266.00000 DOGE</div>
+                </div>
+                <div className="w-1 h-8 bg-white/90 rounded-sm opacity-0 group-hover/row:opacity-100 transition-opacity"></div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between px-2 py-1 rounded hover:bg-gray-800/30 cursor-pointer group">
+            <div className="flex items-center justify-between px-2 py-2 rounded hover:bg-[#1a1c2e]/50 border-l-4 border-transparent hover:border-emerald-500 hover:shadow-[0_0_15px_-3px_rgba(16,185,129,0.2)] cursor-pointer group/row transition-all duration-200">
               <div className="flex items-center space-x-2">
-                <img src="/images/binance.svg" />
-                <span className="text-sm font-normal group-hover:text-white">
+                <img src="/images/binance.svg" className="w-5 h-5" />
+                <span className="text-[18px] font-normal group-hover/row:text-white transition-colors">
                   Binance Coin
                 </span>
-                <svg
-                  className="cursor-pointer text-emerald-400"
-                  width="15"
-                  height="13"
-                  viewBox="0 0 15 13"
-                  fill="currentColor"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M10.3778 0.5C12.8433 0.5 14.5 2.735 14.5 4.82C14.5 9.0425 7.62444 12.5 7.5 12.5C7.37556 12.5 0.5 9.0425 0.5 4.82C0.5 2.735 2.15667 0.5 4.62222 0.5C6.03778 0.5 6.96333 1.1825 7.5 1.7825C8.03667 1.1825 8.96222 0.5 10.3778 0.5Z"
-                    stroke="#13222A"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
               </div>
-              <div className="text-right flex items-center gap-2">
-                <div className="text-[12px] text-gray-500">27288.61 INR ~</div>
-                <div className="text-sm  text-gray-300">0.5 BNB</div>
+              <div className="flex items-center gap-4">
+                <div className="text-right flex items-center gap-2">
+                  <div className="text-[16px] text-gray-500">27288.61 INR ~</div>
+                  <div className="text-[18px] text-gray-300 group-hover/row:text-white transition-colors">0.5 BNB</div>
+                </div>
+                <div className="w-1 h-8 bg-white/90 rounded-sm opacity-0 group-hover/row:opacity-100 transition-opacity"></div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between px-2 py-1 rounded hover:bg-gray-800/30 cursor-pointer group">
+            <div className="flex items-center justify-between px-2 py-2 rounded hover:bg-[#1a1c2e]/50 border-l-4 border-transparent hover:border-emerald-500 hover:shadow-[0_0_15px_-3px_rgba(16,185,129,0.2)] cursor-pointer group/row transition-all duration-200">
               <div className="flex items-center space-x-2">
-                <img src="/images/litecoin.svg" />
-                <span className="text-sm font-normal group-hover:text-white">
+                <img src="/images/litecoin.svg" className="w-5 h-5" />
+                <span className="text-[18px] font-normal group-hover/row:text-white transition-colors">
                   Litecoin
                 </span>
               </div>
-              <div className="text-right flex items-center gap-2">
-                <div className="text-[10px] text-gray-500">3819.75 INR ~</div>
-                <div className="text-sm  text-gray-300">266.00000 DOGE</div>
+              <div className="flex items-center gap-4">
+                <div className="text-right flex items-center gap-2">
+                  <div className="text-[16px] text-gray-500">3819.75 INR ~</div>
+                  <div className="text-[18px] text-gray-300 group-hover/row:text-white transition-colors">266.00000 DOGE</div>
+                </div>
+                <div className="w-1 h-8 bg-white/90 rounded-sm opacity-0 group-hover/row:opacity-100 transition-opacity"></div>
               </div>
             </div>
           </div>}
@@ -532,7 +529,7 @@ const HomeFooter = () => {
 
             <div>
               <div className="flex items-center justify-between">
-                <p className="text-xs text-[#7c8799] mb-1">Wallet Balance</p>
+                <p className="text-[16px] text-[#7c8799] mb-1">Wallet Balance</p>
 
                 <svg className={` text-emerald-400 transition-transform duration-300 ${isSwapped ? "rotate-180" : ""
                   }`} width="14" height="9" viewBox="0 0 14 9" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -540,7 +537,7 @@ const HomeFooter = () => {
                 </svg>
 
 
-                <p className="text-xs text-[#7c8799] mb-1">Wallet Balance</p>
+                <p className="text-[14px] text-[#7c8799] mb-1">Wallet Balance</p>
 
 
 
@@ -550,20 +547,20 @@ const HomeFooter = () => {
 
 
                   <div className="flex flex-col w-[198px] rounded items-left ">
-                    <span className="text-white flex items-center gap-1.5 font-normal text-sm text-nowrap">
+                    <span className="text-white flex items-center gap-1.5 font-normal text-[16px] text-nowrap">
                       <Bitcoin /> 0.0066012 BTC
                     </span>
 
-                    <div className="text-[12px] pl-[15px] text-gray-500">~ 3819.75 INR </div>
+                    <div className="text-[14px] pl-[15px] text-gray-500">~ 3819.75 INR </div>
 
                   </div>
 
                   <div className="flex w-[198px] h-[40px] bg-[#73FFD70F] rounded p-[11px] items-center gap-1.5">
-                    <span className="text-white flex items-center gap-1.5 font-normal text-sm text-nowrap">
+                    <span className="text-white flex items-center gap-1.5 font-normal text-[16px] text-nowrap">
                       <Bitcoin /> 0.0066012 BTC
                     </span>
 
-                    <div className="text-[12px] text-gray-500">~ 3819.75 INR </div>
+                    <div className="text-[14px] text-gray-500">~ 3819.75 INR </div>
 
                   </div>
                 </div>
@@ -603,7 +600,7 @@ const HomeFooter = () => {
                     borderStyle: "dashed",
                     strokeDasharray: "1 1",
                   }}
-                  className="text-sm  text-white   tracking-widest"
+                  className="text-[16px]  text-white   tracking-widest"
                 >
                   Vault
                 </span>
@@ -611,14 +608,14 @@ const HomeFooter = () => {
               {vaultShow && (
                 <div className="flex items-center space-x-2 cursor-pointer text-gray-400 hover:text-white transition">
                   <img src="/images/refresh-balance.svg" />
-                  <span className="text-sm ">Play Balance</span>
+                  <span className="text-[16px] ">Play Balance</span>
                 </div>
               )}
             </div>
 
             <div className="flex items-center space-x-2 text-gray-500 cursor-pointer hover:text-gray-300">
               <img src="/images/close-eye.svg" />
-              <span className="text-xs">Less Amount</span>
+              <span className="text-[14px]">Less Amount</span>
             </div>
           </div>
         </div>
@@ -642,14 +639,14 @@ const HomeFooter = () => {
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="text-white font-normal text-sm tracking-wide">
+                <span className="text-white font-normal text-[16px] tracking-wide">
                   CrispyPotato
                 </span>
               </div>
               <div className="flex items-center space-x-1.5 mt-0.5">
                 <img src="/images/verified.svg" />
                 <img src="/images/color-star.svg" />
-                <span className="px-1 text-[8px] font-black bg-yellow-400 rounded text-black uppercase leading-tight tracking-wider">
+                <span className="px-1 text-[10px] bg-yellow-400 rounded text-black uppercase leading-tight tracking-wider">
                   Vip
                 </span>
               </div>
@@ -671,22 +668,26 @@ const HomeFooter = () => {
           <div className="flex items-center gap-[12px] min-w-0 h-[41px]">
             {!transferAll && <div
               onClick={() => depositCoin()}
-              className="flex w-[146px] h-[41px] items-center gap-1.5 px-3 py-1.5 bg-[#1a1c2e] border border-gray-800 rounded cursor-pointer hover:bg-[#252841] text-nowrap"
+              className="group/balance flex w-[170px] h-[41px] items-center justify-between gap-1.5 px-3 py-1.5 bg-[#0A0B14] border border-[#1e293b] rounded cursor-pointer transition-all duration-300 hover:border-emerald-500/50 hover:shadow-[0_0_15px_-3px_rgba(16,185,129,0.2)] text-nowrap"
             >
-              <img src="/images/bitcoin.svg" />
-              <span className="text-sm tracking-widest  text-white">
-                0.0021780 BTC
-              </span>
+              <div className="flex items-center gap-2">
+                <img src="/images/bitcoin.svg" className="w-5 h-5" />
+                <span className="text-[18px] tracking-tight text-white">
+                  0.0021780 BTC
+                </span>
+              </div>
               <svg
-                width="5"
-                height="3"
-                viewBox="0 0 5 3"
+                width="8"
+                height="5"
+                viewBox="0 0 8 5"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                className="text-emerald-400 opacity-70 group-hover/balance:opacity-100 transition-opacity"
               >
                 <path
-                  d="M0.5 2.5L2.5 0.5L4.5 2.5"
-                  stroke="#73FFD7"
+                  d="M1 1L4 4L7 1"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
                   stroke-linecap="round"
                   stroke-linejoin="round"
                 />
@@ -697,7 +698,7 @@ const HomeFooter = () => {
 
             {transferAll && <button
 
-              className=" w-[41px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#73FFD70F] font-medium rounded text-sm  transition border border-[#31313F]"
+              className=" w-[41px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#73FFD70F] rounded text-[16px]  transition border border-[#31313F]"
             >
               <svg width="5" height="3" viewBox="0 0 5 3" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0.5 0.5L2.5 2.5L4.5 0.5" stroke="#73FFD7" stroke-linecap="round" stroke-linejoin="round" />
@@ -716,7 +717,7 @@ const HomeFooter = () => {
             {depositShow && !vaultShow && (
               <button
                 // onClick={() => depositCoin()}
-                className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#31313F] font-medium rounded text-sm hover:bg-[#494c4b] transition shadow-lg shadow-emerald-500/10"
+                className=" w-[105px] h-[44px] flex items-center justify-center text-center gap-1.5 bg-[#1e293b] text-gray-300 rounded-lg text-[18px] hover:bg-[#2d3a4f] transition-all duration-200 border border-white/5 hover:border-white/10"
               >
                 Withdraw
               </button>
@@ -725,7 +726,7 @@ const HomeFooter = () => {
             {vaultShow && !transferAll && (
               <button
                 onClick={() => transfer()}
-                className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#31313F] font-medium rounded text-sm hover:bg-[#494c4b] transition shadow-lg shadow-emerald-500/10"
+                className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#31313F] rounded text-[16px] hover:bg-[#494c4b] transition shadow-lg shadow-emerald-500/10"
               >
                 Transfer
               </button>
@@ -735,7 +736,7 @@ const HomeFooter = () => {
             {transferAll && (
               <button
                 onClick={() => window.location.reload()}
-                className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#31313F] font-normal rounded text-sm hover:bg-[#494c4b] transition shadow-lg shadow-emerald-500/10"
+                className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#31313F] font-normal rounded text-[16px] hover:bg-[#494c4b] transition shadow-lg shadow-emerald-500/10"
               >
                 <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M0.5 0.5L6.5 6.5M6.5 0.5L0.5 6.5" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
@@ -748,7 +749,7 @@ const HomeFooter = () => {
 
             {transferAll ? <button
               onClick={() => confirmed()}
-              className=" min-w-[75px] h-[41px] px-1 flex items-center justify-center text-center gap-1.5  bg-[#a2ffda] text-[#0a0b14] font-medium rounded text-sm hover:bg-[#85eec5] transition shadow-lg shadow-emerald-500/10 text-nowrap"
+              className=" min-w-[75px] h-[41px] px-1 flex items-center justify-center text-center gap-1.5  bg-[#a2ffda] text-[#0a0b14] rounded text-[16px] hover:bg-[#85eec5] transition shadow-lg shadow-emerald-500/10 text-nowrap"
             >
               <svg
                 className="h-2 w-2"
@@ -768,23 +769,9 @@ const HomeFooter = () => {
               {!confredend ? "Transfer All" : "Confirm"}
             </button> : <button
               // onClick={() => depositCoin()}
-              className=" w-[75px] h-[41px] flex items-center justify-center text-center gap-1.5  bg-[#a2ffda] text-[#0a0b14] font-medium rounded text-sm hover:bg-[#85eec5] transition shadow-lg shadow-emerald-500/10"
+              className=" min-w-[120px] h-[44px] flex items-center justify-center text-center gap-2 bg-[#73FFD7] text-black rounded-lg text-[18px] hover:bg-[#5eead4] transition-all duration-300 shadow-[0_0_25px_-5px_rgba(115,255,215,0.5)] transform active:scale-95"
             >
-              <svg
-                className="h-2 w-2"
-                width="8"
-                height="8"
-                viewBox="0 0 8 8"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M4 0.5V7.5M0.5 4H7.5"
-                  stroke="black"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
+              <span className="text-xl pb-0.5">+</span>
               Deposit
             </button>}
           </div>
@@ -794,7 +781,7 @@ const HomeFooter = () => {
           </div>
         </div>
 
-        <div className={`relative group xl:flex items-center justify-between p-3 border-[#31313F] border bg-[#FFFFFF08] rounded ${transferAll ? "min-w-[700px]" : " min-w-[1000.79px]"} h-[41px]`}>
+        <div className={`relative group xl:flex items-center justify-between p-3 border-[#31313F] border bg-[#FFFFFF08] rounded max-w-[1200px] flex-1 h-[41px]`}>
 
           {/* Hover List (Figma Design) */}
           <div className="absolute bottom-full -left-[1.2px] w-[calc(100%+2.4px)] bg-[#0A0B14] border border-[#31313F] border-b-0 rounded-t-lg opacity-0 scale-95 pointer-events-none transition-all duration-200 group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto z-50 h-[280px] overflow-y-auto scrollbar-hidden">
@@ -802,32 +789,32 @@ const HomeFooter = () => {
               <div key={i} className={`flex items-center justify-between p-2.5 px-4 hover:bg-[#FFFFFF0F] cursor-pointer border-b border-white/5 ${i === 2 ? 'bg-[#73FFD70A] border-l-2 border-l-[#73FFD7]' : ''}`}>
                 <div className="flex items-center space-x-3">
                   <img src="/images/avatar1.jpg" className="w-4 h-4 rounded-sm object-cover" />
-                  <span className="text-sm tracking-wider text-white font-bold">RealBob</span>
+                  <span className="text-[16px] tracking-wider text-white">RealBob</span>
                   <div className="flex items-center space-x-1">
                     <img src="/images/verified.svg" className="w-3" />
                     <img src="/images/color-star.svg" className="w-3" />
-                    <span className="px-1 text-[8px] font-black bg-yellow-400 rounded text-black">VIP</span>
+                    <span className="px-1 text-[10px] bg-yellow-400 rounded text-black">VIP</span>
                   </div>
                   <span className="text-gray-700 mx-1">|</span>
                   <div className="flex items-center space-x-1.5">
                     <img src="/images/poker-card.svg" className="w-3.5" />
-                    <span className={`text-[11px] font-medium ${i === 2 ? 'text-[#73FFD7]' : 'text-gray-400'}`}>Poker</span>
+                    <span className={`text-[13px] ${i === 2 ? 'text-[#73FFD7]' : 'text-gray-400'}`}>Poker</span>
                   </div>
                   <span className="text-gray-700 mx-1">|</span>
                   <div className="flex items-center space-x-2">
                     <img src="/images/trx-currency.svg" className="w-3.5" />
-                    <span className="text-xs text-white font-bold">342 TRX</span>
-                    <span className="px-1.5 py-0.5 text-[10px] bg-[#73FFD7] text-black font-black rounded-[2px] leading-none">12x</span>
+                    <span className="text-[14px] text-white">342 TRX</span>
+                    <span className="px-1.5 py-0.5 text-[12px] bg-[#73FFD7] text-black rounded-[2px] leading-none">12x</span>
                   </div>
                 </div>
 
                 <div className="flex items-center">
                   {i === 2 ? (
-                    <span className="text-[11px] flex items-center gap-2 text-[#73FFD7] font-semibold">
+                    <span className="text-[13px] flex items-center gap-2 text-[#73FFD7]">
                       View Bet <ViewIcon />
                     </span>
                   ) : (
-                    <span className="text-xs text-gray-500 tabular-nums">6:26 PM</span>
+                    <span className="text-[14px] text-gray-500 tabular-nums">6:26 PM</span>
                   )}
                 </div>
               </div>
@@ -837,22 +824,22 @@ const HomeFooter = () => {
           {/* Static Bar Content */}
           <div className="flex items-center space-x-3 w-full">
             <img src="/images/avatar1.jpg" className="rounded-sm w-5 h-5 object-cover" />
-            <span className="text-sm tracking-wider text-white font-bold">RealBob</span>
+            <span className="text-[16px] tracking-wider text-white">RealBob</span>
             <div className="flex items-center space-x-1">
               <img src="/images/verified.svg" className="w-3" />
               <img src="/images/color-star.svg" className="w-3" />
-              <span className="px-1 text-[8px] font-black bg-yellow-400 rounded text-black uppercase">Vip</span>
+              <span className="px-1 text-[8px] bg-yellow-400 rounded text-black uppercase">Vip</span>
             </div>
             <span className="text-gray-700">|</span>
             <div className="flex items-center space-x-1.5">
               <img src="/images/poker-card.svg" className="w-3.5" />
-              <span className="text-[10px] font-medium text-gray-400">Poker</span>
+              <span className="text-[12px] text-gray-400">Poker</span>
             </div>
             <span className="text-gray-700">|</span>
             <div className="flex items-center space-x-2">
               <img src="/images/trx-currency.svg" className="w-3.5" />
-              <span className="text-xs text-white font-bold">342 TRX</span>
-              <span className="px-1.5 py-0.5 text-[10px] bg-[#73FFD7] text-black font-black rounded-[2px] leading-none">12x</span>
+              <span className="text-[16px] text-white">342 TRX</span>
+              <span className="px-1.5 py-0.5 text-[14px] bg-[#73FFD7] text-black rounded-[2px] leading-none">12x</span>
             </div>
           </div>
 
@@ -867,7 +854,7 @@ const HomeFooter = () => {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#6EF0C2] opacity-75"></span>
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[#6EF0C2]"></span>
             </span>
-            <span className="text-[13px] tracking-wide text-[#8A94A6]">
+            <span className="text-[15px] tracking-wide text-[#8A94A6]">
               Live
             </span>
           </div>
@@ -946,7 +933,7 @@ const HomeFooter = () => {
       top-full
       right-0
       mt-2
-      text-xs
+      text-[16px]
       tracking-wide
       text-gray-500
     "
