@@ -257,6 +257,18 @@ export class AutoBetService {
       if (strategy.conditions.length === 0) {
         throw new Error('Strategy has no conditions. Please add at least one condition before starting.');
       }
+
+      // Award diamonds to creator if using another user's public strategy
+      if (strategy.isPublic && strategy.userId !== userId) {
+        console.log(`[AutoBet] 💎 Using another user's strategy — awarding diamonds to creator ${strategy.userId}`);
+        try {
+          await StrategyEngine.recordUsage(config.strategyId, userId);
+          console.log(`[AutoBet] 💎 Diamonds awarded successfully`);
+        } catch (err: any) {
+          console.error(`[AutoBet] ⚠️ Failed to award diamonds:`, err.message);
+        }
+      }
+
       sessionData.strategyId = config.strategyId;
       sessionData.strategyConditions = strategy.conditions;
       sessionData.strategySessionState = {

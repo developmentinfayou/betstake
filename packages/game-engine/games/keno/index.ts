@@ -61,7 +61,7 @@ export class KenoGame extends BaseGame {
 
   play(input: BetInput): BetResult {
     this.validateBet(input.amount, input.currency);
-    
+
     const params = input.gameParams as KenoParams;
     const { selectedNumbers, risk } = params;
 
@@ -87,7 +87,7 @@ export class KenoGame extends BaseGame {
     // Get multiplier and apply house edge
     const multiplierTable = this.multiplierTables[risk][selectedNumbers.length];
     const baseMultiplier = multiplierTable[matchCount] || 0;
-    const finalMultiplier = baseMultiplier * (1 - this.config.houseEdge / 100);
+    const finalMultiplier = baseMultiplier;
 
     const won = finalMultiplier >= 1;
     const payout = this.calculatePayout(input.amount, finalMultiplier);
@@ -117,7 +117,7 @@ export class KenoGame extends BaseGame {
   static autoPick(currentSelection: number[], seedData: any): number[] {
     const maxNumbers = 10;
     const needed = maxNumbers - currentSelection.length;
-    
+
     if (needed <= 0) {
       // If already at max, replace all with new random selection
       const allNumbers = Array.from({ length: 40 }, (_, i) => i + 1);
@@ -125,15 +125,15 @@ export class KenoGame extends BaseGame {
       const shuffled = shuffle(allNumbers, kenoSeedData);
       return shuffled.slice(0, maxNumbers).sort((a, b) => a - b);
     }
-    
+
     // Get available numbers (not already selected)
     const available = Array.from({ length: 40 }, (_, i) => i + 1)
       .filter(n => !currentSelection.includes(n));
-    
+
     const kenoSeedData = { ...seedData, cursor: 2 };
     const shuffled = shuffle(available, kenoSeedData);
     const newPicks = shuffled.slice(0, needed);
-    
+
     return [...currentSelection, ...newPicks].sort((a, b) => a - b);
   }
 

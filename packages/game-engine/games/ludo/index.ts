@@ -26,6 +26,12 @@ export class LudoGame {
       clientSeeds[p.userId] = generateClientSeed();
     });
 
+    // Initialize per-player nonces (each starts at 0)
+    const nonces: Record<string, number> = {};
+    players.forEach(p => {
+      nonces[p.userId] = 0;
+    });
+
     return {
       players: ludoPlayers,
       currentTurnIndex: 0,
@@ -34,7 +40,7 @@ export class LudoGame {
       serverSeed: seed,
       serverSeedHash: hashServerSeed(seed),
       clientSeeds,
-      nonce: 0
+      nonces
     };
   }
 
@@ -53,31 +59,27 @@ export class LudoGame {
   }
 
   /**
-   * Roll dice using provably fair RNG
+   * Roll dice using provably fair RNG (per-player seed + nonce)
    */
   static rollDice(gameState: LudoGameState): number {
     const currentPlayer = gameState.players[gameState.currentTurnIndex];
-    const combinedClientSeed = this.combineClientSeeds(gameState.clientSeeds);
+    const playerClientSeed = gameState.clientSeeds[currentPlayer.userId];
+    const playerNonce = gameState.nonces[currentPlayer.userId];
 
     const float = generateFloat({
       serverSeed: gameState.serverSeed,
-      clientSeed: combinedClientSeed,
-      nonce: gameState.nonce
+      clientSeed: playerClientSeed,
+      nonce: playerNonce
     });
 
-    gameState.nonce++;
+    gameState.nonces[currentPlayer.userId]++;
     const result = Math.floor(float * 6) + 1; // 1-6
     gameState.diceResult = result;
 
     return result;
   }
 
-  /**
-   * Combine all player client seeds
-   */
-  private static combineClientSeeds(clientSeeds: Record<string, string>): string {
-    return Object.values(clientSeeds).join(':');
-  }
+
 
   /**
    * Get valid moves for current player
@@ -135,7 +137,8 @@ export class LudoGame {
       from: oldPos,
       to: newPos,
       diceRoll: diceResult,
-      nonce: gameState.nonce - 1,
+      nonce: gameState.nonces[currentPlayer.userId] - 1,
+      clientSeed: gameState.clientSeeds[currentPlayer.userId],
       captured: captureTarget || undefined,
       timestamp: Date.now()
     };
@@ -144,16 +147,7 @@ export class LudoGame {
     // Check win condition
     this.checkWinCondition(gameState);
 
-    // Next turn
-    const rolledSix = diceResult === 6;
-    if (!rolledSix) {
-      gameState.currentTurnIndex = LudoRules.getNextPlayerIndex(
-        gameState.currentTurnIndex,
-        gameState.players.length,
-        false
-      );
-    }
-
+    // Reset dice result (turn advancement is handled by the websocket handler)
     gameState.diceResult = null;
 
     return { success: true, captured: captureTarget || undefined };
@@ -220,11 +214,10 @@ export class LudoGame {
    */
   static verifyDiceRoll(
     serverSeed: string,
-    clientSeeds: Record<string, string>,
+    clientSeed: string,
     nonce: number
   ): number {
-    const combinedClientSeed = this.combineClientSeeds(clientSeeds);
-    const float = generateFloat({ serverSeed, clientSeed: combinedClientSeed, nonce });
+    const float = generateFloat({ serverSeed, clientSeed, nonce });
     return Math.floor(float * 6) + 1;
   }
 }

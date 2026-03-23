@@ -62,10 +62,10 @@ export function byteGenerator(seedData: SeedData, count: number): Buffer {
     const currentRound = Math.floor(cursor / 32);
     const hmac = generateHmac(serverSeed, clientSeed, nonce, currentRound);
     const hmacBytes = Buffer.from(hmac, 'hex');
-    
+
     // Calculate position within current round
     const currentRoundCursor = cursor % 32;
-    
+
     for (let i = currentRoundCursor; i < hmacBytes.length && bytes.length < count; i++) {
       bytes.push(hmacBytes[i]);
       cursor++;
@@ -178,7 +178,7 @@ export function getGameCursorCount(gameType: string): number {
     FASTPARITY: 0,
     RUSH: 0,
     SOLOCRASH: 0,
-    
+
     // Multiple cursors - multiple floats
     KENO: 2,        // 10 outcomes
     MINES: 3,       // 24 bomb locations
@@ -189,7 +189,7 @@ export function getGameCursorCount(gameType: string): number {
     BLACKJACK: 13,  // Unlimited cards
     VIDEO_POKER: 7, // 52 cards
   };
-  
+
   return cursorMap[gameType] || 0;
 }
 
@@ -214,13 +214,12 @@ export function applyHouseEdge(winChance: number, houseEdge: number): number {
 
 /**
  * Calculate multiplier from win chance with house edge (Stake style)
- * House edge reduces the payout multiplier, not the RNG probability
- * Formula: (99 / winChance) * (1 - houseEdge / 100)
+ * House edge reduces the win probability, not the payout multiplier
+ * Formula: (100 - houseEdge) / winChance (using 99/winChance for 1%)
  */
 export function calculateMultiplier(winChance: number, houseEdge: number = 1): number {
   if (winChance <= 0) return 0;
-  const baseMultiplier = 99 / winChance; // Stake uses 99 instead of 100
-  return baseMultiplier * (1 - houseEdge / 100);
+  return (100 - houseEdge) / winChance;
 }
 
 /**
@@ -228,5 +227,5 @@ export function calculateMultiplier(winChance: number, houseEdge: number = 1): n
  */
 export function calculateWinChance(multiplier: number, houseEdge: number = 1): number {
   if (multiplier <= 0) return 0;
-  return (100 / multiplier) / (1 - houseEdge / 100);
+  return (100 - houseEdge) / multiplier;
 }

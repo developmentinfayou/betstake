@@ -1,5 +1,6 @@
-import { Strategy, IStrategy } from '@casino/database';
+import { Strategy, IStrategy, User } from '@casino/database';
 import { StrategyConditionBlock, ConditionAction } from '@casino/shared';
+import { DiamondService } from './diamond-service';
 
 /**
  * Session state tracked during an autobet run with a strategy
@@ -146,8 +147,14 @@ export class StrategyEngine {
   /**
    * Create a custom strategy
    */
-  static async createStrategy(userId: string, name: string, conditions: StrategyConditionBlock[]): Promise<IStrategy> {
-    return Strategy.create({ userId, name, conditions, isPreset: false });
+  static async createStrategy(
+    userId: string,
+    name: string,
+    conditions: StrategyConditionBlock[],
+    isPublic: boolean = false,
+    creatorUsername: string = ''
+  ): Promise<IStrategy> {
+    return Strategy.create({ userId, name, conditions, isPreset: false, isPublic, creatorUsername });
   }
 
   /**
@@ -159,6 +166,62 @@ export class StrategyEngine {
       { name, conditions },
       { new: true }
     );
+  }
+
+  /**
+   * Get all public strategies (community browse, excludes user's own)
+   */
+  static async getPublicStrategies(excludeUserId: string): Promise<IStrategy[]> {
+    return Strategy.find({
+      isPublic: true,
+      isPreset: false,
+      userId: { $ne: excludeUserId },
+    }).sort({ usageCount: -1, createdAt: -1 });
+  }
+
+  /**
+   * Toggle strategy visibility (public/private) — owner only
+   */
+  static async toggleVisibility(strategyId: string, userId: string): Promise<IStrategy | null> {
+    const strategy = await Strategy.findOne({ _id: strategyId, userId, isPreset: false });
+    if (!strategy) return null;
+
+    strategy.isPublic = !strategy.isPublic;
+
+    // Ensure creatorUsername is set when making public
+    if (strategy.isPublic && !strategy.creatorUsername) {
+      const user = await User.findById(userId).select('username');
+      strategy.creatorUsername = user?.username || 'Unknown';
+    }
+
+    await strategy.save();
+    return strategy;
+  }
+
+  /**
+   * Record usage of a strategy by another user + award diamonds to creator
+   */
+  static async recordUsage(strategyId: string, usedByUserId: string): Promise<{ diamonds: number; usageCount: number } | null> {
+    const strategy = await Strategy.findById(strategyId);
+    if (!strategy || !strategy.isPublic) return null;
+
+    // Don't award diamonds for using your own strategy
+    if (strategy.userId === usedByUserId) {
+      return { diamonds: 0, usageCount: strategy.usageCount };
+    }
+
+    // Increment usage count
+    strategy.usageCount += 1;
+    await strategy.save();
+
+    // Award diamonds to creator
+    const diamonds = await DiamondService.awardForStrategyUse(
+      strategy.userId,
+      strategyId,
+      usedByUserId
+    );
+
+    return { diamonds, usageCount: strategy.usageCount };
   }
 
   /**

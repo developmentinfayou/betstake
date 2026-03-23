@@ -70,6 +70,6 @@ export class StairsGame extends BaseGame {
       multiplier *= 1.4;
     }
 
-    return parseFloat((multiplier * (1 - this.config.houseEdge / 100)).toFixed(4));
+    return parseFloat((multiplier).toFixed(4));
   }
 }

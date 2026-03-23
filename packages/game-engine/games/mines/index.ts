@@ -52,7 +52,7 @@ export class MinesGame extends BaseGame {
       : !hitMine && safeTilesRevealed > 0;
 
     const multiplier = won ? this.calculateMultiplier(gridSize, minesCount, safeTilesRevealed) : 0;
-    const finalMultiplier = won ? multiplier * (1 - this.config.houseEdge / 100) : 0;
+    const finalMultiplier = won ? multiplier : 0;
 
     const payout = this.calculatePayout(input.amount, finalMultiplier);
     const profit = this.calculateProfit(input.amount, payout);

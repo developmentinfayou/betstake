@@ -6,6 +6,9 @@ export interface IStrategy extends Document {
   name: string;
   conditions: StrategyConditionBlock[];
   isPreset: boolean;
+  isPublic: boolean;
+  usageCount: number;
+  creatorUsername: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,9 +39,13 @@ const strategySchema = new Schema<IStrategy>({
   name: { type: String, required: true },
   conditions: { type: [conditionBlockSchema], required: true, validate: [(v: any[]) => v.length > 0, 'At least one condition is required'] },
   isPreset: { type: Boolean, default: false, index: true },
+  isPublic: { type: Boolean, default: false },
+  usageCount: { type: Number, default: 0 },
+  creatorUsername: { type: String, default: '' },
 }, { timestamps: true });
 
 // Compound index for efficient querying
 strategySchema.index({ userId: 1, isPreset: 1 });
+strategySchema.index({ isPublic: 1, createdAt: -1 });
 
 export const Strategy = model<IStrategy>('Strategy', strategySchema);

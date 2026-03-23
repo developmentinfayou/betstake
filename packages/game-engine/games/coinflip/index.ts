@@ -32,7 +32,7 @@ export class CoinFlipGame extends BaseGame {
     const result: CoinSide = float < 0.5 ? 'heads' : 'tails';
     const won = result === choice;
 
-    const multiplier = won ? 2 * (1 - this.config.houseEdge / 100) : 0;
+    const multiplier = won ? 2 : 0;
     const payout = this.calculatePayout(input.amount, multiplier);
     const profit = this.calculateProfit(input.amount, payout);
 

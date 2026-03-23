@@ -15,6 +15,7 @@ export interface IUser extends Document {
   role: UserRole;
   level: number;
   xp: number;
+  diamonds: number;
   isVip: boolean;
   isPremium: boolean;
   createdAt: Date;
@@ -28,6 +29,7 @@ const userSchema = new Schema<IUser>({
   role: { type: String, enum: Object.values(UserRole), default: UserRole.USER },
   level: { type: Number, default: 1 },
   xp: { type: Number, default: 0 },
+  diamonds: { type: Number, default: 0 },
   isVip: { type: Boolean, default: false },
   isPremium: { type: Boolean, default: false }
 }, { timestamps: true });

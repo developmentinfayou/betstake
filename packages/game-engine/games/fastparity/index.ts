@@ -24,19 +24,17 @@ export class FastParityGame extends BaseGame {
   }
 
   private getMultiplier(betType: ParityBetType, color: ParityColor): number {
-    const houseEdge = this.config.houseEdge / 100;
-
     switch (betType) {
       case 'number':
-        return 9 * (1 - houseEdge); // 9x for number bets (1/10 chance)
+        return 9; // 9x for number bets (1/10 chance)
       case 'color':
         if (color === 'violet') {
-          return 4.5 * (1 - houseEdge); // 4.5x for violet (2/10 chance)
+          return 4.5; // 4.5x for violet (2/10 chance)
         }
-        return 1.96 * (1 - houseEdge); // ~2x for green/red (4/10 chance)
+        return 2; // 2x for green/red (4/10 chance)
       case 'even':
       case 'odd':
-        return 2 * (1 - houseEdge); // 2x for even/odd (5/10 chance)
+        return 2; // 2x for even/odd (5/10 chance)
       default:
         return 0;
     }

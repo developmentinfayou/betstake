@@ -1,7 +1,9 @@
 import { Router, Response } from 'express';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { StrategyEngine } from '../services/strategy-engine';
+import { DiamondService } from '../services/diamond-service';
 import { StrategyConditionBlock } from '@casino/shared';
+import { User } from '@casino/database';
 
 const router = Router();
 
@@ -33,6 +35,46 @@ router.get('/defaults', async (req, res) => {
 });
 
 /**
+ * GET /api/strategy/community — browse all public strategies from other users
+ */
+router.get('/community', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const strategies = await StrategyEngine.getPublicStrategies(req.userId!);
+    return res.json({ strategies });
+  } catch (error: any) {
+    console.error('[Strategy] Error fetching community strategies:', error);
+    return res.status(500).json({ error: 'Failed to fetch community strategies' });
+  }
+});
+
+/**
+ * GET /api/strategy/diamonds/balance — get current user's diamond balance
+ */
+router.get('/diamonds/balance', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const balance = await DiamondService.getBalance(req.userId!);
+    return res.json({ balance });
+  } catch (error: any) {
+    console.error('[Strategy] Error fetching diamond balance:', error);
+    return res.status(500).json({ error: 'Failed to fetch diamond balance' });
+  }
+});
+
+/**
+ * GET /api/strategy/diamonds/history — get diamond transaction history
+ */
+router.get('/diamonds/history', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const limit = parseInt(req.query.limit as string) || 50;
+    const history = await DiamondService.getHistory(req.userId!, limit);
+    return res.json({ history });
+  } catch (error: any) {
+    console.error('[Strategy] Error fetching diamond history:', error);
+    return res.status(500).json({ error: 'Failed to fetch diamond history' });
+  }
+});
+
+/**
  * GET /api/strategy/:id — get single strategy
  */
 router.get('/:id', authenticate, async (req: AuthRequest, res: Response) => {
@@ -41,8 +83,8 @@ router.get('/:id', authenticate, async (req: AuthRequest, res: Response) => {
     if (!strategy) {
       return res.status(404).json({ error: 'Strategy not found' });
     }
-    // Only let user see their own or presets
-    if (!strategy.isPreset && strategy.userId !== req.userId) {
+    // Allow viewing if: preset, own strategy, or public
+    if (!strategy.isPreset && strategy.userId !== req.userId && !strategy.isPublic) {
       return res.status(403).json({ error: 'Forbidden' });
     }
     return res.json({ strategy });
@@ -57,7 +99,11 @@ router.get('/:id', authenticate, async (req: AuthRequest, res: Response) => {
  */
 router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
   try {
-    const { name, conditions } = req.body as { name: string; conditions: StrategyConditionBlock[] };
+    const { name, conditions, isPublic } = req.body as {
+      name: string;
+      conditions: StrategyConditionBlock[];
+      isPublic?: boolean;
+    };
 
     if (!name || !name.trim()) {
       return res.status(400).json({ error: 'Strategy name is required' });
@@ -79,7 +125,17 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
       }
     }
 
-    const strategy = await StrategyEngine.createStrategy(req.userId!, name.trim(), conditions);
+    // Get creator's username for display
+    const user = await User.findById(req.userId).select('username');
+    const creatorUsername = user?.username || 'Unknown';
+
+    const strategy = await StrategyEngine.createStrategy(
+      req.userId!,
+      name.trim(),
+      conditions,
+      isPublic || false,
+      creatorUsername
+    );
     return res.status(201).json({ strategy });
   } catch (error: any) {
     console.error('[Strategy] Error creating strategy:', error);
@@ -109,6 +165,42 @@ router.put('/:id', authenticate, async (req: AuthRequest, res: Response) => {
   } catch (error: any) {
     console.error('[Strategy] Error updating strategy:', error);
     return res.status(500).json({ error: 'Failed to update strategy' });
+  }
+});
+
+/**
+ * PUT /api/strategy/:id/visibility — toggle public/private (owner only)
+ */
+router.put('/:id/visibility', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const strategy = await StrategyEngine.toggleVisibility(req.params.id, req.userId!);
+    if (!strategy) {
+      return res.status(404).json({ error: 'Strategy not found or not yours to toggle' });
+    }
+    return res.json({ strategy, message: strategy.isPublic ? 'Strategy is now public' : 'Strategy is now private' });
+  } catch (error: any) {
+    console.error('[Strategy] Error toggling visibility:', error);
+    return res.status(500).json({ error: 'Failed to toggle strategy visibility' });
+  }
+});
+
+/**
+ * POST /api/strategy/:id/use — record strategy usage + award diamonds to creator
+ */
+router.post('/:id/use', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const result = await StrategyEngine.recordUsage(req.params.id, req.userId!);
+    if (!result) {
+      return res.status(404).json({ error: 'Strategy not found or not public' });
+    }
+    return res.json({
+      success: true,
+      usageCount: result.usageCount,
+      diamondsAwarded: result.diamonds > 0 ? 20 : 0,
+    });
+  } catch (error: any) {
+    console.error('[Strategy] Error recording usage:', error);
+    return res.status(500).json({ error: 'Failed to record strategy usage' });
   }
 });
 

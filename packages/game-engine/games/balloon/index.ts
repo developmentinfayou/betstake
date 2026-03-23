@@ -54,7 +54,7 @@ export class BalloonGame extends BaseGame {
 
     const won = pumps < burstAt;
     const rawMultiplier = won ? 1 + (pumps * settings.baseMultiplier) : 0;
-    const finalMultiplier = won ? rawMultiplier * (1 - this.config.houseEdge / 100) : 0;
+    const finalMultiplier = won ? rawMultiplier : 0;
 
     const payout = this.calculatePayout(input.amount, finalMultiplier);
     const profit = this.calculateProfit(input.amount, payout);
