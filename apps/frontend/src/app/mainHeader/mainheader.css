@@ -1,52 +1,48 @@
 .header_3452 {
-    margin-left: 32px;
-    margin-right: 32px;
-    margin-top: 28px;
-    display: flex;
-    height: 41px;
-    min-width: 1376px;
-    align-items: center;
-  }
+  display: flex;
+  align-items: center;
+}
 
-  /* First div */
+/* First div */
 .div_7812 {
-    display: flex;
-    align-items: center;
-    gap: 38.5px;
-  }
-  
-  /* Second div */
-  .div_4926 {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  
-  /* Third div */
-  .div_9034 {
-    position: relative;
-    display: flex;          /* because of lg:flex */
-    align-items: center;
-    gap: 64px;
-  }
+  display: flex;
+  align-items: center;
+  gap: 38.5px;
+}
 
-  /* Parent Div */
+/* Second div */
+.div_4926 {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Third div */
+.div_9034 {
+  position: relative;
+  display: flex;
+  /* because of lg:flex */
+  align-items: center;
+  gap: 64px;
+}
+
+/* Parent Div */
 .div_6147 {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    align-items: flex-end;
-  }
-  
-  /* Span */
-  .span_8293 {
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    position: relative;
-    top: -9px;
-  }
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  align-items: flex-end;
+}
 
-  .custom_4581 {
+/* Span */
+.span_8293 {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  position: relative;
+  top: -9px;
+}
+
+.custom_4581 {
   display: flex;
   flex-direction: column;
   position: relative;
@@ -57,11 +53,14 @@
   display: flex;
   position: relative;
   align-items: center;
-  gap: 6px;              /* gap-1.5 → 1.5 * 4 = 6px */
-  border-radius: 4px;    /* default rounded = 0.25rem = 4px */
+  gap: 6px;
+  /* gap-1.5 → 1.5 * 4 = 6px */
+  border-radius: 4px;
+  /* default rounded = 0.25rem = 4px */
   border: 1px solid #31313F;
   height: 41px;
-  padding-left: 12px;    /* px-3 → 0.75rem = 12px */
+  padding-left: 12px;
+  /* px-3 → 0.75rem = 12px */
   padding-right: 12px;
 }
 
@@ -72,7 +71,8 @@
   height: 41px;
   width: 181px;
   align-items: center;
-  gap: 6px; /* gap-1.5 */
+  gap: 6px;
+  /* gap-1.5 */
   border-radius: 4px;
   border: 1px solid #31313F;
   padding: 12px;
@@ -92,14 +92,15 @@
   left: 10px;
   background: #73FFD7;
   border-radius: 50%;
-  filter: blur(24px);   /* blur-xl approx */
+  filter: blur(24px);
+  /* blur-xl approx */
   border: 2px solid;
   padding: 8px;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
- 
+
 /* Hover Effect (group-hover replacement) */
 .winner_4821:hover .winner_glow_1843 {
   opacity: 1;
@@ -109,7 +110,8 @@
 .winner_text_5927 {
   display: flex;
   gap: 2px;
-  font-size: 14px; /* text-sm */
+  font-size: 14px;
+  /* text-sm */
   position: relative;
   z-index: 2;
 }
@@ -129,7 +131,8 @@
   display: flex;
   position: relative;
   align-items: center;
-  gap: 6px; /* gap-1.5 */
+  gap: 6px;
+  /* gap-1.5 */
   border-radius: 4px;
   border: 1px solid #31313F;
   height: 41px;
@@ -147,7 +150,8 @@
   left: 2px;
   background: #73FFD7;
   border-radius: 50%;
-  filter: blur(24px); /* blur-xl approx */
+  filter: blur(24px);
+  /* blur-xl approx */
   border: 2px solid;
   padding: 8px;
   opacity: 0;
@@ -161,7 +165,8 @@
 
 /* Text */
 .spin_text_7721 {
-  font-size: 14px; /* text-sm */
+  font-size: 14px;
+  /* text-sm */
   letter-spacing: 1.12px;
   color: #ffffff;
   position: relative;

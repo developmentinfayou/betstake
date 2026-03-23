@@ -68,22 +68,21 @@ export class BlackjackGame extends BaseGame {
 
     let multiplier = 0;
     let won = false;
-    const houseEdgeMultiplier = 1 - this.config.houseEdge / 100;
 
     if (this.isBlackjack(playerHand) && !this.isBlackjack(dealerHand)) {
-      multiplier = 2.5 * houseEdgeMultiplier; // BJ 3:2 with house edge
+      multiplier = 2.5; // BJ 3:2
       won = true;
     } else if (this.isBlackjack(dealerHand) && !this.isBlackjack(playerHand)) {
       multiplier = 0;
       won = false;
     } else if (playerTotal === dealerTotal) {
-      multiplier = 1; // Push — no house edge
+      multiplier = 1; // Push
       won = false;
     } else if (playerTotal > 21) {
       multiplier = 0;
       won = false;
     } else if (dealerTotal > 21 || playerTotal > dealerTotal) {
-      multiplier = 2 * houseEdgeMultiplier; // Win with house edge
+      multiplier = 2; // Win
       won = true;
     }
 

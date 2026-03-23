@@ -76,9 +76,14 @@ export const strategyAPI = {
   getAll: () => api.get('/strategy/all'),
   getDefaults: () => api.get('/strategy/defaults'),
   getById: (id: string) => api.get(`/strategy/${id}`),
-  create: (data: { name: string; conditions: any[] }) => api.post('/strategy', data),
+  create: (data: { name: string; conditions: any[]; isPublic?: boolean }) => api.post('/strategy', data),
   update: (id: string, data: { name: string; conditions: any[] }) => api.put(`/strategy/${id}`, data),
   delete: (id: string) => api.delete(`/strategy/${id}`),
+  getCommunity: () => api.get('/strategy/community'),
+  toggleVisibility: (id: string) => api.put(`/strategy/${id}/visibility`),
+  useStrategy: (id: string) => api.post(`/strategy/${id}/use`),
+  getDiamondBalance: () => api.get('/strategy/diamonds/balance'),
+  getDiamondHistory: () => api.get('/strategy/diamonds/history'),
 };
 
 // Contest API
@@ -201,14 +206,7 @@ export const blackjackAPI = {
     api.get('/blackjack/active-session'),
 };
 
-// Chess API (REST - replays & history)
-export const chessAPI = {
-  getGame: (shareableLink: string) => api.get(`/chess/game/${shareableLink}`),
-  getMyGames: (limit?: number, offset?: number) =>
-    api.get('/chess/my-games', { params: { limit, offset } }),
-  getModes: () => api.get('/chess/modes'),
-  getActive: () => api.get('/chess/active'),
-};
+
 
 // Active Sessions API (cross-game)
 export const activeSessionsAPI = {

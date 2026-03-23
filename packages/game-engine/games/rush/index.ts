@@ -38,7 +38,7 @@ export class RushGame extends BaseGame {
     const crashPoint = this.calculateCrashPoint(float, difficulty);
 
     const won = crashPoint >= targetMultiplier;
-    const multiplier = won ? targetMultiplier * (1 - this.config.houseEdge / 100) : 0;
+    const multiplier = won ? targetMultiplier : 0;
 
     const payout = this.calculatePayout(input.amount, multiplier);
     const profit = this.calculateProfit(input.amount, payout);

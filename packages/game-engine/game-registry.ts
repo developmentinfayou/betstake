@@ -15,7 +15,6 @@ import { TowerGame } from './games/tower';
 import { StairsGame } from './games/stairs';
 import { HiLoGame } from './games/hilo';
 import { BlackjackGame } from './games/blackjack';
-import { ChessGame } from './games/chess';
 
 /**
  * Game Registry - manages all available games
@@ -58,7 +57,6 @@ export class GameRegistry {
     this.register('STAIRS', StairsGame, defaultConfig);
     this.register('HILO', HiLoGame, defaultConfig);
     this.register('BLACKJACK', BlackjackGame, defaultConfig);
-    this.register('CHESS', ChessGame, defaultConfig);
   }
 
   /**

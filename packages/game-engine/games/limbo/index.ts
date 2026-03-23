@@ -18,26 +18,26 @@ export interface LimboResult {
 export class LimboGame extends BaseGame {
   play(input: BetInput): BetResult {
     this.validateBet(input.amount, input.currency);
-    
+
     const params = input.gameParams as LimboParams;
     const { targetMultiplier } = params;
 
     // Generate result using exponential distribution (Stake formula)
     const float = generateFloat(input.seedData);
-    
+
     // Stake's Limbo formula: (1e8 / (float * 1e8)) * houseEdge
     // Simplified: (1 / float) * houseEdge
     const houseEdge = 1 - (this.config.houseEdge / 100); // 0.99 for 1% house edge
     const floatPoint = (1 / float) * houseEdge;
-    
+
     // Round down to 2 decimals
     const crashPoint = Math.floor(floatPoint * 100) / 100;
-    
+
     // Consolidate all crash points below 1 to 1.00
     const finalResult = Math.max(crashPoint, 1.00);
 
     const won = finalResult >= targetMultiplier;
-    const multiplier = won ? targetMultiplier * houseEdge : 0;
+    const multiplier = won ? targetMultiplier : 0;
 
     const payout = this.calculatePayout(input.amount, multiplier);
     const profit = this.calculateProfit(input.amount, payout);

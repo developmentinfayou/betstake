@@ -44,7 +44,7 @@ export class HiLoGame extends BaseGame {
 
     // Probability = favorable / 13, fair multiplier = 13 / favorable
     const fairMultiplier = 13 / favorableOutcomes;
-    return parseFloat((fairMultiplier * (1 - this.config.houseEdge / 100)).toFixed(4));
+    return parseFloat((fairMultiplier).toFixed(4));
   }
 
   play(input: BetInput): BetResult {

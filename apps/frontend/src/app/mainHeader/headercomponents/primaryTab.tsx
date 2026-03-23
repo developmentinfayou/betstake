@@ -117,49 +117,48 @@ const PrimaryTab = () => {
   const { pathname } = useLocation();
   return (
     <>
-    <nav
-    className="primary_nav_4821"
-    role="navigation"
-    aria-label="Main navigation"
-  >
-    <div
-      className="primary_slider_1942"
-      style={{
-       transform: `translateX(${
-    activeTab === "dashboard" ? 0 :
-    activeTab === "casino" ? 104 :
-    210
-  }px)`,
-      }}
-    />
+      <nav
+        className="primary_nav_4821"
+        role="navigation"
+        aria-label="Main navigation"
+      >
+        <div
+          className="primary_slider_1942"
+          style={{
+            transform: `translateX(${activeTab === "dashboard" ? 0 :
+              activeTab === "casino" ? 130 :
+                260
+              }px)`,
+          }}
+        />
 
-    {navItems?.map((item, i) => {
-      const isActive = activeTab === item.id;
-      return (
-        <button
-          onMouseEnter={() => !isActive && setHover(item.id)}
-          onMouseLeave={() => setHover("")}
-          key={item.id}
-          onClick={() => setActiveTab(item.id)}
-          className={`primary_btn_7732`}
-          aria-current={isActive ? "page" : undefined}
-          type="button"
-        >
-          {hover === item.id && !isActive && (
-            <div className="primary_hover_glow_6621" />
-          )}
+        {navItems?.map((item, i) => {
+          const isActive = activeTab === item.id;
+          return (
+            <button
+              onMouseEnter={() => !isActive && setHover(item.id)}
+              onMouseLeave={() => setHover("")}
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`primary_btn_7732`}
+              aria-current={isActive ? "page" : undefined}
+              type="button"
+            >
+              {hover === item.id && !isActive && (
+                <div className="primary_hover_glow_6621" />
+              )}
 
-          {renderNavIcon(item.id, isActive, item.icon)}
-          <span
-           className={`primary_label_3351 ${isActive ? "active" : ""}`}
-          >
-            {item.label}
-          </span>
-        </button>
-      );
-    })}
-  </nav>
-  </>
+              {renderNavIcon(item.id, isActive, item.icon)}
+              <span
+                className={`primary_label_3351 ${isActive ? "active" : ""}`}
+              >
+                {item.label}
+              </span>
+            </button>
+          );
+        })}
+      </nav>
+    </>
   );
 };
 

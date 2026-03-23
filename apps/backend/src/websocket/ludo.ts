@@ -386,7 +386,7 @@ export function setupLudoSocket(io: Server) {
         playerId: data.userId,
         result: diceResult,
         validMoves,
-        nonce: room.gameState.nonce - 1
+        nonce: room.gameState.nonces[data.userId] - 1
       });
 
       // Auto-skip if no valid moves
@@ -568,14 +568,14 @@ export function setupLudoSocket(io: Server) {
         // Check if rolled 6 for extra turn
         const lastMove = room.gameState.moveHistory[room.gameState.moveHistory.length - 1];
         const rolledSix = lastMove && lastMove.diceRoll === 6;
-        
+
         if (!rolledSix) {
           nextTurn(room, namespace);
         } else {
           // Reset dice for extra turn
           room.gameState.diceResult = null;
-          namespace.to(room.gameId).emit('extra-turn', { 
-            playerId: room.gameState.players[room.gameState.currentTurnIndex].userId 
+          namespace.to(room.gameId).emit('extra-turn', {
+            playerId: room.gameState.players[room.gameState.currentTurnIndex].userId
           });
         }
       } else {
@@ -635,6 +635,7 @@ export function setupLudoSocket(io: Server) {
         winners,
         payout: payoutPerWinner,
         serverSeed: room.gameState.serverSeed,
+        clientSeeds: room.gameState.clientSeeds,
         gameState: sanitizeGameState(room.gameState)
       });
 
@@ -708,6 +709,7 @@ export function setupLudoSocket(io: Server) {
           payout: payoutPerWinner,
           forfeitedBy: userId,
           serverSeed: room.gameState.serverSeed,
+          clientSeeds: room.gameState.clientSeeds,
           gameState: sanitizeGameState(room.gameState)
         });
 

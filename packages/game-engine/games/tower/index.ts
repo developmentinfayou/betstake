@@ -107,7 +107,7 @@ export class TowerGame extends BaseGame {
     let multiplier = Math.pow(1 / probability, safeFloorsCleared);
 
     // Apply house edge
-    multiplier *= (1 - this.config.houseEdge / 100);
+    // multiplier *= (1 - this.config.houseEdge / 100);
 
     return parseFloat(multiplier.toFixed(4));
   }
@@ -120,7 +120,7 @@ export class TowerGame extends BaseGame {
     const table: number[] = [];
     for (let i = 1; i <= config.floors; i++) {
       const raw = Math.pow(1 / config.probability, i);
-      table.push(parseFloat((raw * (1 - houseEdge / 100)).toFixed(4)));
+      table.push(parseFloat((raw).toFixed(4)));
     }
     return table;
   }

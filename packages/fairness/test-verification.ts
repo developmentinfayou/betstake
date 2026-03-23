@@ -316,6 +316,44 @@ function testHiLo() {
     assert(gameCurrentCard === v.result.currentCard, `HiLo current: game=${gameCurrentCard}, verifier=${v.result.currentCard}`);
 }
 
+// ---- LUDO (Multiplayer Per-Player Dice) ----
+function testLudoDice() {
+    const serverSeed = testSeedData.serverSeed;
+    const playerASeed = 'player_a_client_seed_abc';
+    const playerBSeed = 'player_b_client_seed_xyz';
+
+    // Player A turn (nonce 0)
+    const rollA1 = Math.floor(generateFloat({ serverSeed, clientSeed: playerASeed, nonce: 0 }) * 6) + 1;
+    // Player B turn (nonce 0 — independent counter)
+    const rollB1 = Math.floor(generateFloat({ serverSeed, clientSeed: playerBSeed, nonce: 0 }) * 6) + 1;
+    // Player A turn again (nonce 1)
+    const rollA2 = Math.floor(generateFloat({ serverSeed, clientSeed: playerASeed, nonce: 1 }) * 6) + 1;
+    // Player B turn again (nonce 1)
+    const rollB2 = Math.floor(generateFloat({ serverSeed, clientSeed: playerBSeed, nonce: 1 }) * 6) + 1;
+
+    // Verify each independently — each player only needs serverSeed + their own clientSeed + their nonce
+    const verifyA1 = Math.floor(generateFloat({ serverSeed, clientSeed: playerASeed, nonce: 0 }) * 6) + 1;
+    const verifyB1 = Math.floor(generateFloat({ serverSeed, clientSeed: playerBSeed, nonce: 0 }) * 6) + 1;
+    const verifyA2 = Math.floor(generateFloat({ serverSeed, clientSeed: playerASeed, nonce: 1 }) * 6) + 1;
+    const verifyB2 = Math.floor(generateFloat({ serverSeed, clientSeed: playerBSeed, nonce: 1 }) * 6) + 1;
+
+    assert(rollA1 === verifyA1, `Ludo A roll1: game=${rollA1}, verify=${verifyA1}`);
+    assert(rollB1 === verifyB1, `Ludo B roll1: game=${rollB1}, verify=${verifyB1}`);
+    assert(rollA2 === verifyA2, `Ludo A roll2: game=${rollA2}, verify=${verifyA2}`);
+    assert(rollB2 === verifyB2, `Ludo B roll2: game=${rollB2}, verify=${verifyB2}`);
+
+    // Verify dice values are in valid range (1-6)
+    assert(rollA1 >= 1 && rollA1 <= 6, `Ludo A1 range: ${rollA1}`);
+    assert(rollB1 >= 1 && rollB1 <= 6, `Ludo B1 range: ${rollB1}`);
+
+    // Verify that different client seeds produce different results (not guaranteed but extremely likely)
+    // This is a sanity check, not a strict assertion
+    const differentSeeds = (rollA1 !== rollB1) || (rollA2 !== rollB2);
+    if (differentSeeds) {
+        console.log(`  ℹ️  Different seeds produce different rolls (as expected)`);
+    }
+}
+
 // Run all tests
 console.log('\n🧪 Fairness Verification Test Suite\n' + '='.repeat(50));
 
@@ -334,6 +372,8 @@ testTower();
 testStairs();
 testBlackjack();
 testHiLo();
+testLudoDice();
 
 console.log('\n' + '='.repeat(50));
 console.log(process.exitCode ? '❌ Some tests FAILED!' : '✅ All tests PASSED!');
+

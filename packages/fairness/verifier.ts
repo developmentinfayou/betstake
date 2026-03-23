@@ -281,8 +281,9 @@ function verifyFastParity(input: VerificationInput): VerificationResult {
 // Uses: generateFloat with cursor=0
 function verifyCrash(input: VerificationInput): VerificationResult {
   const floats = generateFloats(input.serverSeed, input.clientSeed, input.nonce, 1, 0);
-  const houseEdge = 0.99;
-  const crashPoint = Math.max(1.01, (99 * houseEdge) / (100 * floats[0]));
+  const houseEdgeFraction = 0.01; // 1%
+  const houseEdgeMultiplier = 1 - houseEdgeFraction;
+  const crashPoint = Math.max(1.01, (99 * houseEdgeMultiplier) / (100 * floats[0]));
   const result = Math.min(parseFloat(crashPoint.toFixed(2)), 10000);
 
   return {

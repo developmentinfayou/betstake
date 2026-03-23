@@ -30,7 +30,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.0005
     }
   },
-  
+
   // LIMBO Jackpots
   {
     gameType: 'LIMBO',
@@ -46,7 +46,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // CRASH Jackpots (Multiplayer)
   {
     gameType: 'CRASH',
@@ -62,7 +62,7 @@ const jackpotConfigurations = [
       chancePerRound: 0.01
     }
   },
-  
+
   // MINES Jackpots
   {
     gameType: 'MINES',
@@ -78,7 +78,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // PLINKO Jackpots
   {
     gameType: 'PLINKO',
@@ -93,7 +93,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // ROULETTE Jackpots
   {
     gameType: 'ROULETTE',
@@ -109,7 +109,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // FASTPARITY Jackpots
   {
     gameType: 'FASTPARITY',
@@ -124,7 +124,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // KENO Jackpots
   {
     gameType: 'KENO',
@@ -139,7 +139,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.0001
     }
   },
-  
+
   // WHEEL Jackpots
   {
     gameType: 'WHEEL',
@@ -154,7 +154,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.002
     }
   },
-  
+
   // BALLOON Jackpots
   {
     gameType: 'BALLOON',
@@ -170,7 +170,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // COINFLIP Jackpots
   {
     gameType: 'COINFLIP',
@@ -186,7 +186,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // RUSH Jackpots
   {
     gameType: 'RUSH',
@@ -202,7 +202,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // TOWER Jackpots
   {
     gameType: 'TOWER',
@@ -218,7 +218,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // HILO Jackpots
   {
     gameType: 'HILO',
@@ -233,7 +233,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // BLACKJACK Jackpots
   {
     gameType: 'BLACKJACK',
@@ -248,7 +248,7 @@ const jackpotConfigurations = [
       chancePerHand: 0.01
     }
   },
-  
+
   // STAIRS Jackpots
   {
     gameType: 'STAIRS',
@@ -264,7 +264,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // KENO Jackpots
   {
     gameType: 'KENO',
@@ -281,7 +281,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.0001
     }
   },
-  
+
   // WHEEL Jackpots
   {
     gameType: 'WHEEL',
@@ -296,7 +296,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.002
     }
   },
-  
+
   // BALLOON Jackpots
   {
     gameType: 'BALLOON',
@@ -313,7 +313,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // COINFLIP Jackpots
   {
     gameType: 'COINFLIP',
@@ -330,7 +330,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // RUSH Jackpots
   {
     gameType: 'RUSH',
@@ -347,7 +347,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // TOWER Jackpots
   {
     gameType: 'TOWER',
@@ -363,7 +363,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // HILO Jackpots
   {
     gameType: 'HILO',
@@ -378,7 +378,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // BLACKJACK Jackpots
   {
     gameType: 'BLACKJACK',
@@ -393,7 +393,7 @@ const jackpotConfigurations = [
       chancePerHand: 0.01
     }
   },
-  
+
   // STAIRS Jackpots
   {
     gameType: 'STAIRS',
@@ -409,7 +409,7 @@ const jackpotConfigurations = [
       chancePerBet: 0.001
     }
   },
-  
+
   // TRENBALL Jackpots (Multiplayer)
   {
     gameType: 'TRENBALL',
@@ -426,7 +426,7 @@ const jackpotConfigurations = [
       chancePerRound: 0.02
     }
   },
-  
+
   // LUDO Jackpots (PVP)
   {
     gameType: 'LUDO',
@@ -441,18 +441,18 @@ const jackpotConfigurations = [
       chancePerGame: 0.05
     }
   },
-  
-  // CHESS Jackpots (PVP)
+
+  // RPS Jackpots (PVP)
   {
-    gameType: 'CHESS',
+    gameType: 'RPS',
     currency: 'BTC',
-    currentAmount: 0.2,
-    minAmount: 0.1,
+    currentAmount: 0.1,
+    minAmount: 0.05,
     status: JackpotStatus.READY,
     houseEdgePercent: 2,
     conditions: {
       type: 'pvp_game',
-      winConditions: ['checkmate_under_10_moves', 'brilliant_move'],
+      winConditions: ['consecutive_wins_5', 'perfect_bo5'],
       chancePerGame: 0.03
     }
   }
@@ -460,7 +460,7 @@ const jackpotConfigurations = [
 
 export const seedJackpotConfigurations = async () => {
   console.log('🎰 Seeding jackpot configurations...');
-  
+
   for (const config of jackpotConfigurations) {
     await Jackpot.findOneAndUpdate(
       { gameType: config.gameType, currency: config.currency },
@@ -468,6 +468,6 @@ export const seedJackpotConfigurations = async () => {
       { upsert: true, new: true }
     );
   }
-  
+
   console.log(`✅ Seeded ${jackpotConfigurations.length} jackpot configurations`);
 };

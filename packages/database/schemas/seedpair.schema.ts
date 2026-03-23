@@ -1,5 +1,10 @@
 import { Schema, model, Document, Types } from 'mongoose';
 
+export interface IActiveGameEntry {
+  gameType: string;
+  sessionId: string;
+}
+
 export interface ISeedPair extends Document {
   userId: Types.ObjectId;
   serverSeed: string;
@@ -8,7 +13,7 @@ export interface ISeedPair extends Document {
   nonce: number;
   isActive: boolean;
   revealed: boolean;
-  activeGameSession?: string; // NEW: Track active game session
+  activeGameSessions: IActiveGameEntry[];
   createdAt: Date;
   revealedAt?: Date;
 }
@@ -21,7 +26,10 @@ const seedPairSchema = new Schema<ISeedPair>({
   nonce: { type: Number, default: 0 },
   isActive: { type: Boolean, default: true },
   revealed: { type: Boolean, default: false },
-  activeGameSession: { type: String }, // NEW: Track active game session
+  activeGameSessions: [{
+    gameType: { type: String, required: true },
+    sessionId: { type: String, required: true },
+  }],
   revealedAt: { type: Date }
 }, { timestamps: true });
 

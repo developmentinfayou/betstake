@@ -27,7 +27,7 @@ export interface DiceResult {
 export class DiceGame extends BaseGame {
   play(input: BetInput): BetResult {
     this.validateBet(input.amount, input.currency);
-    
+
     const params = input.gameParams as DiceParams;
     const mode = params.mode || 'classic';
 
@@ -49,7 +49,7 @@ export class DiceGame extends BaseGame {
     }
 
     const baseMultiplier = 99 / winChance;
-    const multiplier = won ? baseMultiplier * (1 - this.config.houseEdge / 100) : 0;
+    const multiplier = won ? baseMultiplier : 0;
 
     const payout = this.calculatePayout(input.amount, multiplier);
     const profit = this.calculateProfit(input.amount, payout);

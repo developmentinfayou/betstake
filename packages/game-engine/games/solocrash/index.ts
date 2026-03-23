@@ -28,14 +28,13 @@ export class SoloCrashGame extends BaseGame {
 
     let won = false;
     let multiplier = 0;
-    const houseEdgeMultiplier = 1 - houseEdgeFraction; // e.g. 0.99
 
     if (mode === 'quick') {
       won = finalCrashPoint >= 2.0;
-      multiplier = won ? 2.0 * houseEdgeMultiplier : 0;
+      multiplier = won ? 2.0 : 0;
     } else {
       won = finalCrashPoint >= targetMultiplier;
-      multiplier = won ? targetMultiplier * houseEdgeMultiplier : 0;
+      multiplier = won ? targetMultiplier : 0;
     }
 
     const payout = this.calculatePayout(input.amount, multiplier);

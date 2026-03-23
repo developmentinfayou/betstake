@@ -97,6 +97,9 @@ export interface UserStrategy {
   name: string;
   conditions: StrategyConditionBlock[];
   isPreset: boolean;
+  isPublic: boolean;
+  usageCount: number;
+  creatorUsername: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

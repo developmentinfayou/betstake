@@ -34,7 +34,7 @@ export interface LudoGameState {
   serverSeed: string;
   serverSeedHash: string;
   clientSeeds: Record<string, string>;
-  nonce: number;
+  nonces: Record<string, number>;
   winner?: string;
   winningTeam?: number;
 }
@@ -46,6 +46,7 @@ export interface LudoMove {
   to: number;
   diceRoll: number;
   nonce: number;
+  clientSeed: string;
   captured?: { playerId: string; tokenId: number };
   timestamp: number;
 }

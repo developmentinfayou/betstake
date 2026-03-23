@@ -36,13 +36,12 @@ import platformSettingsRoutes from './routes/platform-settings';
 import gameSettingsRoutes from './routes/game-settings';
 import gameInfoRoutes from './routes/game-info';
 import winCategoriesRoutes from './routes/win-categories';
-import chessRoutes from './routes/chess';
 
 // WebSocket handlers
 import { setupCrashSocket } from './websocket/crash';
 import { setupFastParitySocket } from './websocket/fastparity';
 import { setupLudoSocket } from './websocket/ludo';
-import { setupChessSocket } from './websocket/chess';
+import { setupRPSSocket } from './websocket/rps';
 
 // Services
 import { AutoBetService } from './services/autobet-service';
@@ -113,7 +112,6 @@ async function start() {
   app.use('/api/admin/game-info', gameInfoRoutes);
   app.use('/api/admin/win-categories', winCategoriesRoutes);
   app.use('/api/active-sessions', activeSessionsRoutes);
-  app.use('/api/chess', chessRoutes);
 
   // Setup Socket.IO
   const io = new Server(httpServer, {
@@ -145,7 +143,7 @@ async function start() {
   setupCrashSocket(io);
   setupFastParitySocket(io);
   setupLudoSocket(io);
-  setupChessSocket(io);
+  setupRPSSocket(io);
 
   // Start AutoBet worker
   await AutoBetService.startWorker();

@@ -9,6 +9,10 @@ interface StrategyFromAPI {
   name: string;
   conditions: StrategyConditionBlock[];
   isPreset: boolean;
+  isPublic: boolean;
+  usageCount: number;
+  creatorUsername: string;
+  userId: string;
 }
 
 interface StrategySelectorProps {
@@ -31,12 +35,16 @@ export default function StrategySelector({
   disabled = false,
 }: StrategySelectorProps) {
   const [strategies, setStrategies] = useState<StrategyFromAPI[]>([]);
+  const [communityStrategies, setCommunityStrategies] = useState<StrategyFromAPI[]>([]);
   const [selectedStrategyId, setSelectedStrategyId] = useState<string>('');
   const [numberOfBets, setNumberOfBets] = useState(0); // 0 = infinite
   const [activeConditionTab, setActiveConditionTab] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingStrategy, setEditingStrategy] = useState<StrategyFromAPI | null>(null);
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'my' | 'community'>('my');
+  const [diamondBalance, setDiamondBalance] = useState(0);
+  const [togglingVisibility, setTogglingVisibility] = useState<string | null>(null);
 
   const loadStrategies = useCallback(async () => {
     try {
@@ -52,13 +60,40 @@ export default function StrategySelector({
     }
   }, [selectedStrategyId]);
 
+  const loadCommunityStrategies = useCallback(async () => {
+    try {
+      const res = await strategyAPI.getCommunity();
+      setCommunityStrategies(res.data?.strategies || []);
+    } catch (error) {
+      console.error('Failed to load community strategies:', error);
+    }
+  }, []);
+
+  const loadDiamondBalance = useCallback(async () => {
+    try {
+      const res = await strategyAPI.getDiamondBalance();
+      setDiamondBalance(res.data?.balance || 0);
+    } catch (error) {
+      console.error('Failed to load diamond balance:', error);
+    }
+  }, []);
+
   useEffect(() => {
     loadStrategies();
-  }, [loadStrategies]);
+    loadDiamondBalance();
+  }, [loadStrategies, loadDiamondBalance]);
 
-  const selectedStrategy = strategies.find(s => s._id === selectedStrategyId);
+  useEffect(() => {
+    if (activeTab === 'community') {
+      loadCommunityStrategies();
+    }
+  }, [activeTab, loadCommunityStrategies]);
 
-  const handleStart = () => {
+  const allStrategies = activeTab === 'my' ? strategies : communityStrategies;
+  const selectedStrategy = [...strategies, ...communityStrategies].find(s => s._id === selectedStrategyId);
+  const isCommunityStrategy = selectedStrategy ? communityStrategies.some(s => s._id === selectedStrategy._id) : false;
+
+  const handleStart = async () => {
     if (!selectedStrategyId || !selectedStrategy) return;
 
     // Guard: prevent starting with no conditions
@@ -67,8 +102,16 @@ export default function StrategySelector({
       return;
     }
 
+    // If using a community strategy, record usage to award diamonds to creator
+    if (isCommunityStrategy) {
+      try {
+        await strategyAPI.useStrategy(selectedStrategyId);
+      } catch (error) {
+        console.error('Failed to record strategy usage:', error);
+      }
+    }
+
     // Strategy mode sends a clean config — no onWin/onLoss (those are Auto mode only).
-    // The backend branches on strategyId: if present, uses StrategyEngine; otherwise uses onWin/onLoss.
     const config = {
       enabled: true,
       numberOfBets,
@@ -78,13 +121,13 @@ export default function StrategySelector({
     onStart(config);
   };
 
-  const handleCreateOrEdit = async (name: string, conditions: StrategyConditionBlock[]) => {
+  const handleCreateOrEdit = async (name: string, conditions: StrategyConditionBlock[], isPublic: boolean) => {
     setLoading(true);
     try {
       if (editingStrategy && !editingStrategy.isPreset) {
         await strategyAPI.update(editingStrategy._id, { name, conditions });
       } else {
-        const res = await strategyAPI.create({ name, conditions });
+        const res = await strategyAPI.create({ name, conditions, isPublic });
         setSelectedStrategyId(res.data.strategy._id);
       }
       await loadStrategies();
@@ -120,11 +163,31 @@ export default function StrategySelector({
     setModalOpen(true);
   };
 
+  const handleToggleVisibility = async (strategyId: string) => {
+    setTogglingVisibility(strategyId);
+    try {
+      await strategyAPI.toggleVisibility(strategyId);
+      await loadStrategies();
+    } catch (error) {
+      console.error('Failed to toggle visibility:', error);
+    }
+    setTogglingVisibility(null);
+  };
+
   const isDisabled = disabled || isActive;
 
   return (
     <>
       <div className="space-y-4">
+        {/* Diamond Balance Badge */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border border-cyan-500/20 rounded-lg px-3 py-1.5">
+            <span className="text-lg">💎</span>
+            <span className="text-sm font-bold text-cyan-400">{diamondBalance}</span>
+            <span className="text-xs text-gray-400">Diamonds</span>
+          </div>
+        </div>
+
         {/* Amount */}
         <div>
           <label className="block text-sm text-gray-400 mb-2">Amount</label>
@@ -186,9 +249,32 @@ export default function StrategySelector({
           </div>
         </div>
 
-        {/* Select Strategy */}
+        {/* My Strategies / Community Tabs */}
         <div>
-          <label className="block text-sm text-gray-400 mb-2">Select Strategy</label>
+          <div className="flex gap-1 mb-3 bg-[#0f1923] rounded-lg p-1">
+            <button
+              onClick={() => { setActiveTab('my'); setActiveConditionTab(0); }}
+              className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'my'
+                ? 'bg-[#1a2c38] text-white shadow-sm'
+                : 'text-gray-400 hover:text-gray-300'
+                }`}
+              disabled={isDisabled}
+            >
+              My Strategies
+            </button>
+            <button
+              onClick={() => { setActiveTab('community'); setActiveConditionTab(0); }}
+              className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'community'
+                ? 'bg-[#1a2c38] text-white shadow-sm'
+                : 'text-gray-400 hover:text-gray-300'
+                }`}
+              disabled={isDisabled}
+            >
+              🌐 Community
+            </button>
+          </div>
+
+          {/* Strategy Select */}
           <select
             value={selectedStrategyId}
             onChange={(e) => {
@@ -199,11 +285,54 @@ export default function StrategySelector({
             disabled={isDisabled}
           >
             <option value="">Select Strategy</option>
-            {strategies.map(s => (
-              <option key={s._id} value={s._id}>{s.name}</option>
+            {allStrategies.map(s => (
+              <option key={s._id} value={s._id}>
+                {s.name}
+                {activeTab === 'community' ? ` — by ${s.creatorUsername} (${s.usageCount} uses)` : ''}
+                {activeTab === 'my' && s.isPublic ? ' 🌐' : ''}
+              </option>
             ))}
           </select>
         </div>
+
+        {/* Community strategy info banner */}
+        {isCommunityStrategy && selectedStrategy && (
+          <div className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border border-cyan-500/20 rounded-lg p-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-white font-medium">{selectedStrategy.name}</p>
+                <p className="text-xs text-gray-400">by {selectedStrategy.creatorUsername}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-gray-400">{selectedStrategy.usageCount} uses</p>
+                <p className="text-xs text-cyan-400">💎 20 per use</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Visibility toggle for own non-preset strategies */}
+        {activeTab === 'my' && selectedStrategy && !selectedStrategy.isPreset && !isCommunityStrategy && (
+          <button
+            onClick={() => handleToggleVisibility(selectedStrategy._id)}
+            disabled={isDisabled || togglingVisibility === selectedStrategy._id}
+            className={`w-full py-2 rounded-lg text-sm font-medium transition-all border ${selectedStrategy.isPublic
+              ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20'
+              : 'bg-gray-800/50 border-gray-700/50 text-gray-400 hover:bg-gray-700/50'
+              } disabled:opacity-50`}
+          >
+            {togglingVisibility === selectedStrategy._id ? 'Updating...' : (
+              selectedStrategy.isPublic
+                ? '🌐 Public — Click to make Private'
+                : '🔒 Private — Click to make Public'
+            )}
+            {selectedStrategy.isPublic && selectedStrategy.usageCount > 0 && (
+              <span className="ml-2 text-xs text-cyan-300">
+                ({selectedStrategy.usageCount} uses • 💎 {selectedStrategy.usageCount * 20} earned)
+              </span>
+            )}
+          </button>
+        )}
 
         {/* Conditions Preview */}
         {selectedStrategy && selectedStrategy.conditions.length > 0 && (
@@ -233,32 +362,34 @@ export default function StrategySelector({
           </div>
         )}
 
-        {/* Create / Delete / Edit */}
-        <div className="space-y-2">
-          <button
-            onClick={handleCreate}
-            disabled={isDisabled}
-            className="w-full py-2.5 rounded-lg bg-[#1a2c38] hover:bg-[#213743] border border-gray-700/50 text-white font-bold text-sm transition-colors disabled:opacity-50"
-          >
-            Create
-          </button>
-          <div className="grid grid-cols-2 gap-2">
+        {/* Create / Delete / Edit — only for "My Strategies" tab */}
+        {activeTab === 'my' && (
+          <div className="space-y-2">
             <button
-              onClick={handleDelete}
-              disabled={isDisabled || !selectedStrategy || selectedStrategy.isPreset}
-              className="py-2 rounded-lg text-sm text-gray-400 hover:text-red-400 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              onClick={handleCreate}
+              disabled={isDisabled}
+              className="w-full py-2.5 rounded-lg bg-[#1a2c38] hover:bg-[#213743] border border-gray-700/50 text-white font-bold text-sm transition-colors disabled:opacity-50"
             >
-              Delete
+              Create
             </button>
-            <button
-              onClick={handleEdit}
-              disabled={isDisabled || !selectedStrategy || selectedStrategy.isPreset}
-              className="py-2 rounded-lg text-sm text-gray-400 hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              Edit
-            </button>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={handleDelete}
+                disabled={isDisabled || !selectedStrategy || selectedStrategy.isPreset}
+                className="py-2 rounded-lg text-sm text-gray-400 hover:text-red-400 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                Delete
+              </button>
+              <button
+                onClick={handleEdit}
+                disabled={isDisabled || !selectedStrategy || selectedStrategy.isPreset}
+                className="py-2 rounded-lg text-sm text-gray-400 hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                Edit
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Start / Stop */}
         {isActive ? (
@@ -271,7 +402,7 @@ export default function StrategySelector({
             disabled={isDisabled || !selectedStrategyId || loading}
             className="w-full py-3 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-black font-bold text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Starting...' : 'Start Auto Bet'}
+            {loading ? 'Starting...' : (isCommunityStrategy ? '▶ Start (Awards 💎20 to creator)' : 'Start Auto Bet')}
           </button>
         )}
       </div>
@@ -281,7 +412,7 @@ export default function StrategySelector({
         isOpen={modalOpen}
         onClose={() => { setModalOpen(false); setEditingStrategy(null); }}
         onSave={handleCreateOrEdit}
-        editStrategy={editingStrategy ? { name: editingStrategy.name, conditions: editingStrategy.conditions } : null}
+        editStrategy={editingStrategy ? { name: editingStrategy.name, conditions: editingStrategy.conditions, isPublic: editingStrategy.isPublic } : null}
       />
     </>
   );

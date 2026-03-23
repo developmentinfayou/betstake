@@ -313,23 +313,19 @@ const gameConfigurations = [
     config: { modes: ['1v1', '2v2', '1v1v1v1'], maxRollTime: 30, maxPlayTime: 300, antiCheat: true }
   },
   {
-    gameType: 'CHESS',
+    gameType: 'RPS',
     houseEdge: 2.0,
     minBet: { BTC: 0.00000001, ETH: 0.000001, LTC: 0.00001, USDT: 0.01, USD: 0.01, EUR: 0.01 },
     maxBet: { BTC: 0.1, ETH: 1.0, LTC: 10.0, USDT: 1000.0, USD: 1000.0, EUR: 1000.0 },
     maxWin: { BTC: 1.0, ETH: 10.0, LTC: 100.0, USDT: 10000.0, USD: 10000.0, EUR: 10000.0 },
     isEnabled: true,
-    config: { timeControls: ['5+0', '10+0', '15+10', '30+0'], antiCheat: true, moveRecording: true }
-  }UR: 1000.0 },
-    maxWin: { BTC: 1.0, ETH: 10.0, LTC: 100.0, USDT: 10000.0, USD: 10000.0, EUR: 10000.0 },
-    isEnabled: true,
-    config: { timeControls: ['5+0', '10+0', '15+10', '30+0'], antiCheat: true, moveRecording: true }
+    config: { modes: ['bo1', 'bo3', 'bo5'], roundTimer: 10, antiCheat: false }
   }
 ];
 
 export const seedGameConfigurations = async () => {
   console.log('🌱 Seeding game configurations...');
-  
+
   for (const config of gameConfigurations) {
     await GameConfig.findOneAndUpdate(
       { gameType: config.gameType },
@@ -337,6 +333,6 @@ export const seedGameConfigurations = async () => {
       { upsert: true, new: true }
     );
   }
-  
+
   console.log(`✅ Seeded ${gameConfigurations.length} game configurations`);
 };

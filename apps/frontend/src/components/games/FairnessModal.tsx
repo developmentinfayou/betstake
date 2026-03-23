@@ -7,11 +7,21 @@ interface FairnessModalProps {
   onClose: () => void;
 }
 
+// Map game type labels to their URL paths
+const GAME_URL_MAP: Record<string, string> = {
+  'Mines': '/game/mines',
+  'Flip': '/game/coinflip',
+  'HiLo': '/game/hilo',
+  'Tower': '/game/tower',
+  'Stairs': '/game/stairs',
+  'Blackjack': '/game/blackjack',
+};
+
 export default function FairnessModal({ isOpen, onClose }: FairnessModalProps) {
   const [seedData, setSeedData] = useState<any>(null);
   const [newClientSeed, setNewClientSeed] = useState('');
   const [loading, setLoading] = useState(false);
-  const [hasActiveGame, setHasActiveGame] = useState(false);
+  const [activeGames, setActiveGames] = useState<string[]>([]);
 
   useEffect(() => {
     if (isOpen) {
@@ -24,22 +34,24 @@ export default function FairnessModal({ isOpen, onClose }: FairnessModalProps) {
       const response = await seedAPI.getActive();
       setSeedData(response.data);
       setNewClientSeed(response.data.clientSeed);
-      setHasActiveGame(!!response.data.activeGameSession);
+      setActiveGames(response.data.activeGames || []);
     } catch (error) {
       toast.error('Failed to load seed data');
     }
   };
 
+  const hasActiveGame = activeGames.length > 0;
+
   const handleRotateSeed = async () => {
     if (hasActiveGame) {
-      toast.error('Cannot rotate seed during active game session');
+      toast.error('Finish active games before rotating seed');
       return;
     }
     setLoading(true);
     try {
       const response = await seedAPI.rotate();
       const { oldSeed, newSeed } = response.data;
-      
+
       // Show revealed server seed
       toast.success(
         <div>
@@ -49,10 +61,10 @@ export default function FairnessModal({ isOpen, onClose }: FairnessModalProps) {
         </div>,
         { duration: 10000 }
       );
-      
+
       await loadSeedData();
-    } catch (error) {
-      toast.error('Failed to rotate seed');
+    } catch (error: any) {
+      toast.error(error?.response?.data?.error || 'Failed to rotate seed');
     } finally {
       setLoading(false);
     }
@@ -60,14 +72,19 @@ export default function FairnessModal({ isOpen, onClose }: FairnessModalProps) {
 
   const handleUpdateClientSeed = async () => {
     if (!newClientSeed || newClientSeed === seedData?.clientSeed) return;
-    
+
+    if (hasActiveGame) {
+      toast.error('Finish active games before changing client seed');
+      return;
+    }
+
     setLoading(true);
     try {
       await seedAPI.updateClientSeed(newClientSeed);
       toast.success('Client seed updated');
       await loadSeedData();
-    } catch (error) {
-      toast.error('Failed to update client seed');
+    } catch (error: any) {
+      toast.error(error?.response?.data?.error || 'Failed to update client seed');
     } finally {
       setLoading(false);
     }
@@ -89,29 +106,26 @@ export default function FairnessModal({ isOpen, onClose }: FairnessModalProps) {
           {seedData && (
             <div className="space-y-6">
               {/* Status Badge */}
-              <div className={`border rounded-lg p-3 flex items-center justify-between ${
-                hasActiveGame 
-                  ? 'bg-yellow-900/20 border-yellow-500' 
+              <div className={`border rounded-lg p-3 flex items-center justify-between ${hasActiveGame
+                  ? 'bg-yellow-900/20 border-yellow-500'
                   : 'bg-green-900/20 border-green-500'
-              }`}>
+                }`}>
                 <div>
-                  <div className={`font-bold ${
-                    hasActiveGame ? 'text-yellow-500' : 'text-green-500'
-                  }`}>
+                  <div className={`font-bold ${hasActiveGame ? 'text-yellow-500' : 'text-green-500'
+                    }`}>
                     {hasActiveGame ? '🔒 Seed Locked' : 'Active Seed Pair'}
                   </div>
                   <div className="text-sm text-gray-400">
-                    {hasActiveGame 
-                      ? 'Complete your game to unlock' 
+                    {hasActiveGame
+                      ? `${activeGames.length} active game${activeGames.length > 1 ? 's' : ''}`
                       : `${seedData.betCount || 0} bets placed`
                     }
                   </div>
                 </div>
-                <div className={`px-3 py-1 rounded-full text-sm font-bold ${
-                  hasActiveGame 
-                    ? 'bg-yellow-500 text-black' 
+                <div className={`px-3 py-1 rounded-full text-sm font-bold ${hasActiveGame
+                    ? 'bg-yellow-500 text-black'
                     : 'bg-green-500 text-white'
-                }`}>
+                  }`}>
                   {hasActiveGame ? 'LOCKED' : 'ACTIVE'}
                 </div>
               </div>
@@ -144,7 +158,7 @@ export default function FairnessModal({ isOpen, onClose }: FairnessModalProps) {
                   />
                   <button
                     onClick={handleUpdateClientSeed}
-                    disabled={loading || newClientSeed === seedData.clientSeed}
+                    disabled={loading || newClientSeed === seedData.clientSeed || hasActiveGame}
                     className="btn-primary px-4 disabled:opacity-50"
                   >
                     Update
@@ -175,7 +189,19 @@ export default function FairnessModal({ isOpen, onClose }: FairnessModalProps) {
                   <div className="bg-red-900/20 border border-red-500 p-3 rounded mb-3">
                     <div className="text-red-500 font-bold mb-1">⚠️ Cannot Rotate</div>
                     <div className="text-sm text-gray-400">
-                      You have an active game session. Complete or cashout your current game before rotating seeds.
+                      You need to finish the following game(s) before you can rotate your seed pair:{' '}
+                      {activeGames.map((game, index) => (
+                        <span key={game}>
+                          <a
+                            href={GAME_URL_MAP[game] || '#'}
+                            onClick={onClose}
+                            className="text-blue-400 underline hover:text-blue-300 font-semibold"
+                          >
+                            {game}
+                          </a>
+                          {index < activeGames.length - 1 ? ', ' : ''}
+                        </span>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -202,10 +228,10 @@ export default function FairnessModal({ isOpen, onClose }: FairnessModalProps) {
                   <li>HMAC-SHA256 generates the random outcome</li>
                   <li>After rotating, you can verify all past bets</li>
                 </ol>
-                
+
                 <div className="mt-4 p-3 bg-yellow-900/20 border border-yellow-500/50 rounded">
                   <div className="text-xs text-yellow-400">
-                    <strong>Note:</strong> Some games (Mines, Tower, Stairs, HiLo, Blackjack) use session-based gameplay but still use the same provably fair system for their random elements.
+                    <strong>Note:</strong> Some games (Mines, Tower, Stairs, HiLo, Blackjack, Flip) use session-based gameplay. You can play multiple session games simultaneously, but must finish all before rotating seeds.
                   </div>
                 </div>
               </div>

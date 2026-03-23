@@ -4,8 +4,8 @@ import ConditionBlock, { StrategyConditionBlock } from './ConditionBlock';
 interface AdvancedBetModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (name: string, conditions: StrategyConditionBlock[]) => void;
-    editStrategy?: { name: string; conditions: StrategyConditionBlock[] } | null;
+    onSave: (name: string, conditions: StrategyConditionBlock[], isPublic: boolean) => void;
+    editStrategy?: { name: string; conditions: StrategyConditionBlock[]; isPublic?: boolean } | null;
 }
 
 function generateId() {
@@ -25,14 +25,17 @@ function createDefaultCondition(): StrategyConditionBlock {
 export default function AdvancedBetModal({ isOpen, onClose, onSave, editStrategy }: AdvancedBetModalProps) {
     const [name, setName] = useState('');
     const [conditions, setConditions] = useState<StrategyConditionBlock[]>([createDefaultCondition()]);
+    const [isPublic, setIsPublic] = useState(false);
 
     useEffect(() => {
         if (editStrategy) {
             setName(editStrategy.name);
             setConditions(editStrategy.conditions.length > 0 ? editStrategy.conditions : [createDefaultCondition()]);
+            setIsPublic(editStrategy.isPublic || false);
         } else {
             setName('');
             setConditions([createDefaultCondition()]);
+            setIsPublic(false);
         }
     }, [editStrategy, isOpen]);
 
@@ -54,7 +57,7 @@ export default function AdvancedBetModal({ isOpen, onClose, onSave, editStrategy
     const handleSave = () => {
         if (!name.trim()) return;
         if (conditions.length === 0) return;
-        onSave(name.trim(), conditions);
+        onSave(name.trim(), conditions, isPublic);
     };
 
     if (!isOpen) return null;
@@ -111,6 +114,22 @@ export default function AdvancedBetModal({ isOpen, onClose, onSave, editStrategy
                     >
                         Add Condition
                     </button>
+
+                    {/* Make Public Toggle */}
+                    <div className="flex items-center justify-between bg-[#1a2c38] rounded-lg p-3 border border-gray-700/50">
+                        <div>
+                            <p className="text-sm font-medium text-white">Make Public</p>
+                            <p className="text-xs text-gray-400">Other users can use this strategy. You earn 💎20 per use.</p>
+                        </div>
+                        <button
+                            onClick={() => setIsPublic(!isPublic)}
+                            className={`w-12 h-6 rounded-full transition-colors relative ${isPublic ? 'bg-cyan-500' : 'bg-gray-600'
+                                }`}
+                        >
+                            <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${isPublic ? 'left-[26px]' : 'left-0.5'
+                                }`} />
+                        </button>
+                    </div>
                 </div>
 
                 {/* Footer */}

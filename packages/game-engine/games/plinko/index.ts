@@ -174,7 +174,7 @@ export class PlinkoGame extends BaseGame {
       multiplier *= finalGoldenMultiplier;
     }
 
-    const finalMultiplier = multiplier * (1 - this.config.houseEdge / 100);
+    const finalMultiplier = multiplier;
 
     const won = finalMultiplier >= 1;
     const payout = this.calculatePayout(input.amount, finalMultiplier);

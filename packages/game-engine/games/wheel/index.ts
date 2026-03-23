@@ -74,7 +74,7 @@ export class WheelGame extends BaseGame {
 
   play(input: BetInput): BetResult {
     this.validateBet(input.amount, input.currency);
-    
+
     const params = input.gameParams as WheelParams;
     const { risk, segments } = params;
 
@@ -89,8 +89,8 @@ export class WheelGame extends BaseGame {
     const color = this.colors[segment % this.colors.length];
 
     // Apply house edge to multiplier
-    const finalMultiplier = multiplier * (1 - this.config.houseEdge / 100);
-    
+    const finalMultiplier = multiplier;
+
     const won = finalMultiplier >= 1;
     const payout = this.calculatePayout(input.amount, finalMultiplier);
     const profit = this.calculateProfit(input.amount, payout);

@@ -121,12 +121,14 @@ Bottom Nav:
 - Multiplier (12x) HEX code wrong, colour
 - Spacing Wrong, All text Colours Wrong
 - Gap between Live and bar not accurate.
-- Bottom bar broken from between and spacing wrong, also height of hover box is wrong, add proper records and hover effect
+- Bottom bar bro
+ken from between and spacing wrong, also height of hover box is wrong, add proper records and hover effect
 
 Balance Modal:
 - Username should be hidden when balance box is opening
 - Bitcoin Icon missing
 - Heart is Filled by Default, Heart Hover Effect Wrong
+
 - Text Colour Wrong
 - Settings and All Icons Wrong
 - Fiat and Crypto Box, wrong Gap

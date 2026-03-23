@@ -14,10 +14,10 @@
 .game_nav_7392 {
   position: relative;
   height: 41px;
-  width: 462px;
+  width: 799px;
   padding: 12px;
   border-radius: 4px;
-  overflow-x: auto;
+  overflow-x: hidden;
   border: 1px solid #31313F;
   scrollbar-width: none;
 }
@@ -34,7 +34,7 @@
   display: flex;
   align-items: center;
   height: 100%;
-  gap: 16px;
+  gap: 0px;
   position: relative;
 }
 
@@ -45,7 +45,9 @@
 .game_tab_item_6621 {
   display: flex;
   align-items: center;
-  gap: 16px;
+  justify-content: center;
+  width: 155px;
+  position: relative;
 }
 
 /* ============================= */
@@ -67,7 +69,7 @@
 /* ============================= */
 
 .game_tab_label_3351 {
-  font-size: 14px;
+  font-size: 17px;
   letter-spacing: 1.12px;
   color: #828282;
   transition: color 0.2s ease;
@@ -87,9 +89,12 @@
 /* ============================= */
 
 .game_separator_5521 {
+  position: absolute;
+  right: 0;
   width: 1px;
   height: 16px;
   background: #31313F;
+  flex-shrink: 0;
 }
 
 /* ============================= */

@@ -176,11 +176,11 @@ export default function HomePage() {
         return 275;
       case "roulette":
         return 373;
-        case "racks":
+      case "racks":
         return 462;
-        case "goals":
-          return 540;
-        
+      case "goals":
+        return 540;
+
       default:
         return 0;
     }
@@ -277,10 +277,10 @@ export default function HomePage() {
 
   return (
     <div
-      className="min-h-screen text-white mt-[64px] "
-      
+      className="min-h-screen text-white mt-[32px] px-6"
+
     >
-   
+
 
       {/* ✅ PAGE CONTAINER */}
       <main>
