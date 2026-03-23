@@ -146,7 +146,7 @@ export interface ProvablyFairSeed {
 }
 
 export interface RngOutcome {
-  purpose: 'colour' | 'chess960' | 'tiebreaker' | 'prizeDraw';
+  purpose: 'colour' | 'tiebreaker' | 'prizeDraw';
   nonce: number;
   derivedHash: string;
   result: string | number;

@@ -74,46 +74,59 @@ export class SeedManager {
   }
 
   /**
-   * Lock seed for active game session
+   * Lock seed for active game session (supports multiple simultaneous games)
    */
-  static async lockSeedForGame(userId: string, gameSessionId: string) {
+  static async lockSeedForGame(userId: string, gameSessionId: string, gameType: string) {
     const seedPair = await SeedPair.findOne({ userId, isActive: true });
     if (!seedPair) throw new Error('No active seed pair found');
 
-    seedPair.activeGameSession = gameSessionId;
-    await seedPair.save();
+    // Check if this session is already tracked
+    const exists = seedPair.activeGameSessions.some(s => s.sessionId === gameSessionId);
+    if (!exists) {
+      seedPair.activeGameSessions.push({ gameType, sessionId: gameSessionId });
+      await seedPair.save();
+    }
     return seedPair;
   }
 
   /**
-   * Unlock seed after game session ends
+   * Unlock seed after game session ends (remove from array)
    */
   static async unlockSeedAfterGame(gameSessionId: string) {
     await SeedPair.updateOne(
-      { activeGameSession: gameSessionId },
-      { $unset: { activeGameSession: 1 } }
+      { 'activeGameSessions.sessionId': gameSessionId },
+      { $pull: { activeGameSessions: { sessionId: gameSessionId } } }
     );
   }
 
   /**
-   * Check if user has active game session
+   * Check if user has any active game sessions
    */
   static async hasActiveGameSession(userId: string): Promise<boolean> {
     const seedPair = await SeedPair.findOne({
       userId,
       isActive: true,
     });
-    return !!(seedPair && seedPair.activeGameSession);
+    return !!(seedPair && seedPair.activeGameSessions && seedPair.activeGameSessions.length > 0);
+  }
+
+  /**
+   * Get list of active game types for this user
+   */
+  static async getActiveGameSessions(userId: string): Promise<string[]> {
+    const seedPair = await SeedPair.findOne({ userId, isActive: true });
+    if (!seedPair || !seedPair.activeGameSessions) return [];
+    return seedPair.activeGameSessions.map(s => s.gameType);
   }
 
   /**
    * Rotate to new seed pair (reveals old server seed)
    */
   static async rotateSeedPair(userId: string, newClientSeed?: string) {
-    // Check for active game session
-    const hasActiveGame = await this.hasActiveGameSession(userId);
-    if (hasActiveGame) {
-      throw new Error('Cannot rotate seed during active game session');
+    // Check for active game sessions
+    const activeGames = await this.getActiveGameSessions(userId);
+    if (activeGames.length > 0) {
+      throw new Error(`You need to finish the following game(s) before you can rotate your seed pair: ${activeGames.join(', ')}`);
     }
 
     const currentSeed = await SeedPair.findOne({ userId, isActive: true });

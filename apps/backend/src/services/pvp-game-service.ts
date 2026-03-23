@@ -162,12 +162,11 @@ export class PVPGameService {
           currentPlayer: 0,
           pieces: this.initializeLudoPieces(mode)
         };
-      case PVPGameType.CHESS:
+      case PVPGameType.RPS:
         return {
-          board: this.initializeChessBoard(),
-          currentPlayer: 'white',
-          castling: { white: { king: true, queen: true }, black: { king: true, queen: true } },
-          enPassant: null
+          currentRound: 1,
+          scores: {},
+          rounds: []
         };
       default:
         return {};
@@ -186,7 +185,7 @@ export class PVPGameService {
         default: return 2;
       }
     }
-    return 2; // Chess is always 2 players
+    return 2; // RPS and other games are always 2 players
   }
 
   /**
@@ -197,8 +196,8 @@ export class PVPGameService {
     switch (game.gameType) {
       case PVPGameType.LUDO:
         return this.validateLudoMove(game.gameState, playerId, move);
-      case PVPGameType.CHESS:
-        return this.validateChessMove(game.gameState, playerId, move);
+      case PVPGameType.RPS:
+        return true; // Websocket handles real validation
       default:
         return false;
     }
@@ -237,10 +236,8 @@ export class PVPGameService {
   // Game-specific implementations
   private static initializeLudoBoard() { return Array(40).fill(null); }
   private static initializeLudoPieces(mode: string) { return {}; }
-  private static initializeChessBoard() { return 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'; }
 
   private static validateLudoMove(gameState: any, playerId: string, move: any): boolean { return true; }
-  private static validateChessMove(gameState: any, playerId: string, move: any): boolean { return true; }
 
   private static applyMove(gameState: any, gameType: PVPGameType, move: any) { return gameState; }
   private static checkGameEnd(gameState: any, gameType: PVPGameType) { return null; }

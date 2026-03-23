@@ -7,14 +7,15 @@ const router = Router();
 router.get('/active', authenticate, async (req: AuthRequest, res) => {
   try {
     const seedPair = await SeedManager.getActiveSeedPair(req.userId!);
-    const hasActiveGame = await SeedManager.hasActiveGameSession(req.userId!);
+    const activeGames = await SeedManager.getActiveGameSessions(req.userId!);
 
     res.json({
       serverSeedHash: seedPair.serverSeedHash,
       clientSeed: seedPair.clientSeed,
       nonce: seedPair.nonce,
       revealed: seedPair.revealed,
-      hasActiveGame, // NEW: Indicate if seed is locked
+      activeGames, // Array of game type names (e.g. ['Mines', 'Flip'])
+      hasActiveGame: activeGames.length > 0,
     });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -31,7 +32,7 @@ router.post('/client-seed', authenticate, async (req: AuthRequest, res) => {
       nonce: newSeedPair.nonce,
     });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -54,7 +55,7 @@ router.post('/rotate', authenticate, async (req: AuthRequest, res) => {
     });
   } catch (error: any) {
     console.error('[Seed Rotate Error]', error.message);
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 

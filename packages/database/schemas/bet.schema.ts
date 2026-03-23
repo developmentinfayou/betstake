@@ -25,8 +25,8 @@ export enum GameType {
   COINFLIP = 'COINFLIP',
   TRENBALL = 'TRENBALL',
   LUDO = 'LUDO',
-  CHESS = 'CHESS',
-  STAIRS = 'STAIRS'
+  STAIRS = 'STAIRS',
+  RPS = 'RPS'
 }
 
 export interface IBet extends Document {

@@ -1,21 +1,22 @@
 import { Router } from 'express';
 import { authenticate, AuthRequest } from '../middleware/auth';
-import { MinesSession, HiLoSession, BlackjackSession, StairsSession, TowerSession } from '@casino/database';
+import { MinesSession, HiLoSession, BlackjackSession, StairsSession, TowerSession, CoinFlipSession } from '@casino/database';
 
 const router = Router();
 
 // Check all game types for active sessions
 router.get('/', authenticate, async (req: AuthRequest, res) => {
     try {
-        const [mines, hilo, blackjack, stairs, tower] = await Promise.all([
+        const [mines, hilo, blackjack, stairs, tower, coinflip] = await Promise.all([
             MinesSession.findOne({ userId: req.userId, active: true }),
             HiLoSession.findOne({ userId: req.userId, active: true }),
             BlackjackSession.findOne({ userId: req.userId, active: true }),
             StairsSession.findOne({ userId: req.userId, active: true }),
             TowerSession.findOne({ userId: req.userId, active: true }),
+            CoinFlipSession.findOne({ userId: req.userId, active: true }),
         ]);
 
-        const hasAnyActive = !!(mines || hilo || blackjack || stairs || tower);
+        const hasAnyActive = !!(mines || hilo || blackjack || stairs || tower || coinflip);
 
         res.json({
             hasAnyActive,
@@ -25,6 +26,7 @@ router.get('/', authenticate, async (req: AuthRequest, res) => {
                 blackjack: blackjack ? { sessionId: blackjack._id, gameType: 'BLACKJACK', betAmount: blackjack.betAmount } : null,
                 stairs: stairs ? { sessionId: stairs._id, gameType: 'STAIRS', betAmount: stairs.betAmount } : null,
                 tower: tower ? { sessionId: tower._id, gameType: 'TOWER', betAmount: tower.betAmount } : null,
+                coinflip: coinflip ? { sessionId: coinflip._id, gameType: 'COINFLIP', betAmount: coinflip.betAmount } : null,
             },
         });
     } catch (error: any) {

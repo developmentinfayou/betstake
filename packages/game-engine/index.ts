@@ -16,5 +16,5 @@ export { StairsGame } from './games/stairs';
 export { HiLoGame } from './games/hilo';
 export { BlackjackGame } from './games/blackjack';
 export { LudoGame, LudoMode, LudoGameState } from './games/ludo';
-export { ChessGame, ChessEngine, parseTimeControl, CHESS_MODES } from './games/chess';
-export type { ChessGameState, TimeControl } from './games/chess';
+export { RPSGame, RPSChoice, RPSMode } from './games/rps';
+export type { RPSGameState, RPSRound } from './games/rps';

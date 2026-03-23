@@ -55,7 +55,7 @@ router.post('/start', authenticate, async (req: AuthRequest, res) => {
     });
 
     // Lock seed for this game session
-    await SeedManager.lockSeedForGame(req.userId!, session._id.toString());
+    await SeedManager.lockSeedForGame(req.userId!, session._id.toString(), 'HiLo');
 
     res.json({
       sessionId: session._id,

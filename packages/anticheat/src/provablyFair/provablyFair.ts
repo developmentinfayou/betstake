@@ -47,25 +47,6 @@ export class ProvablyFairService {
     };
   }
 
-  /**
-   * Derive Chess960 starting position index (0–959).
-   */
-  deriveChess960Position(
-    serverSeed: string,
-    clientSeed: string,
-    nonce: number
-  ): RngOutcome {
-    const hash = this.deriveRandom(serverSeed, clientSeed, nonce);
-    const value = parseInt(hash.slice(0, 8), 16);
-    const position = value % 960;
-
-    return {
-      purpose: 'chess960',
-      nonce,
-      derivedHash: hash,
-      result: position,
-    };
-  }
 
   /**
    * Derive a generic random integer in [0, max).
@@ -111,9 +92,6 @@ export class ProvablyFairService {
     switch (purpose) {
       case 'colour':
         derivedOutcome = value % 2 === 0 ? 'WHITE' : 'BLACK';
-        break;
-      case 'chess960':
-        derivedOutcome = value % 960;
         break;
       default:
         derivedOutcome = value;

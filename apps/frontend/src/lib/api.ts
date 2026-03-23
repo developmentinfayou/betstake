@@ -201,14 +201,7 @@ export const blackjackAPI = {
     api.get('/blackjack/active-session'),
 };
 
-// Chess API (REST - replays & history)
-export const chessAPI = {
-  getGame: (shareableLink: string) => api.get(`/chess/game/${shareableLink}`),
-  getMyGames: (limit?: number, offset?: number) =>
-    api.get('/chess/my-games', { params: { limit, offset } }),
-  getModes: () => api.get('/chess/modes'),
-  getActive: () => api.get('/chess/active'),
-};
+
 
 // Active Sessions API (cross-game)
 export const activeSessionsAPI = {
