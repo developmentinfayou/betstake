@@ -1,76 +1,39 @@
 import { useState, useEffect } from "react";
-import { betAPI, walletAPI } from "@/lib/api";
+import { walletAPI, betAPI, rushAPI } from "@/lib/api";
 import { useActiveGameGuard } from "@/hooks/useActiveGameGuard";
 import ActiveGameBlocker from "@/components/games/ActiveGameBlocker";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useAutoBetSocket } from "@/hooks/useAutoBetSocket";
 import BetModeSelector from "@/components/betting/BetModeSelector";
 import ManualBetControls from "@/components/betting/ManualBetControls";
-import AutoBetControls, {
-  AutoBetConfig,
-} from "@/components/betting/AutoBetControls";
-import StrategySelector from "@/components/betting/StrategySelector";
-import RushGameControls, {
-  RushGameParams,
-} from "@/components/games/rush/RushGameControls";
+import RushGameControls from "@/components/games/rush/RushGameControls";
 import FairnessModal from "@/components/games/FairnessModal";
-
-type BetMode = "manual" | "auto" | "strategy";
+import { RushDifficulty } from "@casino/game-engine/games/rush/constants";
 
 export default function RushPage() {
-  const [betMode, setBetMode] = useState<BetMode>("manual");
+  const [betMode, setBetMode] = useState<"manual" | "auto" | "strategy">("manual");
   const [amount, setAmount] = useState(10);
-  const [gameParams, setGameParams] = useState<RushGameParams>({
-    difficulty: "medium",
-    targetMultiplier: 2.0,
-  });
+  const [difficulty, setDifficulty] = useState<RushDifficulty>("medium");
+  
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
   const [balance, setBalance] = useState(0);
-  const [stats, setStats] = useState({
-    profit: 0,
-    wins: 0,
-    losses: 0,
-    wagered: 0,
-  });
-  const [autoBetActive, setAutoBetActive] = useState(false);
-  const { isBlocked, blockedByGame } = useActiveGameGuard({ currentGameType: 'RUSH', autoBetActive });
+  const [stats, setStats] = useState({ profit: 0, wins: 0, losses: 0, wagered: 0 });
   const [fairnessModalOpen, setFairnessModalOpen] = useState(false);
-  const [userId, setUserId] = useState<string>();
+
+  // Active session states
+  const [gameActive, setGameActive] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [currentMultiplier, setCurrentMultiplier] = useState(1);
+  const [bustedAtStep, setBustedAtStep] = useState<number | undefined>();
+  const [crashPoint, setCrashPoint] = useState<number | null>(null);
+  
+  const { isBlocked, blockedByGame } = useActiveGameGuard({ currentGameType: 'RUSH', autoBetActive: false });
 
   useEffect(() => {
     loadBalance();
-    const token = localStorage.getItem("token");
-    if (token) {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      setUserId(payload.id);
-    }
+    checkActiveSession();
   }, []);
-
-  useAutoBetSocket(userId, (data) => {
-    setResult(data.bet.result);
-    setAmount(data.bet.amount); // Sync amount with strategy-adjusted bet
-    if (data.wallet) setBalance(data.wallet.balance);
-    if (data.bet.won) {
-      setStats((s) => ({
-        ...s,
-        wins: s.wins + 1,
-        profit: s.profit + data.bet.profit,
-        wagered: s.wagered + data.bet.amount,
-      }));
-    } else {
-      setStats((s) => ({
-        ...s,
-        losses: s.losses + 1,
-        profit: s.profit + data.bet.profit,
-        wagered: s.wagered + data.bet.amount,
-      }));
-    }
-  }, () => {
-    setAutoBetActive(false);
-    loadBalance();
-  });
 
   const loadBalance = async () => {
     try {
@@ -82,7 +45,26 @@ export default function RushPage() {
     }
   };
 
-  const placeBet = async () => {
+  const checkActiveSession = async () => {
+    try {
+      const response = await rushAPI.getActiveSession();
+      if (response.data.hasActiveSession) {
+        setSessionId(response.data.sessionId);
+        setCurrentStepIndex(response.data.stepsPassed);
+        setCurrentMultiplier(response.data.currentMultiplier || 1);
+        setDifficulty(response.data.difficulty);
+        setAmount(response.data.betAmount);
+        setGameActive(true);
+        setBustedAtStep(undefined);
+        setCrashPoint(null);
+        toast.success("Resumed your active game");
+      }
+    } catch (error) {
+      // No active session — continue normally
+    }
+  };
+
+  const startGame = async () => {
     if (amount > balance) {
       toast.error("Insufficient balance");
       return;
@@ -90,66 +72,99 @@ export default function RushPage() {
 
     setLoading(true);
     try {
-      const response = await betAPI.place({
-        gameType: "RUSH",
+      const response = await rushAPI.start({
+        difficulty,
+        betAmount: amount,
         currency: "USD",
-        amount,
-        gameParams,
       });
-      const { bet, result: gameResult } = response.data;
-      setResult(gameResult.result || gameResult);
 
-      if (gameResult.won) {
-        toast.success(`Won $${gameResult.profit.toFixed(2)}!`);
-        setStats((s) => ({
-          ...s,
-          wins: s.wins + 1,
-          profit: s.profit + gameResult.profit,
-          wagered: s.wagered + amount,
-        }));
+      setSessionId(response.data.sessionId);
+      setCurrentMultiplier(1.00);
+      setCurrentStepIndex(0);
+      setGameActive(true);
+      setBustedAtStep(undefined);
+      setCrashPoint(null);
+      toast.success("Game started!");
+      await loadBalance();
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || "Failed to start game");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const nextStep = async () => {
+    if (!sessionId || !gameActive) return;
+
+    setLoading(true);
+    try {
+      const response = await rushAPI.next({ sessionId });
+
+      if (response.data.safe) {
+        setCurrentStepIndex(response.data.stepsPassed);
+        setCurrentMultiplier(response.data.currentMultiplier);
+        toast.success(`Survived! ${response.data.currentMultiplier.toFixed(2)}x`);
       } else {
-        toast.error(`Lost $${amount}`);
+        // Crashed
+        setGameActive(false);
+        setBustedAtStep(response.data.bet.result.crashedAtStep);
+        setCrashPoint(response.data.crashPoint);
+        setCurrentStepIndex(response.data.bet.result.crashedAtStep); // Show the busted step
+        toast.error(`Crashed at ${response.data.crashPoint.toFixed(2)}x!`);
+        
         setStats((s) => ({
           ...s,
           losses: s.losses + 1,
           profit: s.profit - amount,
           wagered: s.wagered + amount,
         }));
+        await loadBalance();
       }
-
-      await loadBalance();
     } catch (error: any) {
-      toast.error(error.response?.data?.error || "Bet failed");
+      toast.error(error.response?.data?.error || "Failed to go to next step");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleStartAutoBet = async (config: AutoBetConfig) => {
+  const cashOut = async () => {
+    if (!sessionId || !gameActive) return;
+    
+    // In Rush, user must climb at least 1 step to cash out (Step 0 is 1.00x)
+    if (currentStepIndex === 0) {
+      toast.error("You must clear at least one step to cash out!");
+      return;
+    }
+
+    setLoading(true);
     try {
-      await betAPI.startAutobet({
-        gameType: "RUSH",
-        currency: "USD",
-        amount,
-        gameParams,
-        config,
-      });
-      setAutoBetActive(true);
-      toast.success("Auto-bet started");
+      const response = await rushAPI.cashout({ sessionId });
+
+      toast.success(`Cashed out! Won $${response.data.profit.toFixed(2)}`);
+      setGameActive(false);
+      setCrashPoint(response.data.crashPoint);
+
+      setStats((s) => ({
+        ...s,
+        wins: s.wins + 1,
+        profit: s.profit + response.data.profit,
+        wagered: s.wagered + amount,
+      }));
+      await loadBalance();
     } catch (error: any) {
-      toast.error(error.response?.data?.error || "Failed to start auto-bet");
+      toast.error(error.response?.data?.error || "Failed to cash out");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleStopAutoBet = async () => {
-    try {
-      await betAPI.stopAutobet();
-      setAutoBetActive(false);
-      toast.success("Auto-bet stopped");
-      await loadBalance();
-    } catch (error: any) {
-      toast.error("Failed to stop auto-bet");
-    }
+  const resetGame = () => {
+    setGameActive(false);
+    setBustedAtStep(undefined);
+    setCrashPoint(null);
+    setSessionId(null);
+    setCurrentStepIndex(0);
+    setCurrentMultiplier(1);
   };
 
   return (
@@ -157,8 +172,7 @@ export default function RushPage() {
       <header className="border-b border-gray-800">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="text-2xl font-bold gradient-text">
-            {" "}
-            Rush
+            Stellar Rush
           </Link>
           <div className="flex items-center gap-4">
             <button
@@ -184,31 +198,67 @@ export default function RushPage() {
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="card">
-              <h2 className="text-2xl font-bold mb-6">Rush</h2>
+              <h2 className="text-2xl font-bold mb-6">Stellar Rush</h2>
 
-              {result && (
-                <div
-                  className={`mb-6 p-6 rounded-lg text-center ${result.won
-                    ? "bg-green-900/20 border border-green-500"
-                    : "bg-red-900/20 border border-red-500"
-                    }`}
-                >
-                  <div className="text-6xl font-bold mb-2">
-                    {result.crashPoint.toFixed(2)}x
+              {gameActive && (
+                <div className="mb-6 p-6 bg-blue-900/20 border border-blue-500 rounded-lg text-center flex flex-col items-center justify-center">
+                  <div className="text-sm text-gray-400 uppercase tracking-wider mb-2">
+                    Current Multiplier
                   </div>
-                  <div className="text-2xl mb-2">
-                    {result.won ? "🎉 WIN!" : "💥 CRASHED"}
+                  <div className="text-5xl font-bold text-primary mb-2">
+                    {currentMultiplier.toFixed(2)}x
                   </div>
-                  <div className="text-sm text-gray-400">
-                    Target: {result.targetMultiplier.toFixed(2)}x
+                  <div className="text-sm text-green-400 font-semibold bg-green-900/40 px-3 py-1 rounded-full">
+                    Potential Win: ${(amount * currentMultiplier).toFixed(2)}
+                  </div>
+                </div>
+              )}
+              
+              {!gameActive && crashPoint !== null && (
+                <div className={`mb-6 p-6 rounded-lg text-center border ${bustedAtStep ? 'bg-red-900/20 border-red-500' : 'bg-green-900/20 border-green-500'}`}>
+                  <div className="text-sm text-gray-400 uppercase tracking-wider mb-2">
+                    {bustedAtStep ? 'Crashed At' : 'Would Have Crashed At'}
+                  </div>
+                  <div className={`text-5xl font-bold mb-2 ${bustedAtStep ? 'text-red-500' : 'text-gray-300 opacity-70'}`}>
+                    {crashPoint.toFixed(2)}x
+                  </div>
+                  <div className="text-xl font-bold mt-4">
+                    {bustedAtStep 
+                      ? <span className="text-red-500">💥 YOU BUSTED!</span> 
+                      : <span className="text-green-400">🎉 SUCCESSFULLY CASHED OUT AT {currentMultiplier.toFixed(2)}x</span>
+                    }
                   </div>
                 </div>
               )}
 
               <RushGameControls
-                onChange={setGameParams}
-                disabled={loading || autoBetActive}
+                difficulty={difficulty}
+                onChangeDifficulty={setDifficulty}
+                disabled={loading}
+                gameActive={gameActive}
+                currentStepIndex={currentStepIndex}
+                bustedAtStep={bustedAtStep}
+                onNextStep={nextStep}
               />
+
+              {gameActive && currentStepIndex > 0 && (
+                <button
+                  onClick={cashOut}
+                  disabled={loading}
+                  className="btn-secondary w-full py-4 mt-6 text-lg font-bold shadow-lg"
+                >
+                  Cash Out ${(amount * currentMultiplier).toFixed(2)}
+                </button>
+              )}
+
+              {!gameActive && (sessionId !== null || crashPoint !== null) && (
+                <button
+                  onClick={resetGame}
+                  className="btn-primary w-full py-4 mt-6 text-lg font-bold"
+                >
+                  Play Again
+                </button>
+              )}
             </div>
           </div>
 
@@ -217,64 +267,36 @@ export default function RushPage() {
               <BetModeSelector
                 mode={betMode}
                 onChange={setBetMode}
-                showStrategy={true}
+                showStrategy={false}
               />
-              {betMode === "manual" && (
+
+              {betMode === "manual" && !gameActive && (
                 <ManualBetControls
                   amount={amount}
                   balance={balance}
                   onAmountChange={setAmount}
-                  onBet={placeBet}
-                  disabled={autoBetActive}
+                  onBet={startGame}
+                  disabled={loading}
                   loading={loading}
-                  multiplier={gameParams.targetMultiplier}
                 />
               )}
-              {betMode === "auto" && (
-                <AutoBetControls
-                  amount={amount}
-                  balance={balance}
-                  onAmountChange={setAmount}
-                  onStart={handleStartAutoBet}
-                  onStop={handleStopAutoBet}
-                  isActive={autoBetActive}
-                  disabled={loading || amount <= 0 || amount > balance}
-                />
-              )}
-              {betMode === "strategy" && (
-                <StrategySelector
-                  amount={amount}
-                  balance={balance}
-                  onAmountChange={setAmount}
-                  onStart={handleStartAutoBet}
-                  onStop={handleStopAutoBet}
-                  isActive={autoBetActive}
-                  disabled={loading || amount <= 0 || amount > balance}
-                />
+
+              {betMode !== "manual" && (
+                <div className="text-center py-8 text-gray-400 border border-gray-800 rounded-lg bg-gray-900/50">
+                  <div className="text-lg mb-2">⚠️ AutoBet Disabled</div>
+                  <div className="text-sm px-4">
+                    Stellar Rush requires manual step-by-step gameplay. AutoBet is disabled for this game.
+                  </div>
+                </div>
               )}
             </div>
-
-            {autoBetActive && (
-              <div className="card bg-blue-900/20 border border-blue-500">
-                <div className="text-center">
-                  <div className="text-sm text-gray-400 mb-1">
-                    Auto-Bet Active
-                  </div>
-                  <div className="text-lg font-bold">Running...</div>
-                </div>
-              </div>
-            )}
 
             <div className="card">
               <h3 className="text-xl font-bold mb-4">Live Stats</h3>
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Profit/Loss</span>
-                  <span
-                    className={
-                      stats.profit >= 0 ? "text-green-500" : "text-red-500"
-                    }
-                  >
+                  <span className={stats.profit >= 0 ? "text-green-500" : "text-red-500"}>
                     ${stats.profit.toFixed(2)}
                   </span>
                 </div>
@@ -291,9 +313,7 @@ export default function RushPage() {
                   <span>${stats.wagered.toFixed(2)}</span>
                 </div>
                 <button
-                  onClick={() =>
-                    setStats({ profit: 0, wins: 0, losses: 0, wagered: 0 })
-                  }
+                  onClick={() => setStats({ profit: 0, wins: 0, losses: 0, wagered: 0 })}
                   className="btn-secondary w-full mt-4"
                 >
                   Reset Stats

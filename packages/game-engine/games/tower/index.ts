@@ -106,8 +106,8 @@ export class TowerGame extends BaseGame {
     // Multiplier based on inverse probability: (1/p)^n
     let multiplier = Math.pow(1 / probability, safeFloorsCleared);
 
-    // Apply house edge
-    // multiplier *= (1 - this.config.houseEdge / 100);
+    // Apply house edge (e.g. 1% house edge → multiply by 0.99)
+    multiplier *= (1 - this.config.houseEdge / 100);
 
     return parseFloat(multiplier.toFixed(4));
   }
@@ -117,10 +117,12 @@ export class TowerGame extends BaseGame {
    */
   static getMultiplierTable(difficulty: TowerDifficulty, houseEdge: number = 1): number[] {
     const config = TOWER_CONFIG[difficulty];
+    const houseEdgeMultiplier = 1 - houseEdge / 100; // e.g. 1% → 0.99
     const table: number[] = [];
     for (let i = 1; i <= config.floors; i++) {
       const raw = Math.pow(1 / config.probability, i);
-      table.push(parseFloat((raw).toFixed(4)));
+      const adjusted = raw * houseEdgeMultiplier;
+      table.push(parseFloat(adjusted.toFixed(4)));
     }
     return table;
   }

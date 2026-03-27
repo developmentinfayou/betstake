@@ -1,75 +1,25 @@
-import { BaseGame, BetInput, BetResult } from '../../base-game';
 import { generateFloat } from '@casino/fairness';
+import { BaseGame, BetInput, BetResult } from '../../base-game';
 
-export type RushDifficulty = 'easy' | 'medium' | 'hard' | 'expert';
+export * from './constants';
 
-export interface RushParams {
-  difficulty: RushDifficulty;
-  targetMultiplier: number;
-}
+/**
+ * Generates the hidden crash point for a Rush session based on the Stake.com algorithm.
+ * Uses 0.99 house edge. Same provably fair logic as standard sequential Crash game.
+ */
+export function generateCrashPoint(seedData: { serverSeed: string; clientSeed: string; nonce: number }): number {
+  const float = generateFloat(seedData);
 
-export interface RushResult {
-  crashPoint: number;
-  targetMultiplier: number;
-  won: boolean;
+  // Exact match with CrashGame formula and verifyCrash (1% house edge)
+  const houseEdgeFraction = 0.01;
+  const houseEdgeMultiplier = 1 - houseEdgeFraction;
+  const crashPoint = Math.max(1.01, (99 * houseEdgeMultiplier) / (100 * float));
+
+  return Math.min(parseFloat(crashPoint.toFixed(2)), 10000);
 }
 
 export class RushGame extends BaseGame {
-  private difficultyRanges: Record<RushDifficulty, { min: number; max: number }> = {
-    easy: { min: 1.5, max: 5 },
-    medium: { min: 1.2, max: 10 },
-    hard: { min: 1.1, max: 50 },
-    expert: { min: 1.01, max: 100 },
-  };
-
   play(input: BetInput): BetResult {
-    this.validateBet(input.amount, input.currency);
-
-    const params = input.gameParams as RushParams;
-    const { difficulty, targetMultiplier } = params;
-
-    const range = this.difficultyRanges[difficulty];
-
-    if (targetMultiplier < range.min || targetMultiplier > range.max) {
-      throw new Error(`Target multiplier must be between ${range.min}x and ${range.max}x for ${difficulty} difficulty`);
-    }
-
-    const float = generateFloat(input.seedData);
-    const crashPoint = this.calculateCrashPoint(float, difficulty);
-
-    const won = crashPoint >= targetMultiplier;
-    const multiplier = won ? targetMultiplier : 0;
-
-    const payout = this.calculatePayout(input.amount, multiplier);
-    const profit = this.calculateProfit(input.amount, payout);
-
-    const result: RushResult = {
-      crashPoint,
-      targetMultiplier,
-      won,
-    };
-
-    return {
-      multiplier,
-      payout,
-      profit,
-      won,
-      gameData: params,
-      result,
-    };
-  }
-
-  private calculateCrashPoint(float: number, difficulty: RushDifficulty): number {
-    const range = this.difficultyRanges[difficulty];
-
-    const e = Math.pow(2, 32);
-    const h = Math.floor((1 - float) * e);
-
-    let crashPoint = Math.max(1, (0.99 * e) / h);
-
-    crashPoint = Math.min(crashPoint, range.max);
-    crashPoint = Math.max(crashPoint, range.min);
-
-    return parseFloat(crashPoint.toFixed(2));
+    throw new Error('Rush is now an interactive session-based game and cannot be played directly via play(). Use the session API endpoints.');
   }
 }

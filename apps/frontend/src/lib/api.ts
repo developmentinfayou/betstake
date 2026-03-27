@@ -213,6 +213,20 @@ export const activeSessionsAPI = {
   check: () => api.get('/active-sessions'),
 };
 
+// Rush API
+export const rushAPI = {
+  start: (data: { difficulty: string; betAmount: number; currency: string }) =>
+    api.post('/rush/start', data),
+  next: (data: { sessionId: string }) =>
+    api.post('/rush/next', data),
+  cashout: (data: { sessionId: string }) =>
+    api.post('/rush/cashout', data),
+  getActiveSession: () =>
+    api.get('/rush/active-session'),
+  clearSession: () =>
+    api.delete('/rush/session'),
+};
+
 // Verification API (client-side only, no auth needed)
 export const verifyAPI = {
   calculateResult: (serverSeed: string, clientSeed: string, nonce: number, gameType: string) => {
@@ -220,3 +234,4 @@ export const verifyAPI = {
     return { serverSeed, clientSeed, nonce, gameType };
   },
 };
+

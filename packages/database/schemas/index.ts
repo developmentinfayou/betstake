@@ -33,3 +33,4 @@ export * from './game-settings.schema';
 export * from './game-info.schema';
 export * from './win-categories.schema';
 export * from './diamond-transaction.schema';
+export * from './rushsession.schema';
