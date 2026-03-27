@@ -1,0 +1,51 @@
+﻿src/app/game/blackjack/page.tsx(370,17): error TS2322: Type 'Dispatch<SetStateAction<BetMode>>' is not assignable to type '(mode: BetMode) => void'.
+  Types of parameters 'value' and 'mode' are incompatible.
+    Type 'BetMode' is not assignable to type 'SetStateAction<BetMode>'.
+      Type '"strategy"' is not assignable to type 'SetStateAction<BetMode>'.
+src/app/game/crash/page.tsx(511,17): error TS2322: Type 'Dispatch<SetStateAction<"manual">>' is not assignable to type '(mode: BetMode) => void'.
+  Types of parameters 'value' and 'mode' are incompatible.
+    Type 'BetMode' is not assignable to type 'SetStateAction<"manual">'.
+      Type '"auto"' is not assignable to type 'SetStateAction<"manual">'.
+src/app/game/fastparity/page.tsx(104,25): error TS2345: Argument of type '(prev: RoundState | null) => { roundId: string; timeLeft: number; status: string; bets: { userId: string; username: string; betType: "number" | "color"; value: string | number; amount: number; }[]; totalAmount: number; playerCount: number; } | null' is not assignable to parameter of type 'SetStateAction<RoundState | null>'.
+  Type '(prev: RoundState | null) => { roundId: string; timeLeft: number; status: string; bets: { userId: string; username: string; betType: "number" | "color"; value: string | number; amount: number; }[]; totalAmount: number; playerCount: number; } | null' is not assignable to type '(prevState: RoundState | null) => RoundState | null'.
+    Type '{ roundId: string; timeLeft: number; status: string; bets: { userId: string; username: string; betType: "number" | "color"; value: string | number; amount: number; }[]; totalAmount: number; playerCount: number; } | null' is not assignable to type 'RoundState | null'.
+      Type '{ roundId: string; timeLeft: number; status: string; bets: Array<{ userId: string; username: string; betType: "number" | "color"; value: number | string; amount: number; }>; totalAmount: number; playerCount: number; }' is not assignable to type 'RoundState'.
+        Types of property 'status' are incompatible.
+          Type 'string' is not assignable to type '"betting" | "closed" | "completed"'.
+src/app/game/hilo/page.tsx(320,17): error TS2322: Type 'Dispatch<SetStateAction<BetMode>>' is not assignable to type '(mode: BetMode) => void'.
+  Types of parameters 'value' and 'mode' are incompatible.
+    Type 'BetMode' is not assignable to type 'SetStateAction<BetMode>'.
+      Type '"strategy"' is not assignable to type 'SetStateAction<BetMode>'.
+src/app/history/page.tsx(322,21): error TS2322: Type '{ children: string; href: string; className: string; }' is not assignable to type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'.
+  Property 'href' does not exist on type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'. Did you mean 'ref'?
+src/app/layout.tsx(1,31): error TS2307: Cannot find module 'next' or its corresponding type declarations.
+src/components/betting/AutoBetControls.tsx(43,9): error TS2353: Object literal may only specify known properties, and 'reset' does not exist in type '{ action: "reset" | "increase"; value?: number | undefined; }'.
+src/components/betting/AutoBetControls.tsx(47,9): error TS2353: Object literal may only specify known properties, and 'reset' does not exist in type '{ action: "reset" | "increase"; value?: number | undefined; }'.
+src/components/games/AutoBetControls.tsx(73,29): error TS2339: Property 'increaseBy' does not exist on type '{ reset: boolean; } | { reset: boolean; } | { reset: boolean; increaseBy: number; } | { reset: boolean; } | { reset: boolean; increaseBy: number; }'.
+  Property 'increaseBy' does not exist on type '{ reset: boolean; }'.
+src/components/games/AutoBetControls.tsx(75,36): error TS2339: Property 'increaseBy' does not exist on type '{ reset: boolean; } | { reset: boolean; } | { reset: boolean; increaseBy: number; } | { reset: boolean; } | { reset: boolean; increaseBy: number; }'.
+  Property 'increaseBy' does not exist on type '{ reset: boolean; }'.
+src/components/games/AutoBetControls.tsx(80,30): error TS2339: Property 'increaseBy' does not exist on type '{ reset: boolean; } | { reset: boolean; increaseBy: number; } | { reset: boolean; } | { reset: boolean; increaseBy: number; } | { reset: boolean; }'.
+  Property 'increaseBy' does not exist on type '{ reset: boolean; }'.
+src/components/games/AutoBetControls.tsx(82,38): error TS2339: Property 'increaseBy' does not exist on type '{ reset: boolean; } | { reset: boolean; increaseBy: number; } | { reset: boolean; } | { reset: boolean; increaseBy: number; } | { reset: boolean; }'.
+  Property 'increaseBy' does not exist on type '{ reset: boolean; }'.
+src/components/games/coinflip/CoinAnimation.tsx(58,14): error TS2322: Type '{ children: string; jsx: true; }' is not assignable to type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+  Property 'jsx' does not exist on type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+src/components/games/plinko/PlinkoBoard.tsx(32,9): error TS2322: Type 'number[]' is not assignable to type 'number'.
+src/components/games/plinko/PlinkoBoard.tsx(33,9): error TS2322: Type 'number[]' is not assignable to type 'number'.
+src/components/games/plinko/PlinkoBoard.tsx(34,9): error TS2322: Type 'number[]' is not assignable to type 'number'.
+src/components/games/plinko/PlinkoBoard.tsx(37,9): error TS2322: Type 'number[]' is not assignable to type 'number'.
+src/components/games/plinko/PlinkoBoard.tsx(38,9): error TS2322: Type 'number[]' is not assignable to type 'number'.
+src/components/games/plinko/PlinkoBoard.tsx(39,9): error TS2322: Type 'number[]' is not assignable to type 'number'.
+src/components/games/plinko/PlinkoBoard.tsx(42,9): error TS2322: Type 'number[]' is not assignable to type 'number'.
+src/components/games/plinko/PlinkoBoard.tsx(43,9): error TS2322: Type 'number[]' is not assignable to type 'number'.
+src/components/games/plinko/PlinkoBoard.tsx(44,9): error TS2322: Type 'number[]' is not assignable to type 'number'.
+src/components/games/plinko/PlinkoBoard.tsx(49,40): error TS2339: Property 'map' does not exist on type 'number | ((...items: number[]) => number) | ((separator?: string | undefined) => string) | ((compareFn?: ((a: number, b: number) => number) | undefined) => number[]) | { (callbackfn: (previousValue: number, currentValue: number, currentIndex: number, array: number[]) => number): number; (callbackfn: (previousValue: ...'.
+  Property 'map' does not exist on type 'number'.
+src/components/games/plinko/PlinkoBoard.tsx(49,44): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/components/games/plinko/PlinkoBoard.tsx(196,27): error TS7006: Parameter 'multiplier' implicitly has an 'any' type.
+src/components/games/plinko/PlinkoBoard.tsx(196,39): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/components/games/plinko/PlinkoGameControls.tsx(204,14): error TS2367: This comparison appears to be unintentional because the types '"same_trajectory"' and '"next_bets"' have no overlap.
+src/components/games/plinko/PlinkoGameControls.tsx(219,14): error TS2367: This comparison appears to be unintentional because the types '"same_trajectory"' and '"percentage"' have no overlap.
+src/lib/simple-ludo.ts(88,52): error TS7006: Parameter 't' implicitly has an 'any' type.
+../../packages/game-engine/index.ts(18,30): error TS1205: Re-exporting a type when 'isolatedModules' is enabled requires using 'export type'.

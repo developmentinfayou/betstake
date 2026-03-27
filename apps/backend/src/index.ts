@@ -36,6 +36,7 @@ import platformSettingsRoutes from './routes/platform-settings';
 import gameSettingsRoutes from './routes/game-settings';
 import gameInfoRoutes from './routes/game-info';
 import winCategoriesRoutes from './routes/win-categories';
+import rushRoutes from './routes/rush';
 
 // WebSocket handlers
 import { setupCrashSocket } from './websocket/crash';
@@ -112,6 +113,7 @@ async function start() {
   app.use('/api/admin/game-info', gameInfoRoutes);
   app.use('/api/admin/win-categories', winCategoriesRoutes);
   app.use('/api/active-sessions', activeSessionsRoutes);
+  app.use('/api/rush', rushRoutes);
 
   // Setup Socket.IO
   const io = new Server(httpServer, {
