@@ -227,6 +227,24 @@ export const rushAPI = {
     api.delete('/rush/session'),
 };
 
+// Balloon / Pump API (session-based)
+export const balloonAPI = {
+  start: (data: { difficulty: string; betAmount: number; currency: string }) =>
+    api.post('/balloon/start', data),
+  pump: (data: { sessionId: string }) =>
+    api.post('/balloon/pump', data),
+  cashout: (data: { sessionId: string }) =>
+    api.post('/balloon/cashout', data),
+  auto: (data: { difficulty: string; betAmount: number; currency: string; targetPumps: number }) =>
+    api.post('/balloon/auto', data),
+  getActiveSession: () =>
+    api.get('/balloon/active-session'),
+  clearSession: () =>
+    api.delete('/balloon/session'),
+  getSteps: (difficulty: string) =>
+    api.get(`/balloon/steps/${difficulty}`),
+};
+
 // Verification API (client-side only, no auth needed)
 export const verifyAPI = {
   calculateResult: (serverSeed: string, clientSeed: string, nonce: number, gameType: string) => {
@@ -234,4 +252,5 @@ export const verifyAPI = {
     return { serverSeed, clientSeed, nonce, gameType };
   },
 };
+
 

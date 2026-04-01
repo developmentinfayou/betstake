@@ -206,7 +206,7 @@ export class AutoBetService {
    * Check if game type is session-based
    */
   private static isSessionGame(gameType: string): boolean {
-    return ['TOWER', 'STAIRS', 'HILO', 'BLACKJACK'].includes(gameType);
+    return ['TOWER', 'STAIRS', 'HILO', 'BLACKJACK', 'BALLOON'].includes(gameType);
   }
 
   /**

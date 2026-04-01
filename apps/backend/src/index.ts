@@ -37,6 +37,7 @@ import gameSettingsRoutes from './routes/game-settings';
 import gameInfoRoutes from './routes/game-info';
 import winCategoriesRoutes from './routes/win-categories';
 import rushRoutes from './routes/rush';
+import balloonRoutes from './routes/balloon';
 
 // WebSocket handlers
 import { setupCrashSocket } from './websocket/crash';
@@ -114,6 +115,7 @@ async function start() {
   app.use('/api/admin/win-categories', winCategoriesRoutes);
   app.use('/api/active-sessions', activeSessionsRoutes);
   app.use('/api/rush', rushRoutes);
+  app.use('/api/balloon', balloonRoutes);
 
   // Setup Socket.IO
   const io = new Server(httpServer, {
